@@ -41,11 +41,12 @@ async def auto_pm_fill(b, m):
         if G_FILTER:
             kd = await global_filters(b, m)
             if kd == False:
-                await pm_AutoFilter(b, m)
+                await auto_filter(b, m)  # <-- Change this line to call auto_filter function
         else:      
-            await pm_AutoFilter(b, m)
+            await auto_filter(b, m)  # <-- Change this line to call auto_filter function
     elif PMFILTER.strip().lower() in ["false", "no", "0", "disable", "n"]:
-        return 
+        return
+
 
 @Client.on_callback_query(filters.regex("pmnext"))
 async def pm_next_page(bot, query):
