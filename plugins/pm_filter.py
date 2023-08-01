@@ -704,13 +704,13 @@ async def cb_handler(client: Client, query: CallbackQuery):
         try:
             if AUTH_CHANNEL and not await is_subscribed(client, query):
                 if clicked == typed:
-                    await query.answer(url=f"https://t.me/botechs_bot?start={ident}_{file_id}")
+                    await query.answer(url=f"https://t.me/moviesdownhubbot?start={ident}_{file_id}")
                     return
                 else:
                     await query.answer(f"Hᴇʏ {query.from_user.first_name}, Tʜɪs Is Nᴏᴛ Yᴏᴜʀ Mᴏᴠɪᴇ Rᴇǫᴜᴇsᴛ. Rᴇǫᴜᴇsᴛ Yᴏᴜʀ's !", show_alert=True)
             elif settings['botpm']:
                 if clicked == typed:
-                    await query.answer(url=f"https://t.me/botechs_bot?start={ident}_{file_id}")
+                    await query.answer(url=f"https://t.me/moviesdownhubbot?start={ident}_{file_id}")
                     return
                 else:
                     await query.answer(f"Hᴇʏ {query.from_user.first_name}, Tʜɪs Is Nᴏᴛ Yᴏᴜʀ Mᴏᴠɪᴇ Rᴇǫᴜᴇsᴛ. Rᴇǫᴜᴇsᴛ Yᴏᴜʀ's !", show_alert=True)
@@ -750,9 +750,9 @@ async def cb_handler(client: Client, query: CallbackQuery):
         except UserIsBlocked:
             await query.answer('Uɴʙʟᴏᴄᴋ ᴛʜᴇ ʙᴏᴛ ᴍᴀʜɴ !', show_alert=True)
         except PeerIdInvalid:
-            await query.answer(url=f"https://t.me/botechs_bot?start={ident}_{file_id}")
+            await query.answer(url=f"https://t.me/moviesdownhubbot?start={ident}_{file_id}")
         except Exception as e:
-            await query.answer(url=f"https://t.me/botech_bots?start={ident}_{file_id}")
+            await query.answer(url=f"https://t.me/moviesdownhubbot?start={ident}_{file_id}")
     elif query.data.startswith("checksub"):
         if AUTH_CHANNEL and not await is_subscribed(client, query):
             await query.answer("Jᴏɪɴ ᴏᴜʀ Bᴀᴄᴋ-ᴜᴘ ᴄʜᴀɴɴᴇʟ ᴍᴀʜɴ! 😒", show_alert=True)
@@ -1145,7 +1145,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
 
     elif query.data == "smal":
         buttons = [[
-            InlineKeyboardButton('ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ', url=f'https://t.me/botechs_bot?startgroup=true')
+            InlineKeyboardButton('ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ', url=f'https://t.me/moviesdownhubbot?startgroup=true')
         ],[
             InlineKeyboardButton('ᴍʏ ᴅᴇᴠ', url=f'http://t.me/Lallu_tgs'),
             InlineKeyboardButton('ᴍʏ ɢʀᴏᴜᴘ', url=f'https://t.me/EDIT_REPO')
@@ -1170,7 +1170,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
         )
     elif query.data == "shin":
         buttons = [[
-            InlineKeyboardButton('ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ', url=f'https://t.me/botechs_bot?startgroup=true')
+            InlineKeyboardButton('ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ', url=f'https://t.me/moviesdownhubbot?startgroup=true')
         ],[
             InlineKeyboardButton('ᴍʏ ᴅᴇᴠ', url=f'http://t.me/Lallu_tgs'),
             InlineKeyboardButton('ᴍʏ ɢʀᴏᴜᴘ', url=f'https://t.me/EDIT_REPO')
@@ -1195,7 +1195,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
         )
     elif query.data == "seng":
         buttons = [[
-            InlineKeyboardButton('ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ', url=f'https://t.me/botechs_bot?startgroup=true')
+            InlineKeyboardButton('ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ', url=f'https://t.me/moviesdownhubbot?startgroup=true')
         ],[
             InlineKeyboardButton('ᴍʏ ᴅᴇᴠ', url=f'http://t.me/Lallu_tgs'),
             InlineKeyboardButton('ᴍʏ ɢʀᴏᴜᴘ', url=f'https://t.me/EDIT_REPO')
@@ -1220,7 +1220,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
         )
     elif query.data == "stam":
         buttons = [[
-            InlineKeyboardButton('ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ', url=f'https://t.me/botechs_bot?startgroup=true')
+            InlineKeyboardButton('ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ', url=f'https://t.me/moviesdownhubbot?startgroup=true')
         ],[
             InlineKeyboardButton('ᴍʏ ᴅᴇᴠ', url=f'http://t.me/Lallu_tgs'),
             InlineKeyboardButton('ᴍʏ ɢʀᴏᴜᴘ', url=f'https://t.me/EDIT_REPO')
@@ -1345,7 +1345,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
         )
     elif query.data == "thank":
         buttons = [[
-            InlineKeyboardButton('ᴀᴅᴅ ᴍᴇ', url=f'https://t.me/botechs_bot?startgroup=true'),
+            InlineKeyboardButton('ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ', url=f'https://t.me/moviesdownhubbot?startgroup=true')
         ],[
             InlineKeyboardButton('sᴛᴀʀᴛ ᴍsɢ', callback_data='astart'),
             InlineKeyboardButton('ᴄʟᴏsᴇ', callback_data='close_data')
@@ -1723,7 +1723,7 @@ async def auto_filter(client, msg, spoll=False):
             btn = [
                 [
                     InlineKeyboardButton(
-                        text=f"[{get_size(file.file_size)}] {file.file_name}", url=await get_shortlink(message.chat.id, f"https://telegram.me/botechs_bot?start=files_{file.file_id}")
+                        text=f"[{get_size(file.file_size)}] {file.file_name}", url=await get_shortlink(message.chat.id, f"https://telegram.me/moviesdownhubbot?start=files_{file.file_id}")
                     ),
                 ]
                 for file in files
@@ -1733,11 +1733,11 @@ async def auto_filter(client, msg, spoll=False):
                 [
                     InlineKeyboardButton(
                         text=f"{file.file_name}",
-                        url=await get_shortlink(message.chat.id, f"https://telegram.me/botechs_bot?start=files_{file.file_id}")
+                        url=await get_shortlink(message.chat.id, f"https://telegram.me/moviesdownhubbot?start=files_{file.file_id}")
                     ),
                     InlineKeyboardButton(
                         text=f"{get_size(file.file_size)}",
-                        url=await get_shortlink(message.chat.id, f"https://telegram.me/botechs_bot?start=files_{file.file_id}")
+                        url=await get_shortlink(message.chat.id, f"https://telegram.me/moviesdownhubbot?start=files_{file.file_id}")
                     ),
                 ]
                 for file in files
