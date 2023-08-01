@@ -41,9 +41,9 @@ async def auto_pm_fill(b, m):
         if G_FILTER:
             kd = await global_filters(b, m)
             if kd == False:
-                await auto_filter(b, m)  # <-- Change this line to call auto_filter function
+                await pm_autofilter(b, m)  # <-- Change this line to call auto_filter function
         else:      
-            await auto_filter(b, m)  # <-- Change this line to call auto_filter function
+            await pm_autofilter(b, m)  # <-- Change this line to call auto_filter function
     elif PMFILTER.strip().lower() in ["false", "no", "0", "disable", "n"]:
         return
 
