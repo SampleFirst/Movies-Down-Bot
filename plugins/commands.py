@@ -438,7 +438,7 @@ async def channel_info(bot, message):
         await message.reply_document(file)
         os.remove(file)
 
-@client.on_message(filters.command('logs') & filters.user(ADMINS))
+@Client.on_message(filters.command('logs') & filters.user(ADMINS))
 async def send_log(_, message):
     x = subprocess.getoutput("tail TelegramBot.log")
     log_url = paste(x)
@@ -458,7 +458,7 @@ def paste(text):
     res = req.post(url, data={"content": text, "extension": "txt"})
     return f"https://spaceb.in/{res.json()['payload']['id']}"
 
-@client.on_callback_query()
+@Client.on_callback_query()
 async def handle_callback_query(client, query):
     data = query.data
     if data.startswith("send_log_"):
