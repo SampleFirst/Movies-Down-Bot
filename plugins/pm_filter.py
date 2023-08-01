@@ -727,7 +727,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
                           InlineKeyboardButton('𒊹 ʜɪɴ', callback_data='hindi'),
                           InlineKeyboardButton('𒊹 ᴛᴀᴍ', callback_data='tamil')
                         ],[                         
-                          InlineKeyboardButton("✾𝙹𝙾𝙸𝙽 𝙼𝚈 𝙶𝚁𝙾𝚄𝙾𝙿✾", url='t.me/benana_mvs')
+                          InlineKeyboardButton('Fast Download', url=await get_shortlink(f"https://telegram.me/moviesdownhubbot?start=files_{file.file_id}")),
                         ]]
                     )
                   )
@@ -737,7 +737,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
                             [[
                                 InlineKeyboardButton("› 〉 📂ɢᴇᴛ ꜰɪʟᴇ📁", url=joelkb_creatorbeatz.link)
                             ],[
-                                InlineKeyboardButton("🏴ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ🏴", url='https://t.me/databut')
+                                InlineKeyboardButton("🏴ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ🏴", url='https://t.me/+cRShHd8yOMk3ZGNl')
                             ]]
                         )
                     )
@@ -784,9 +784,9 @@ async def cb_handler(client: Client, query: CallbackQuery):
             reply_markup=InlineKeyboardMarkup(
                 [
                  [
-                  InlineKeyboardButton('Sᴜᴘᴘᴏʀᴛ Gʀᴏᴜᴘ', url=GRP_LNK),
+                  InlineKeyboardButton('Fast Download', url=await get_shortlink(f"https://telegram.me/moviesdownhubbot?start=files_{file.file_id}")),
                   InlineKeyboardButton('Uᴘᴅᴀᴛᴇs Cʜᴀɴɴᴇʟ', url=CHNL_LNK)
-               ],[
+                ],[
                   InlineKeyboardButton("Bᴏᴛ Oᴡɴᴇʀ", url="t.me/Lallu_tg")
                  ]
                 ]
