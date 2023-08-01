@@ -94,7 +94,7 @@ async def channel_receive_handler(bot, broadcast):
             chat_id=broadcast.chat.id,
             message_id=broadcast.id,
             reply_markup=InlineKeyboardMarkup(
-                [[InlineKeyboardButton("Dᴏᴡɴʟᴏᴀᴅ ʟɪɴᴋ 📥", url=f"https://t.me/botechs_bot?start=AvishkarPatil_{str(log_msg.id)}")]])
+                [[InlineKeyboardButton("Dᴏᴡɴʟᴏᴀᴅ ʟɪɴᴋ 📥", url=f"https://t.me/moviesdownhubbot?start=AvishkarPatil_{str(log_msg.id)}")]])
             # [[InlineKeyboardButton("Dᴏᴡɴʟᴏᴀᴅ ʟɪɴᴋ 📥", url=f"https://t.me/botechs_bot?start=AvishkarPatil_{str(log_msg.id)}")]])
         )
     except FloodWait as w:
