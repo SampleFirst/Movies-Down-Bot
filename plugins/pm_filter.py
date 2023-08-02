@@ -1147,7 +1147,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
     elif query.data == "shin":
         buttons = [
             [
-                InlineKeyboardButton('ᴀᴅᴅ ᴍᴇ ᴛᴏ ᴜʀ ɢʀᴩ', url=f'https://t.me/{temp.U_NAME}?startgroup=true')
+                InlineKeyboardButton('ᴀᴅᴅ ᴍᴇ ᴛᴏ ᴜʀ ɢʀᴩ', url=f'https://t.me/MoviesDownHubBot?startgroup=true')
             ],
             [
                 InlineKeyboardButton('ᴍy ᴅᴇᴠ', url=f'http://t.me/Lallu_tgs'),
