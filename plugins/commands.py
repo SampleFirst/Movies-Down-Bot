@@ -843,12 +843,12 @@ async def deletemultiplefiles(bot, message):
     
     for file in files:
         await k.edit_text(f"<b>Process started for deleting files from DB. Successfully deleted {str(deleted)} files from DB for your query {keyword}!\n\nPlease wait...</b>")
-        file_ids = file.file_id
+        file_path_or_url = get_file_path_or_url_from_id(file.file_id)
         file_name = file.file_name
         
         # Backup the file to the specified channel
         try:
-            await bot.send_document(chat_id=backup_channel_id, document=file_ids, caption=f"Backup of {file_name}")
+            await bot.send_document(chat_id=backup_channel_id, document=file_path_or_url, caption=f"Backup of {file_name}")
         except Exception as e:
             logger.error(f"Failed to backup file {file_name}: {str(e)}")
         
