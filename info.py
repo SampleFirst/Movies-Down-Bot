@@ -29,9 +29,9 @@ MELCOW_VID = environ.get("MELCOW_VID", "https://telegra.ph/file/451f038b4e7c2ddd
 SPELL_IMG = environ.get("SPELL_IMG", "https://telegra.ph/file/5e2d4418525832bc9a1b9.jpg")
 
 #pmfiltet
-PMFILTER = environ.get('PMFILTER', "True")
-PM_IMDB = environ.get('PM_IMDB', "False")
-G_FILTER = bool(environ.get("G_FILTER", True))
+PMFILTER = is_enabled(environ.get('PMFILTER', "True"), True)
+PM_IMDB = is_enabled(environ.get('PM_IMDB', "True"), True)
+G_FILTER = is_enabled(environ.get("G_FILTER", "True"), True)
 SPELL_CHECK_REPLY = is_enabled(environ.get("SPELL_CHECK_REPLY", "True"), True)
 IMDB_DELET_TIME = int(environ.get('IMDB_DELET_TIME', "250"))
 
