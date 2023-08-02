@@ -8,6 +8,7 @@ import re
 import json
 import base64
 import datetime
+import pytz
 
 from pyrogram import Client, filters, enums
 from pyrogram.errors import ChatAdminRequired, FloodWait
@@ -88,6 +89,7 @@ async def start(client, message):
         await client.send_message(LOG_CHANNEL, script.LOG_TEXT_P.format(message.from_user.id, message.from_user.mention))
 
     if len(message.command) != 2:
+        current_datetime = datetime.datetime.now(pytz.timezone('Asia/Kolkata')).strftime("%Y - %B - %d  %H:%M:%S")
         buttons = [
             [
                 InlineKeyboardButton('🔮 Select Language 🔮', callback_data='lang')
@@ -104,7 +106,7 @@ async def start(client, message):
                 InlineKeyboardButton('☺️ Thank U ☺️', callback_data='thank')
             ],    
             [
-                InlineKeyboardButton(f'📅 {datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}', callback_data='current_datetime')
+                InlineKeyboardButton(f'📅 {current_datetime}', callback_data='current_datetime')
             ]
         ]
         reply_markup = InlineKeyboardMarkup(buttons)
