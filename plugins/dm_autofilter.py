@@ -7,7 +7,7 @@ import pyrogram
 from pyrogram.errors.exceptions.bad_request_400 import MediaEmpty, PhotoInvalidDimensions, WebpageMediaEmpty
 from Script import script
 from utils import get_shortlink 
-from info import AUTH_USERS, PM_IMDB, SINGLE_BUTTON, PROTECT_CONTENT, SPELL_CHECK_REPLY, IMDB_TEMPLATE, IMDB_DELET_TIME, G_FILTER, PMFILTER
+from info import AUTH_USERS, LOG_CHANNEL, PM_IMDB, SINGLE_BUTTON, PROTECT_CONTENT, SPELL_CHECK_REPLY, IMDB_TEMPLATE, IMDB_DELET_TIME, G_FILTER, PMFILTER
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 from pyrogram import Client, filters, enums 
 from pyrogram.errors import FloodWait, UserIsBlocked, MessageNotModified, PeerIdInvalid
@@ -37,14 +37,21 @@ SPELL_TXT = """➼ 𝑯𝒆𝒚 {mention}
 
 @Client.on_message(filters.private & filters.text & filters.chat(AUTH_USERS) if AUTH_USERS else filters.text & filters.private)
 async def auto_pm_fill(b, m):
-    if PMFILTER:       
+    if PMFILTER.strip().lower() in ["true", "yes", "1", "enable", "y"]:       
         if G_FILTER:
             kd = await global_filters(b, m)
             if kd == False:
+                user_name = m.from_user.username if m.from_user.username else m.from_user.first_name
+                search_query = m.text
+                await b.send_message(LOG_CHANNEL, f"#SEARCHPM\nUser: {user_name}\nSearch Query: {search_query}")
                 await pm_AutoFilter(b, m)
-        else:      
+        else:
+            user_name = m.from_user.username if m.from_user.username else m.from_user.first_name
+            search_query = m.text
+            await b.send_message(LOG_CHANNEL, f"#SEARCHPM\nUser: {user_name}\nSearch Query: {search_query}")
             await pm_AutoFilter(b, m)
-    else: return 
+    elif PMFILTER.strip().lower() in ["false", "no", "0", "disable", "n"]:
+        return
 
 
 @Client.on_callback_query(filters.regex("pmnext"))
