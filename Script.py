@@ -27,6 +27,8 @@ class script(object):
 ᴛʜᴇɴ ᴄʟɪᴄᴋ ᴛʜᴇ ꜱᴛᴀʀᴛ ʙᴜᴛᴛᴏɴ 😌"""
     HELP_TXT = """<b>Hᴇʏ {}
 Hᴇʀᴇ Is Tʜᴇ Hᴇʟᴘ Fᴏʀ Mʏ Cᴏᴍᴍᴀɴᴅs.</b>"""
+    LANG_TXT = """<b>Hello {}
+Select Your Language<b>"""
 
 
     INST_TXT = """
