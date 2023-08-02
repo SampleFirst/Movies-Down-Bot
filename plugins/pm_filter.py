@@ -1384,12 +1384,357 @@ async def cb_handler(client: Client, query: CallbackQuery):
             [
                 InlineKeyboardButton('(അ)Malayalam', callback_data='smal'),
                 InlineKeyboardButton('(அ)Tamil', callback_data='stam')
+elif query.data == "start":
+        await query.message.delete()
+        current_datetime = datetime.datetime.now(pytz.timezone('Asia/Kolkata')).strftime("%Y-%B-%d %I:%M:%S %p")
+        buttons = [
+            [
+                InlineKeyboardButton('🔮 Select Language 🔮', callback_data='lang')
+            ],
+            [
+                InlineKeyboardButton('(A)English', callback_data='seng'),
+                InlineKeyboardButton('(अ)Hindi', callback_data='shin')
+            ],
+            [
+                InlineKeyboardButton('(అ)Telugu', callback_data='stel'),
+                InlineKeyboardButton('(अ)Marathi', callback_data='smar')
+            ],
+            [
+                InlineKeyboardButton('(അ)Malayalam', callback_data='smal'),
+                InlineKeyboardButton('(அ)Tamil', callback_data='stam')
             ],
             [
                 InlineKeyboardButton('☺️ Thank U ☺️', callback_data='thank')
             ],
             [
-                InlineKeyboardButton(f'📅 {current_datetime}', callback_data='current_datetime')
+                InlineKeyboardButton(f'📅 {current_datetime}', callback_data='refresh_datetime')
+            ]
+        ]
+        reply_markup = InlineKeyboardMarkup(buttons)
+        await client.edit_message_media(
+            query.message.chat.id, 
+            query.message.id, 
+            InputMediaPhoto(random.choice(PICS))
+        )
+        await query.message.edit_text(
+            text=script.START_TXT.format(query.from_user.mention),
+            reply_markup=reply_markup,
+            parse_mode=enums.ParseMode.HTML
+        )
+        await query.answer(MSG_ALRT)
+
+    elif query.data == "smal":
+        buttons = [
+            [
+                InlineKeyboardButton('ᴀᴅᴅ ᴍᴇ ᴛᴏ ᴜʀ ɢʀᴩ', url=f'https://t.me/MoviesDownHubBot?startgroup=true')
+            ],
+            [
+                InlineKeyboardButton('ᴍy ᴅᴇᴠ', url=f'http://t.me/Lallu_tgs'),
+                InlineKeyboardButton('ᴍy ɢʀᴩ', url=f'https://t.me/EDIT_REPO')
+            ],
+            [
+                InlineKeyboardButton('ʜᴇʟᴩ', callback_data='help'),
+                InlineKeyboardButton('ᴀʙᴏᴜᴛ', callback_data='about'),
+                InlineKeyboardButton('ꜱᴇᴀʀᴄʜ', switch_inline_query_current_chat='')
+            ],
+            [
+                InlineKeyboardButton('ʙᴀᴄᴋ', callback_data='thank')
+            ]
+        ]
+        reply_markup = InlineKeyboardMarkup(buttons)
+        await client.edit_message_media(
+            query.message.chat.id, 
+            query.message.id, 
+            InputMediaPhoto(random.choice(PICS))
+        )
+        await query.message.edit_text(
+            text=script.SMAL_TXT.format(query.from_user.mention),
+            reply_markup=reply_markup,
+            parse_mode=enums.ParseMode.HTML
+        )
+    elif query.data == "stel":
+        buttons = [
+            [
+                InlineKeyboardButton('ᴀᴅᴅ ᴍᴇ ᴛᴏ ᴜʀ ɢʀᴩ', url=f'https://t.me/MoviesDownHubBot?startgroup=true')
+            ],
+            [
+                InlineKeyboardButton('ᴍy ᴅᴇᴠ', url=f'http://t.me/Lallu_tgs'),
+                InlineKeyboardButton('ᴍy ɢʀᴩ', url=f'https://t.me/EDIT_REPO')
+            ],
+            [
+                InlineKeyboardButton('ʜᴇʟᴩ', callback_data='help'),
+                InlineKeyboardButton('ᴀʙᴏᴜᴛ', callback_data='about'),
+                InlineKeyboardButton('ꜱᴇᴀʀᴄʜ', switch_inline_query_current_chat='')
+            ],
+            [
+                InlineKeyboardButton('ʙᴀᴄᴋ', callback_data='thank')
+            ]
+        ]
+        reply_markup = InlineKeyboardMarkup(buttons)
+        await client.edit_message_media(
+            query.message.chat.id, 
+            query.message.id, 
+            InputMediaPhoto(random.choice(PICS))
+        )
+        await query.message.edit_text(
+            text=script.STEL_TXT.format(query.from_user.mention),
+            reply_markup=reply_markup,
+            parse_mode=enums.ParseMode.HTML
+        )
+    elif query.data == "smar":
+        buttons = [
+            [
+                InlineKeyboardButton('ᴀᴅᴅ ᴍᴇ ᴛᴏ ᴜʀ ɢʀᴩ', url=f'https://t.me/MoviesDownHubBot?startgroup=true')
+            ],
+            [
+                InlineKeyboardButton('ᴍy ᴅᴇᴠ', url=f'http://t.me/Lallu_tgs'),
+                InlineKeyboardButton('ᴍy ɢʀᴩ', url=f'https://t.me/EDIT_REPO')
+            ],
+            [
+                InlineKeyboardButton('ʜᴇʟᴩ', callback_data='help'),
+                InlineKeyboardButton('ᴀʙᴏᴜᴛ', callback_data='about'),
+                InlineKeyboardButton('ꜱᴇᴀʀᴄʜ', switch_inline_query_current_chat='')
+            ],
+            [
+                InlineKeyboardButton('ʙᴀᴄᴋ', callback_data='thank')
+            ]
+        ]
+        reply_markup = InlineKeyboardMarkup(buttons)
+        await client.edit_message_media(
+            query.message.chat.id, 
+            query.message.id, 
+            InputMediaPhoto(random.choice(PICS))
+        )
+        await query.message.edit_text(
+            text=script.SMAR_TXT.format(query.from_user.mention),
+            reply_markup=reply_markup,
+            parse_mode=enums.ParseMode.HTML
+        )        
+    elif query.data == "shin":
+        buttons = [
+            [
+                InlineKeyboardButton('ᴀᴅᴅ ᴍᴇ ᴛᴏ ᴜʀ ɢʀᴩ', url=f'https://t.me/MoviesDownHubBot?startgroup=true')
+            ],
+            [
+                InlineKeyboardButton('ᴍy ᴅᴇᴠ', url=f'http://t.me/Lallu_tgs'),
+                InlineKeyboardButton('ᴍy ɢʀᴩ', url=f'https://t.me/EDIT_REPO')
+            ],
+            [
+                InlineKeyboardButton('ʜᴇʟᴩ', callback_data='help'),
+                InlineKeyboardButton('ᴀʙᴏᴜᴛ', callback_data='about'),
+                InlineKeyboardButton('ꜱᴇᴀʀᴄʜ', switch_inline_query_current_chat='')
+            ],
+            [
+                InlineKeyboardButton('ʙᴀᴄᴋ', callback_data='thank')
+            ]
+        ]
+        reply_markup = InlineKeyboardMarkup(buttons)
+        await client.edit_message_media(
+            query.message.chat.id, 
+            query.message.id, 
+            InputMediaPhoto(random.choice(PICS))
+        )
+        await query.message.edit_text(
+            text=script.SHIN_TXT.format(query.from_user.mention),
+            reply_markup=reply_markup,
+            parse_mode=enums.ParseMode.HTML
+        )
+    elif query.data == "seng":
+        buttons = [
+            [
+                InlineKeyboardButton('ᴀᴅᴅ ᴍᴇ ᴛᴏ ᴜʀ ɢʀᴩ', url=f'https://t.me/{temp.U_NAME}?startgroup=true')
+            ],
+            [
+                InlineKeyboardButton('ᴍy ᴅᴇᴠ', url=f'http://t.me/Lallu_tgs'),
+                InlineKeyboardButton('ᴍy ɢʀᴩ', url=f'https://t.me/EDIT_REPO')
+            ],
+            [
+                InlineKeyboardButton('ʜᴇʟᴩ', callback_data='help'),
+                InlineKeyboardButton('ᴀʙᴏᴜᴛ', callback_data='about'),
+                InlineKeyboardButton('ꜱᴇᴀʀᴄʜ', switch_inline_query_current_chat='')
+            ],
+            [
+                InlineKeyboardButton('ʙᴀᴄᴋ', callback_data='thank')
+            ]
+        ]
+        reply_markup = InlineKeyboardMarkup(buttons)
+        await client.edit_message_media(
+            query.message.chat.id, 
+            query.message.id, 
+            InputMediaPhoto(random.choice(PICS))
+        )
+        await query.message.edit_text(
+            text=script.SENG_TXT.format(query.from_user.mention),
+            reply_markup=reply_markup,
+            parse_mode=enums.ParseMode.HTML
+        )
+    elif query.data == "stam":
+        buttons = [
+            [
+                InlineKeyboardButton('ᴀᴅᴅ ᴍᴇ ᴛᴏ ᴜʀ ɢʀᴩ', url=f'https://t.me/MoviesDownHubBot?startgroup=true')
+            ],
+            [
+                InlineKeyboardButton('ᴍy ᴅᴇᴠ', url=f'http://t.me/Lallu_tgs'),
+                InlineKeyboardButton('ᴍy ɢʀᴩ', url=f'https://t.me/EDIT_REPO')
+            ],
+            [
+                InlineKeyboardButton('ʜᴇʟᴩ', callback_data='help'),
+                InlineKeyboardButton('ᴀʙᴏᴜᴛ', callback_data='about'),
+                InlineKeyboardButton('ꜱᴇᴀʀᴄʜ', switch_inline_query_current_chat='')
+            ],
+            [
+                InlineKeyboardButton('ʙᴀᴄᴋ', callback_data='thank')
+            ]
+        ]
+        reply_markup = InlineKeyboardMarkup(buttons)
+        await client.edit_message_media(
+            query.message.chat.id, 
+            query.message.id, 
+            InputMediaPhoto(random.choice(PICS))
+        )
+        await query.message.edit_text(
+            text=script.STAM_TXT.format(query.from_user.mention),
+            reply_markup=reply_markup,
+            parse_mode=enums.ParseMode.HTML
+        )
+    elif query.data == "refresh_datetime":
+        await query.message.delete()
+        current_datetime = datetime.datetime.now(pytz.timezone('Asia/Kolkata')).strftime("%Y-%B-%d %I:%M:%S %p")
+        buttons = [
+            [
+                InlineKeyboardButton('🔮 Select Language 🔮', callback_data='lang')
+            ],
+            [
+                InlineKeyboardButton('(A)English', callback_data='seng'),
+                InlineKeyboardButton('(अ)Hindi', callback_data='shin')
+            ],
+            [
+                InlineKeyboardButton('(అ)Telugu', callback_data='stel'),
+                InlineKeyboardButton('(अ)Marathi', callback_data='smar')
+            ],
+            [
+                InlineKeyboardButton('(അ)Malayalam', callback_data='smal'),
+                InlineKeyboardButton('(அ)Tamil', callback_data='stam')
+            ],
+            [
+                InlineKeyboardButton('☺️ Thank U ☺️', callback_data='thank')
+            ],
+            [
+                InlineKeyboardButton(f'📅 {current_datetime}', callback_data='refresh_datetime')
+            ]
+        ]
+        reply_markup = InlineKeyboardMarkup(buttons)
+        await client.edit_message_media(
+            query.message.chat.id, 
+            query.message.id, 
+            InputMediaPhoto(random.choice(PICS))
+        )
+        await query.message.edit_text(
+            text=script.START_TXT.format(query.from_user.mention),
+            reply_markup=reply_markup,
+            parse_mode=enums.ParseMode.HTML
+        )    
+    elif query.data == "filters":
+        buttons = [[
+            InlineKeyboardButton('ᴍ ғɪʟᴛᴇʀ', callback_data='manuelfilter'),
+            InlineKeyboardButton('ᴀ ғɪʟᴛᴇʀ', callback_data='autofilter')
+        ],[
+            InlineKeyboardButton('ʙᴀᴄᴋ', callback_data='help'),
+            InlineKeyboardButton('ɢ ғɪʟᴛᴇʀ', callback_data='global_filters')
+        ]]  
+     
+        reply_markup = InlineKeyboardMarkup(buttons)
+        await client.edit_message_media(
+            query.message.chat.id, 
+            query.message.id, 
+            InputMediaPhoto(random.choice(PICS))
+        )
+        await query.message.edit_text(
+            text=script.ALL_FILTERS.format(query.from_user.mention),
+            reply_markup=reply_markup,
+            parse_mode=enums.ParseMode.HTML
+        )
+    elif query.data == "global_filters":
+        buttons = [[
+            InlineKeyboardButton('ʙᴀᴄᴋ', callback_data='filters')
+        ]]
+
+        reply_markup = InlineKeyboardMarkup(buttons)
+        await client.edit_message_media(
+            query.message.chat.id, 
+            query.message.id, 
+            InputMediaPhoto(random.choice(PICS))
+        )
+        await query.message.edit_text(
+            text=script.GFILTER_TXT.format(query.from_user.mention),
+            reply_markup=reply_markup,
+            parse_mode=enums.ParseMode.HTML
+        )
+    elif query.data == "help":
+        buttons = [[
+            InlineKeyboardButton('ғɪʟᴛᴇʀs', callback_data='filters'),
+            InlineKeyboardButton('ғɪʟᴇ sᴛᴏʀᴇ', callback_data='store_file')
+        ], [
+            InlineKeyboardButton('ᴄᴏɴɴᴇᴄᴛ', callback_data='coct'),
+            InlineKeyboardButton('ᴇxᴛʀᴀ', callback_data='extra')
+        ], [
+            InlineKeyboardButton('ʙᴀᴄᴋ', callback_data='thank'),
+            InlineKeyboardButton('sᴛᴀᴛᴜs', callback_data='stats')
+        ]]
+        
+        reply_markup = InlineKeyboardMarkup(buttons)
+        await client.edit_message_media(
+            query.message.chat.id, 
+            query.message.id, 
+            InputMediaPhoto(random.choice(PICS))
+        )
+        await query.message.edit_text(
+            text=script.HELP_TXT.format(query.from_user.mention),
+            reply_markup=reply_markup,
+            parse_mode=enums.ParseMode.HTML
+        )
+    elif query.data == "about":
+        buttons = [[
+            InlineKeyboardButton('sᴜᴘᴘᴏʀᴛ', url=GRP_LNK),
+            InlineKeyboardButton('sᴏᴜʀᴄᴇ', callback_data='source')
+        ],[
+            InlineKeyboardButton('ʙᴀᴄᴋ', callback_data='thank'),
+            InlineKeyboardButton('ᴄʟᴏsᴇ', callback_data='close_data')
+        ]]
+        reply_markup = InlineKeyboardMarkup(buttons)
+        await client.edit_message_media(
+            query.message.chat.id, 
+            query.message.id, 
+            InputMediaPhoto(random.choice(PICS))
+        )
+        await query.message.edit_text(
+            text=script.ABOUT_TXT.format(query.from_user.mention),
+            reply_markup=reply_markup,
+            parse_mode=enums.ParseMode.HTML
+        )
+    elif query.data == "lang":
+        current_datetime = datetime.datetime.now(pytz.timezone('Asia/Kolkata')).strftime("%Y-%B-%d %I:%M:%S %p")
+        buttons = [
+            [
+                InlineKeyboardButton('🔮 Select Language 🔮', callback_data='lang')
+            ],
+            [
+                InlineKeyboardButton('(A)English', callback_data='seng'),
+                InlineKeyboardButton('(अ)Hindi', callback_data='shin')
+            ],
+            [
+                InlineKeyboardButton('(అ)Telugu', callback_data='stel'),
+                InlineKeyboardButton('(अ)Marathi', callback_data='smar')
+            ],
+            [
+                InlineKeyboardButton('(അ)Malayalam', callback_data='smal'),
+                InlineKeyboardButton('(அ)Tamil', callback_data='stam')
+            ],
+            [
+                InlineKeyboardButton('☺️ Thank U ☺️', callback_data='thank')
+            ],
+            [
+                InlineKeyboardButton(f'📅 {current_datetime}', callback_data='refresh_datetime')
             ]
         ]
         reply_markup = InlineKeyboardMarkup(buttons)
@@ -1407,14 +1752,14 @@ async def cb_handler(client: Client, query: CallbackQuery):
         current_datetime = datetime.datetime.now(pytz.timezone('Asia/Kolkata')).strftime("%Y-%B-%d %I:%M:%S %p")
         buttons = [
             [
-                InlineKeyboardButton('ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ', url=f'https://t.me/{temp.U_NAME}?startgroup=true')
+                InlineKeyboardButton('ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ', url=f'https://t.me/MoviesDownHubBot?startgroup=true')
             ],
             [
                 InlineKeyboardButton('sᴛᴀʀᴛ ᴍsɢ', callback_data='astart'),
                 InlineKeyboardButton('ᴄʟᴏsᴇ', callback_data='close_data')
             ]
             [
-                InlineKeyboardButton(f'📅 {current_datetime}', callback_data='current_datetime')
+                InlineKeyboardButton(f'📅 {current_datetime}', callback_data='refresh_datetime')
             ]
         ]
         reply_markup = InlineKeyboardMarkup(buttons)
