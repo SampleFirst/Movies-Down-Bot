@@ -474,12 +474,12 @@ async def handle_callback_query(client, query):
 
 @Client.on_message(filters.command('delete') & filters.user(ADMINS))
 async def delete(bot, message):
-    """Delete file from database and send original file to 'YourBackupChannel'"""
+    """Delete file from database and send for backup"""
     reply = message.reply_to_message
     if reply and reply.media:
         msg = await message.reply("Processing...⏳", quote=True)
     else:
-        await message.reply('Reply to the file with /delete for the file you want to delete', quote=True)
+        await message.reply('Reply to the file with /delete that you want to delete', quote=True)
         return
 
     for file_type in ("document", "video", "audio"):
@@ -489,18 +489,17 @@ async def delete(bot, message):
     else:
         await msg.edit('This is not a supported file format')
         return
-
+    
     file_id, file_ref = unpack_new_file_id(media.file_id)
-    
-    # Send the original file to 'YourBackupChannel' before deleting from the database
+
+    # Backup the actual original file in the BACKUP_CHANNEL before deletion
     try:
-        backup_channel_username = 'BACKUP_CHANNEL'
-        await bot.copy_message(chat_id=backup_channel_username, from_chat_id=message.chat.id, message_id=reply.message_id)
+        backup_message = await bot.send_copy(BACKUP_CHANNEL, reply)
+        # Remove the forwarded message caption for cleaner backups
+        await backup_message.edit(caption="")
     except Exception as e:
-        await msg.edit('Failed to send the file to the backup channel.')
-        return
+        logger.error(f"Failed to backup file: {e}")
     
-    # Delete the file from the database
     result = await Media.collection.delete_one({
         '_id': file_id,
     })
@@ -512,10 +511,12 @@ async def delete(bot, message):
             'file_name': file_name,
             'file_size': media.file_size,
             'mime_type': media.mime_type
-        })
+            })
         if result.deleted_count:
             await msg.edit('File is successfully deleted from the database')
         else:
+            # Files indexed before https://github.com/EvamariaTG/EvaMaria/commit/f3d2a1bcb155faf44178e5d7a685a1b533e714bf#diff-86b613edf1748372103e94cacff3b578b36b698ef9c16817bb98fe9ef22fb669R39 
+            # have the original file name.
             result = await Media.collection.delete_many({
                 'file_name': media.file_name,
                 'file_size': media.file_size,
