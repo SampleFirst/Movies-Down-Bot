@@ -99,12 +99,16 @@ async def start(client, message):
                 InlineKeyboardButton('(अ)Hindi', callback_data='shin')
             ],
             [
+                InlineKeyboardButton('(అ)Telugu', callback_data='stel'),
+                InlineKeyboardButton('(अ)Marathi', callback_data='smar')
+            ],
+            [
                 InlineKeyboardButton('(അ)Malayalam', callback_data='smal'),
                 InlineKeyboardButton('(அ)Tamil', callback_data='stam')
             ],
             [
                 InlineKeyboardButton('☺️ Thank U ☺️', callback_data='thank')
-            ],    
+            ],
             [
                 InlineKeyboardButton(f'📅 {current_datetime}', callback_data='current_datetime')
             ]
