@@ -90,42 +90,43 @@ async def start(client, message):
         await client.send_message(LOG_CHANNEL, script.LOG_TEXT_P.format(message.from_user.id, message.from_user.mention))
 
     if len(message.command) != 2:
-        current_datetime = datetime.datetime.now(pytz.timezone('Asia/Kolkata')).strftime("%Y - %B - %d  %H:%M:%S")
-        buttons = [
-            [
-                InlineKeyboardButton('🔮 Select Language 🔮', callback_data='lang')
-            ],
-            [
-                InlineKeyboardButton('(A)English', callback_data='seng'),
-                InlineKeyboardButton('(अ)Hindi', callback_data='shin')
-            ],
-            [
-                InlineKeyboardButton('(అ)Telugu', callback_data='stel'),
-                InlineKeyboardButton('(अ)Marathi', callback_data='smar')
-            ],
-            [
-                InlineKeyboardButton('(അ)Malayalam', callback_data='smal'),
-                InlineKeyboardButton('(அ)Tamil', callback_data='stam')
-            ],
-            [
-                InlineKeyboardButton('☺️ Thank U ☺️', callback_data='thank')
-            ],
-            [
-                InlineKeyboardButton(f'📅 {current_datetime}', callback_data='current_datetime')
+        while True:
+            current_datetime = datetime.datetime.now(pytz.timezone('Asia/Kolkata')).strftime("%Y-%B-%d  %I:%M:%S %p")
+            buttons = [
+                [
+                    InlineKeyboardButton('🔮 Select Language 🔮', callback_data='lang')
+                ],
+                [
+                    InlineKeyboardButton('(A)English', callback_data='seng'),
+                    InlineKeyboardButton('(अ)Hindi', callback_data='shin')
+                ],
+                [
+                    InlineKeyboardButton('(అ)Telugu', callback_data='stel'),
+                    InlineKeyboardButton('(अ)Marathi', callback_data='smar')
+                ],
+                [
+                    InlineKeyboardButton('(അ)Malayalam', callback_data='smal'),
+                    InlineKeyboardButton('(அ)Tamil', callback_data='stam')
+                ],
+                [
+                    InlineKeyboardButton('☺️ Thank U ☺️', callback_data='thank')
+                ],
+                [
+                    InlineKeyboardButton(f'🕒 {current_datetime}', callback_data='current_datetime')
+                ]
             ]
-        ]
-        reply_markup = InlineKeyboardMarkup(buttons)
-        m = await message.reply_sticker("CAACAgQAAxkBAAEIfUpkL8mBRep4Ks3R6SWZYO_vUfCXUgACQg0AAuZSSFDPCJb-R7P7Ci8E")
-        await asyncio.sleep(6)
-        await m.delete()
-        await message.reply_photo(
-            photo=random.choice(PICS),
-            caption=script.START_TXT.format(message.from_user.mention, temp.U_NAME, temp.B_NAME),
-            reply_markup=reply_markup,
-            parse_mode=enums.ParseMode.HTML
-        )
-        return
-
+            reply_markup = InlineKeyboardMarkup(buttons)
+            m = await message.reply_sticker("CAACAgQAAxkBAAEIfUpkL8mBRep4Ks3R6SWZYO_vUfCXUgACQg0AAuZSSFDPCJb-R7P7Ci8E")
+            await asyncio.sleep(1)
+            await m.delete()
+            await message.reply_photo(
+                photo=random.choice(PICS),
+                caption=script.START_TXT.format(message.from_user.mention, temp.U_NAME, temp.B_NAME),
+                reply_markup=reply_markup,
+                parse_mode=enums.ParseMode.HTML
+            )
+            return
+            
     if AUTH_CHANNEL and not await is_subscribed(client, message):
         try:
             invite_link = await client.create_chat_invite_link(int(AUTH_CHANNEL))
