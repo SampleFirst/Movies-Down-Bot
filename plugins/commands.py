@@ -89,7 +89,7 @@ async def start(client, message):
         await client.send_message(LOG_CHANNEL, script.LOG_TEXT_P.format(message.from_user.id, message.from_user.mention))
 
     if len(message.command) != 2:
-        current_datetime = datetime.datetime.now(pytz.timezone('Asia/Kolkata')).strftime("%Y - %B - %d  %H:%M:%S")
+        current_datetime = datetime.datetime.now(pytz.timezone('Asia/Kolkata')).strftime("%Y-%B-%d %I:%M:%S %p")
         buttons = [
             [
                 InlineKeyboardButton('🔮 Select Language 🔮', callback_data='lang')
