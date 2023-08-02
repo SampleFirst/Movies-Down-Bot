@@ -1234,7 +1234,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
     elif query.data == "seng":
         buttons = [
             [
-                InlineKeyboardButton('ᴀᴅᴅ ᴍᴇ ᴛᴏ ᴜʀ ɢʀᴩ', url=f'https://t.me/MoviesDownHubBot?startgroup=true')
+                InlineKeyboardButton('ᴀᴅᴅ ᴍᴇ ᴛᴏ ᴜʀ ɢʀᴩ', url=f'https://t.me/{temp.U_NAME}?startgroup=true')
             ],
             [
                 InlineKeyboardButton('ᴍy ᴅᴇᴠ', url=f'http://t.me/Lallu_tgs'),
@@ -1256,10 +1256,10 @@ async def cb_handler(client: Client, query: CallbackQuery):
             InputMediaPhoto(random.choice(PICS))
         )
         await query.message.edit_text(
-            text=script.SENG_TXT.format(query.from_user.mention, temp.U_NAME, temp.B_NAME),
+            text=script.SENG_TXT.format(query.from_user.mention),
             reply_markup=reply_markup,
             parse_mode=enums.ParseMode.HTML
-        )        
+        )
     elif query.data == "stam":
         buttons = [
             [
