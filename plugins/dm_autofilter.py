@@ -37,15 +37,14 @@ SPELL_TXT = """➼ 𝑯𝒆𝒚 {mention}
 
 @Client.on_message(filters.private & filters.text & filters.chat(AUTH_USERS) if AUTH_USERS else filters.text & filters.private)
 async def auto_pm_fill(b, m):
-    if PMFILTER.strip().lower() in ["true", "yes", "1", "enable", "y"]:       
+    if PMFILTER:       
         if G_FILTER:
             kd = await global_filters(b, m)
             if kd == False:
-                await pm_autofilter(b, m)  # <-- Change this line to call auto_filter function
+                await pm_AutoFilter(b, m)
         else:      
-            await pm_autofilter(b, m)  # <-- Change this line to call auto_filter function
-    elif PMFILTER.strip().lower() in ["false", "no", "0", "disable", "n"]:
-        return
+            await pm_AutoFilter(b, m)
+    else: return 
 
 
 @Client.on_callback_query(filters.regex("pmnext"))
