@@ -1242,6 +1242,43 @@ async def cb_handler(client: Client, query: CallbackQuery):
             reply_markup=reply_markup,
             parse_mode=enums.ParseMode.HTML
         )
+    elif query.data == 'current_datetime':
+        current_datetime = datetime.datetime.now(pytz.timezone('Asia/Kolkata')).strftime("%Y-%B-%d %I:%M:%S %p")
+        await query.answer(f'📅 {current_datetime}')
+        buttons = [
+            [
+                InlineKeyboardButton('🔮 Select Language 🔮', callback_data='lang')
+            ],
+            [
+                InlineKeyboardButton('(A)English', callback_data='seng'),
+                InlineKeyboardButton('(अ)Hindi', callback_data='shin')
+            ],
+            [
+                InlineKeyboardButton('(అ)Telugu', callback_data='stel'),
+                InlineKeyboardButton('(अ)Marathi', callback_data='smar')
+            ],
+            [
+                InlineKeyboardButton('(അ)Malayalam', callback_data='smal'),
+                InlineKeyboardButton('(அ)Tamil', callback_data='stam')
+            ],
+            [
+                InlineKeyboardButton('☺️ Thank U ☺️', callback_data='thank')
+            ],
+            [
+                InlineKeyboardButton(f'📅 {current_datetime}', callback_data='current_datetime')
+            ]
+        ]
+        reply_markup = InlineKeyboardMarkup(buttons)
+        await client.edit_message_media(
+            query.message.chat.id, 
+            query.message.id, 
+            InputMediaPhoto(random.choice(PICS))
+        )
+        await query.message.edit_text(
+            text=script.START_TXT.format(query.from_user.mention, temp.U_NAME, temp.B_NAME),
+            reply_markup=reply_markup,
+            parse_mode=enums.ParseMode.HTML
+        )
     elif query.data == "filters":
         buttons = [[
             InlineKeyboardButton('ᴍ ғɪʟᴛᴇʀ', callback_data='manuelfilter'),
