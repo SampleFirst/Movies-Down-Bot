@@ -7,6 +7,7 @@ import requests as req
 import re
 import json
 import base64
+import datetime
 
 from pyrogram import Client, filters, enums
 from pyrogram.errors import ChatAdminRequired, FloodWait
@@ -89,16 +90,21 @@ async def start(client, message):
     if len(message.command) != 2:
         buttons = [
             [
-                InlineKeyboardButton('🔮𝚂𝙴𝙻𝙴𝙲𝚃 𝚄 𝙻𝙰𝙽𝙶🔮', callback_data='lang')
+                InlineKeyboardButton('🔮 Select Language 🔮', callback_data='lang')
             ],
             [
-                InlineKeyboardButton('𝙼𝙰𝙻', callback_data='smal'),
-                InlineKeyboardButton('𝙷𝙸𝙽', callback_data='shin'),
-                InlineKeyboardButton('𝚃𝙰𝙼', callback_data='stam'),
-                InlineKeyboardButton('𝙴𝙽𝙶', callback_data='seng')
+                InlineKeyboardButton('(A)English', callback_data='seng'),
+                InlineKeyboardButton('(अ)Hindi', callback_data='shin')
             ],
             [
-                InlineKeyboardButton('☺️ 𝚃𝙷𝙰𝙽𝙺 𝚄 ☺️', callback_data='thank')
+                InlineKeyboardButton('(അ)Malayalam', callback_data='smal'),
+                InlineKeyboardButton('(அ)Tamil', callback_data='stam')
+            ],
+            [
+                InlineKeyboardButton('☺️ Thank U ☺️', callback_data='thank')
+            ],    
+            [
+                InlineKeyboardButton(f'📅 {datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}', callback_data='current_datetime')
             ]
         ]
         reply_markup = InlineKeyboardMarkup(buttons)
