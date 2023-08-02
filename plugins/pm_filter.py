@@ -1384,7 +1384,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
             [
                 InlineKeyboardButton('(അ)Malayalam', callback_data='smal'),
                 InlineKeyboardButton('(அ)Tamil', callback_data='stam')
-elif query.data == "start":
+    elif query.data == "start":
         await query.message.delete()
         current_datetime = datetime.datetime.now(pytz.timezone('Asia/Kolkata')).strftime("%Y-%B-%d %I:%M:%S %p")
         buttons = [
