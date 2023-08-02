@@ -1246,7 +1246,6 @@ async def cb_handler(client: Client, query: CallbackQuery):
         )
     elif query.data == 'current_datetime':
         current_datetime = datetime.datetime.now(pytz.timezone('Asia/Kolkata')).strftime("%Y-%B-%d %I:%M:%S %p")
-        await query.answer(f'📅 {current_datetime}')
         buttons = [
             [
                 InlineKeyboardButton('🔮 Select Language 🔮', callback_data='lang')
