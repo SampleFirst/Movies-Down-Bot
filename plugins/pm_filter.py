@@ -1118,7 +1118,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
     elif query.data == "smal":
         buttons = [
             [
-                InlineKeyboardButton('ᴀᴅᴅ ᴍᴇ ᴛᴏ ᴜʀ ɢʀᴩ', url=f'https://t.me/{temp.U_NAME}?startgroup=true')
+                InlineKeyboardButton('ᴀᴅᴅ ᴍᴇ ᴛᴏ ᴜʀ ɢʀᴩ', url=f'https://t.me/MoviesDownHubBot?startgroup=true')
             ],
             [
                 InlineKeyboardButton('ᴍy ᴅᴇᴠ', url=f'http://t.me/Lallu_tgs'),
@@ -1144,6 +1144,64 @@ async def cb_handler(client: Client, query: CallbackQuery):
             reply_markup=reply_markup,
             parse_mode=enums.ParseMode.HTML
         )
+    elif query.data == "stel":
+        buttons = [
+            [
+                InlineKeyboardButton('ᴀᴅᴅ ᴍᴇ ᴛᴏ ᴜʀ ɢʀᴩ', url=f'https://t.me/MoviesDownHubBot?startgroup=true')
+            ],
+            [
+                InlineKeyboardButton('ᴍy ᴅᴇᴠ', url=f'http://t.me/Lallu_tgs'),
+                InlineKeyboardButton('ᴍy ɢʀᴩ', url=f'https://t.me/EDIT_REPO')
+            ],
+            [
+                InlineKeyboardButton('ʜᴇʟᴩ', callback_data='help'),
+                InlineKeyboardButton('ᴀʙᴏᴜᴛ', callback_data='about'),
+                InlineKeyboardButton('ꜱᴇᴀʀᴄʜ', switch_inline_query_current_chat='')
+            ],
+            [
+                InlineKeyboardButton('ʙᴀᴄᴋ', callback_data='thank')
+            ]
+        ]
+        reply_markup = InlineKeyboardMarkup(buttons)
+        await client.edit_message_media(
+            query.message.chat.id, 
+            query.message.id, 
+            InputMediaPhoto(random.choice(PICS))
+        )
+        await query.message.edit_text(
+            text=script.STEL_TXT.format(query.from_user.mention),
+            reply_markup=reply_markup,
+            parse_mode=enums.ParseMode.HTML
+        )
+    elif query.data == "smar":
+        buttons = [
+            [
+                InlineKeyboardButton('ᴀᴅᴅ ᴍᴇ ᴛᴏ ᴜʀ ɢʀᴩ', url=f'https://t.me/MoviesDownHubBot?startgroup=true')
+            ],
+            [
+                InlineKeyboardButton('ᴍy ᴅᴇᴠ', url=f'http://t.me/Lallu_tgs'),
+                InlineKeyboardButton('ᴍy ɢʀᴩ', url=f'https://t.me/EDIT_REPO')
+            ],
+            [
+                InlineKeyboardButton('ʜᴇʟᴩ', callback_data='help'),
+                InlineKeyboardButton('ᴀʙᴏᴜᴛ', callback_data='about'),
+                InlineKeyboardButton('ꜱᴇᴀʀᴄʜ', switch_inline_query_current_chat='')
+            ],
+            [
+                InlineKeyboardButton('ʙᴀᴄᴋ', callback_data='thank')
+            ]
+        ]
+        reply_markup = InlineKeyboardMarkup(buttons)
+        await client.edit_message_media(
+            query.message.chat.id, 
+            query.message.id, 
+            InputMediaPhoto(random.choice(PICS))
+        )
+        await query.message.edit_text(
+            text=script.SMAR_TXT.format(query.from_user.mention),
+            reply_markup=reply_markup,
+            parse_mode=enums.ParseMode.HTML
+        )        
     elif query.data == "shin":
         buttons = [
             [
@@ -1176,7 +1234,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
     elif query.data == "seng":
         buttons = [
             [
-                InlineKeyboardButton('ᴀᴅᴅ ᴍᴇ ᴛᴏ ᴜʀ ɢʀᴩ', url=f'https://t.me/{temp.U_NAME}?startgroup=true')
+                InlineKeyboardButton('ᴀᴅᴅ ᴍᴇ ᴛᴏ ᴜʀ ɢʀᴩ', url=f'https://t.me/MoviesDownHubBot?startgroup=true')
             ],
             [
                 InlineKeyboardButton('ᴍy ᴅᴇᴠ', url=f'http://t.me/Lallu_tgs'),
@@ -1201,11 +1259,11 @@ async def cb_handler(client: Client, query: CallbackQuery):
             text=script.SENG_TXT.format(query.from_user.mention, temp.U_NAME, temp.B_NAME),
             reply_markup=reply_markup,
             parse_mode=enums.ParseMode.HTML
-        )
+        )        
     elif query.data == "stam":
         buttons = [
             [
-                InlineKeyboardButton('ᴀᴅᴅ ᴍᴇ ᴛᴏ ᴜʀ ɢʀᴩ', url=f'https://t.me/{temp.U_NAME}?startgroup=true')
+                InlineKeyboardButton('ᴀᴅᴅ ᴍᴇ ᴛᴏ ᴜʀ ɢʀᴩ', url=f'https://t.me/MoviesDownHubBot?startgroup=true')
             ],
             [
                 InlineKeyboardButton('ᴍy ᴅᴇᴠ', url=f'http://t.me/Lallu_tgs'),
