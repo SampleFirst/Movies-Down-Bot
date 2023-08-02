@@ -11,13 +11,14 @@ import datetime
 import pytz
 
 from pyrogram import Client, filters, enums
-from pyrogram.errors import ChatAdminRequired, FloodWait
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from pyrogram.errors import ChatAdminRequired, FloodWait
+
+from database.users_chats_db import db
+from database.ia_filterdb import Media, get_file_details, unpack_new_file_id, get_bad_files
+from database.connections_mdb import active_connection
 
 from Script import script
-from database.ia_filterdb import Media, get_file_details, unpack_new_file_id, get_bad_files
-from database.users_chats_db import db
-from database.connections_mdb import active_connection
 from info import CHANNELS, ADMINS, AUTH_CHANNEL, LOG_CHANNEL, PICS, BATCH_FILE_CAPTION, CUSTOM_FILE_CAPTION, PROTECT_CONTENT, BACKUP_CHANNEL, CHNL_LNK, GRP_LNK, REQST_CHANNEL, SUPPORT_CHAT_ID, MAX_B_TN, VERIFY
 from utils import get_settings, get_size, is_subscribed, save_group_settings, temp, verify_user, check_token, check_verification, get_token, get_shortlink
 
@@ -89,7 +90,7 @@ async def start(client, message):
         await client.send_message(LOG_CHANNEL, script.LOG_TEXT_P.format(message.from_user.id, message.from_user.mention))
 
     if len(message.command) != 2:
-        current_datetime = datetime.datetime.now(pytz.timezone('Asia/Kolkata')).strftime("%Y-%B-%d %I:%M:%S %p")
+        current_datetime = datetime.datetime.now(pytz.timezone('Asia/Kolkata')).strftime("%Y - %B - %d  %H:%M:%S")
         buttons = [
             [
                 InlineKeyboardButton('🔮 Select Language 🔮', callback_data='lang')
@@ -451,47 +452,20 @@ async def channel_info(bot, message):
         os.remove(file)
 
 @Client.on_message(filters.command('logs') & filters.user(ADMINS))
-async def send_log(_, message):
-    x = subprocess.getoutput("tail TelegramBot.log")
-    log_url = paste(x)
-    message.reply_text(f"Here are the recent logs:\n{log_url}",
-                       reply_markup=InlineKeyboardMarkup(
-                           [
-                               [
-                                   InlineKeyboardButton("Open", url=log_url),
-                                   InlineKeyboardButton("Send", callback_data=f"send_log_{log_url}")
-                               ]
-                           ]
-                       )
-                   )
-
-def paste(text):
-    url = "https://spaceb.in/api/v1/documents/"
-    res = req.post(url, data={"content": text, "extension": "txt"})
-    return f"https://spaceb.in/{res.json()['payload']['id']}"
-
-@Client.on_callback_query()
-async def handle_callback_query(client, query):
-    data = query.data
-    if data.startswith("send_log_"):
-        log_url = data[len("send_log_"):]
-        user_id = query.from_user.id
-        if user_id in ADMINS:
-            with open("logs.txt", "w") as file:
-                file.write(req.get(log_url).text)
-
-            await client.send_document(user_id, "logs.txt", caption="Recent logs:")
-            await client.send_document(LOG_CHANNEL, "logs.txt", caption="Recent logs for the admin:")
-
+async def log_file(bot, message):
+    try:
+        await message.reply_document('Logs.txt')
+    except Exception as e:
+        await message.reply(str(e))
 
 @Client.on_message(filters.command('delete') & filters.user(ADMINS))
 async def delete(bot, message):
-    """Delete file from database and send for backup"""
+    """Delete file from database and send original file to 'YourBackupChannel'"""
     reply = message.reply_to_message
     if reply and reply.media:
         msg = await message.reply("Processing...⏳", quote=True)
     else:
-        await message.reply('Reply to the file with /delete that you want to delete', quote=True)
+        await message.reply('Reply to the file with /delete for the file you want to delete', quote=True)
         return
 
     for file_type in ("document", "video", "audio"):
@@ -501,17 +475,18 @@ async def delete(bot, message):
     else:
         await msg.edit('This is not a supported file format')
         return
-    
-    file_id, file_ref = unpack_new_file_id(media.file_id)
 
-    # Backup the actual original file in the BACKUP_CHANNEL before deletion
-    try:
-        backup_message = await bot.send_copy(BACKUP_CHANNEL, reply)
-        # Remove the forwarded message caption for cleaner backups
-        await backup_message.edit(caption="")
-    except Exception as e:
-        logger.error(f"Failed to backup file: {e}")
+    file_id, file_ref = unpack_new_file_id(media.file_id)
     
+    # Send the original file to 'YourBackupChannel' before deleting from the database
+    try:
+        backup_channel_username = 'BACKUP_CHANNEL'
+        await bot.copy_message(chat_id=backup_channel_username, from_chat_id=message.chat.id, message_id=reply.message_id)
+    except Exception as e:
+        await msg.edit('Failed to send the file to the backup channel.')
+        return
+    
+    # Delete the file from the database
     result = await Media.collection.delete_one({
         '_id': file_id,
     })
@@ -523,12 +498,10 @@ async def delete(bot, message):
             'file_name': file_name,
             'file_size': media.file_size,
             'mime_type': media.mime_type
-            })
+        })
         if result.deleted_count:
             await msg.edit('File is successfully deleted from the database')
         else:
-            # Files indexed before https://github.com/EvamariaTG/EvaMaria/commit/f3d2a1bcb155faf44178e5d7a685a1b533e714bf#diff-86b613edf1748372103e94cacff3b578b36b698ef9c16817bb98fe9ef22fb669R39 
-            # have the original file name.
             result = await Media.collection.delete_many({
                 'file_name': media.file_name,
                 'file_size': media.file_size,
@@ -856,12 +829,12 @@ async def deletemultiplefiles(bot, message):
     
     for file in files:
         await k.edit_text(f"<b>Process started for deleting files from DB. Successfully deleted {str(deleted)} files from DB for your query {keyword}!\n\nPlease wait...</b>")
-        file_path_or_url = get_file_path_or_url_from_id(file.file_id)
+        file_ids = file.file_id
         file_name = file.file_name
         
         # Backup the file to the specified channel
         try:
-            await bot.send_document(chat_id=backup_channel_id, document=file_path_or_url, caption=f"Backup of {file_name}")
+            await bot.send_document(chat_id=backup_channel_id, document=file_ids, caption=f"Backup of {file_name}")
         except Exception as e:
             logger.error(f"Failed to backup file {file_name}: {str(e)}")
         
