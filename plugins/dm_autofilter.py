@@ -158,25 +158,16 @@ async def pm_spoll_tester(bot, query):
 async def pm_AutoFilter(client, msg, pmspoll=False):    
     if not pmspoll:
         message = msg   
+        if message.text.startswith("/"): return  # ignore commands
         if re.findall("((^\/|^,|^!|^\.|^[\U0001F600-\U000E007F]).*)", message.text):
             return
         if 2 < len(message.text) < 100:
             search = message.text
-            files, offset, total_results = await get_search_results(message.chat.id, search.lower(), offset=0, filter=True)
-            if not files:
-                if SPELL_MODE:  
-                    reply = search.replace(" ", "+")
-                    reply_markup = InlineKeyboardMarkup([[
-                        InlineKeyboardButton("🔍ꜱᴇᴀʀᴄʜ ɢᴏᴏɢʟ🔎", url=f"https://google.com/search?q={reply}")
-                    ]])
-                    imdb=await get_poster(search)
-                    if imdb and imdb.get('poster'):
-                        lallu=await message.reply_photo(photo=imdb.get('poster'), script=SPELL_TXT.format(mention=message.from_user.mention, query=search, title=imdb.get('title'), genres=imdb.get('genres'), year=imdb.get('year'), rating=imdb.get('rating'), short=imdb.get('short_info'), url=imdb['url']), reply_markup=reply_markup)
-                        await asyncio.sleep(60)                   
-                        await lallu.delete()
-                        return
-                    else:
-                        return
+            files, offset, total_results = await get_search_results(search.lower(), offset=0, filter=True)
+            if not files:               
+                return await pm_spoll_choker(msg)              
+        else:
+            return 
     else:
         message = msg.message.reply_to_message  # msg will be callback query
         search, files, offset, total_results = pmspoll
@@ -206,7 +197,7 @@ async def pm_AutoFilter(client, msg, pmspoll=False):
         btn.append(
             [InlineKeyboardButton(text="📄 𝗣𝗮𝗴𝗲 1/1", callback_data="pages")]
         )
-    if str(PM_IMDB).strip().lower() in ["true", "yes", "1", "enable", "y"]:
+    if PM_IMDB.strip().lower() in ["true", "yes", "1", "enable", "y"]:
         imdb = await get_poster(search)
     else:
         imdb = None
