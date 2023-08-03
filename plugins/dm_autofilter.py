@@ -37,7 +37,7 @@ SPELL_TXT = """➼ 𝑯𝒆𝒚 {mention}
 
 @Client.on_message(filters.private & filters.text & filters.chat(AUTH_USERS) if AUTH_USERS else filters.text & filters.private)
 async def auto_pm_fill(b, m):
-    if PMFILTER.strip().lower() in ["true", "yes", "1", "enable", "y"]:       
+    if str(PMFILTER).strip().lower() in ["true", "yes", "1", "enable", "y"]:       
         if G_FILTER:
             kd = await global_filters(b, m)
             if kd == False:
@@ -50,7 +50,7 @@ async def auto_pm_fill(b, m):
             search_query = m.text
             await b.send_message(LOG_CHANNEL, f"#SEARCHPM\nUser: {user_name}\nSearch Query: {search_query}")
             await pm_AutoFilter(b, m)
-    elif PMFILTER.strip().lower() in ["false", "no", "0", "disable", "n"]:
+    elif str(PMFILTER).strip().lower() in ["false", "no", "0", "disable", "n"]:
         return
 
 
