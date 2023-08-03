@@ -206,7 +206,7 @@ async def pm_AutoFilter(client, msg, pmspoll=False):
         btn.append(
             [InlineKeyboardButton(text="📄 𝗣𝗮𝗴𝗲 1/1", callback_data="pages")]
         )
-    if PM_IMDB.strip().lower() in ["true", "yes", "1", "enable", "y"]:
+    if str(PM_IMDB).strip().lower() in ["true", "yes", "1", "enable", "y"]:
         imdb = await get_poster(search)
     else:
         imdb = None
