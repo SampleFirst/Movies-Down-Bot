@@ -158,16 +158,26 @@ async def pm_spoll_tester(bot, query):
 async def pm_AutoFilter(client, msg, pmspoll=False):    
     if not pmspoll:
         message = msg   
-        if message.text.startswith("/"): return  # ignore commands
         if re.findall("((^\/|^,|^!|^\.|^[\U0001F600-\U000E007F]).*)", message.text):
             return
         if 2 < len(message.text) < 100:
             search = message.text
-            files, offset, total_results = await get_search_results(search.lower(), offset=0, filter=True)
-            if not files:               
-                return await pm_spoll_choker(msg)              
-        else:
-            return 
+            chat_id = msg.chat.id
+            files, offset, total_results = await get_search_results(chat_id, search.lower(), offset=0, filter=True)
+            if not files:
+                if SPELL_MODE:  
+                    reply = search.replace(" ", "+")
+                    reply_markup = InlineKeyboardMarkup([[
+                        InlineKeyboardButton("🔍ꜱᴇᴀʀᴄʜ ɢᴏᴏɢʟ🔎", url=f"https://google.com/search?q={reply}")
+                    ]])
+                    imdb=await get_poster(search)
+                    if imdb and imdb.get('poster'):
+                        lallu=await message.reply_photo(photo=imdb.get('poster'), script=SPELL_TXT.format(mention=message.from_user.mention, query=search, title=imdb.get('title'), genres=imdb.get('genres'), year=imdb.get('year'), rating=imdb.get('rating'), short=imdb.get('short_info'), url=imdb['url']), reply_markup=reply_markup)
+                        await asyncio.sleep(60)                   
+                        await lallu.delete()
+                        return
+                    else:
+                        return
     else:
         message = msg.message.reply_to_message  # msg will be callback query
         search, files, offset, total_results = pmspoll
