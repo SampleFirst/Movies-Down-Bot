@@ -139,9 +139,9 @@ async def pm_spoll_tester(bot, query):
         await k.delete()
 
 
-async def auto_filter(client, msg, spoll=False):
-    if not spoll:
-        message = msg
+async def pm_AutoFilter(client, msg, pmspoll=False):    
+    if not pmspoll:
+        message = msg   
         if re.findall("((^\/|^,|^!|^\.|^[\U0001F600-\U000E007F]).*)", message.text):
             return
         if 2 < len(message.text) < 100:
