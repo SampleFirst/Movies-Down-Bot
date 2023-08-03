@@ -65,6 +65,10 @@ DATABASE_NAME = environ.get('DATABASE_NAME', "")
 COLLECTION_NAME = environ.get('COLLECTION_NAME', 'Telegram_files')
 SESSION_NAME = str(getenv('SESSION_NAME', 'benanabot'))
 
+# URL shortener
+SHORT_URL = environ.get("SHORT_URL")
+SHORT_API = environ.get("SHORT_API")
+
 # Others
 VERIFY = bool(environ.get('VERIFY', False))
 SHORTLINK_URL = environ.get('SHORTLINK_URL', 'shorturllink.in')
