@@ -172,7 +172,8 @@ async def pm_AutoFilter(client, msg, pmspoll=False):
             return
         if 2 < len(message.text) < 100:
             search = message.text
-            files, offset, total_results = await get_search_results(message.chat.id, search.lower(), offset=0, filter=True)
+            chat_id = msg.chat.id
+            files, offset, total_results = await get_search_results(chat_id, search.lower(), offset=0, filter=True)
             if not files:
                 if SPELL_MODE:  
                     reply = search.replace(" ", "+")
