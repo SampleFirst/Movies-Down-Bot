@@ -91,7 +91,7 @@ async def pm_next_page(bot, query):
         await query.answer("You are using one of my old messages, please send the request again.", show_alert=True)
         return
 
-    files, n_offset, total = await get_search_results(search, offset=offset, filter=True)
+    files, n_offset, total = await get_search_results(chat_id, query, file_type, max_results, offset, filter)
     try:
         n_offset = int(n_offset)
     except:
