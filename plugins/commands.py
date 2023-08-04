@@ -9,6 +9,7 @@ import json
 import base64
 import datetime
 import pytz
+import time
 
 from pyrogram import Client, filters, enums
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
@@ -47,7 +48,8 @@ HELP_BUTTON = [[
     InlineKeyboardButton('back', callback_data='start'),
     InlineKeyboardButton('close', callback_data='close')
 ]]
- 
+
+
 @Client.on_message(filters.command(["help"], ["/", ".", "?"]))
 async def start(client, message):
     await message.reply_photo(
@@ -55,6 +57,7 @@ async def start(client, message):
         caption=HELP_TEXT.format(m.from_user.mention),
         reply_markup=InlineKeyboardMarkup(HELP_BUTTON),
     )
+
 
 @Client.on_message(filters.command("start") & filters.incoming)
 async def start(client, message):
@@ -125,6 +128,7 @@ async def start(client, message):
                 reply_markup=reply_markup,
                 parse_mode=enums.ParseMode.HTML
             )
+            time.sleep(1)  # Wait for 1 second before repeating the loop to update the time.
             return
             
     if AUTH_CHANNEL and not await is_subscribed(client, message):
