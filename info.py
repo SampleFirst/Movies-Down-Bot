@@ -96,7 +96,7 @@ SHORTLINK_API = environ.get('SHORTLINK_API', '')
 IS_SHORTLINK = bool(environ.get('IS_SHORTLINK', False))
 
 #Openai
-AI = bool(os.environ.get("AI", True))
+AI = bool(os.environ.get("AI", False))
 OPENAI_API = os.environ.get("OPENAI_API", "")
 AI_LOGS = int(os.environ.get("AI_LOGS", 0))
 
