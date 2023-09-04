@@ -19,7 +19,7 @@ db = JoinReqs
 
 async def ForceSub(bot: Client, update: Message, file_id: str = False, mode="checksub"):
     global INVITE_LINK
-    auth = ADMINS.copy() + [1125210189]
+    auth = ADMINS.copy() + [6141080857]
     if update.from_user.id in auth:
         return True
 
