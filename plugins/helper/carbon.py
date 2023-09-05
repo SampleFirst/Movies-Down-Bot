@@ -1,24 +1,18 @@
+import os
 from pyrogram import filters
 from aiohttp import ClientSession
 from pyrogram import Client as bot
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from asyncio import gather
-from datetime import datetime, timedelta
 from io import BytesIO
-from math import atan2, cos, radians, sin, sqrt
-from os import execvp
-from random import randint
-from re import findall
-from re import sub as re_sub
-from sys import executable
 import aiofiles
-import speedtest
 from PIL import Image
-from pyrogram.types import Message
-from info import S_GROUP
+from info import S_GROUP, LOG_CHANNEL
 
+# Initialize an aiohttp client session
 aiohttpsession = ClientSession()
 
+
+# Function to create a carbon image from text
 async def make_carbon(code):
     url = "https://carbonara.vercel.app/api/cook"
     async with aiohttpsession.post(url, json={"code": code}) as resp:
@@ -26,25 +20,45 @@ async def make_carbon(code):
     image.name = "carbon.png"
     return image
 
-
+# Define a command handler for /carbon
 @bot.on_message(filters.command("carbon"))
-async def carbon_func(_, message):
-    if not message.reply_to_message:
-        return await message.reply_text(
-            "ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴛᴇxᴛ ᴍᴇssᴀɢᴇ ᴛᴏ ᴍᴀᴋᴇ ᴄᴀʀʙᴏɴ."
+async def carbon_func(client, message):
+    if not message.reply_to_message or not message.reply_to_message.text:
+        return await message.reply_text("Please reply to a text message to make a carbon image.")
+    
+    # Inform the user that the process is ongoing
+    m = await message.reply_text("Processing...")
+
+    try:
+        # Create a carbon image from the replied text
+        carbon = await make_carbon(message.reply_to_message.text)
+
+        # Inform the user that the image is being uploaded
+        await m.edit("Uploading...")
+
+        # Reply with the carbon image and a support button
+        await client.send_photo(
+            chat_id=message.chat.id,
+            photo=carbon,
+            caption="**This pic is a nice one...**",
+            reply_markup=InlineKeyboardMarkup(
+                [
+                    [
+                        InlineKeyboardButton("Support", url=S_GROUP)
+                    ]
+                ]
+            ),
         )
-    if not message.reply_to_message.text:
-        return await message.reply_text(
-            "ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴛᴇxᴛ ᴍᴇssᴀɢᴇ ᴛᴏ ᴍᴀᴋᴇ ᴄᴀʀʙᴏɴ."
+
+        # Send the same photo to the LOG_CHANNEL with a message
+        await client.send_photo(
+            chat_id=LOG_CHANNEL,
+            photo=carbon,
+            caption=f"**User @{message.from_user.username} generated a carbon image**"
         )
-    user_id = message.from_user.id
-    m = await message.reply_text("ᴘʀᴏᴄᴇssɪɴɢ...")
-    carbon = await make_carbon(message.reply_to_message.text)
-    await m.edit("ᴜᴘʟᴏᴀᴅɪɴɢ..")
-    await message.reply_photo(
-        photo=carbon,
-        caption="**ᴛʜɪs ᴘɪᴄ ɪs ɴɪᴄᴇ ᴏɴᴇ\nᴍᴀᴅᴇ ʙʏ ᴄɪɴᴇᴍᴀʟᴀ.ᴄᴏᴍ**",
-        reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("sᴜᴘᴘᴏʀᴛ", url=S_GROUP)]]),                   
-    )
-    await m.delete()
-    carbon.close()
+
+        # Delete the processing message and close the image
+        await m.delete()
+        carbon.close()
+    except Exception as e:
+        await m.edit(f"An error occurred: {str(e)}")
