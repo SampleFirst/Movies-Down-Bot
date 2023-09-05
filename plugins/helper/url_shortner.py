@@ -1,180 +1,147 @@
 import os
 import aiohttp
-from pyrogram import Client, filters, enums
+from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, InlineQueryResultArticle, InputTextMessageContent
-from pyrogram.handlers import MessageHandler
 from pyshorteners import Shortener
 
+# Environment variables for API keys
 BITLY_API = os.environ.get("BITLY_API", "8df1df8c23f719e5cf97788cc2d40321ea30092b")
 CUTTLY_API = os.environ.get("CUTTLY_API", "f64dffbde033b6c307387dd50b7c76e505f1c")
-SHORTCM_API = os.environ.get("SHORTCM_API", "pk_...NIZv")
+SHORTCM_API = os.environ.get("SHORTCM_API", "")
 GPLINKS_API = os.environ.get("GPLINKS_API", "008ccaedd6061ad1948838f410947603de9007a7")
 
-reply_markup = InlineKeyboardMarkup(
-        [[
-        InlineKeyboardButton("𝘊𝘭𝘰𝘴𝘦", callback_data='close_data')
-        ]]
-    )
+# Define shorteners and their availability
+shorteners = {
+    "Bit.ly": ("bitly", BITLY_API),
+    "Cutt.ly": ("cuttly", CUTTLY_API),
+    "Short.cm": ("shortcm", SHORTCM_API),
+    "TinyURL.com": ("tinyurl", ""),
+    "GPLinks.in": ("gplinks", GPLINKS_API)
+}
 
+# Inline keyboard markup for shortener selection
+def update_buttons(user_id):
+    selected_shorteners = user_selection.get(user_id, [])
+    buttons = []
+    for shortener, (shortener_key, api_key) in shorteners.items():
+        toggle_text = "ON" if shortener_key in selected_shorteners else "OFF"
+        availability_text = "✅" if api_key else "✖️"
+        button_text = f'[{availability_text}] [{toggle_text}] {shortener}'
+        buttons.append(
+            InlineKeyboardButton(
+                button_text,
+                callback_data=f'toggle_{shortener_key}'
+            )
+        )
+    buttons.append(
+        InlineKeyboardButton(
+            "Generate Short Link...",
+            callback_data='generate_short_link'
+        )
+    )
+    return InlineKeyboardMarkup([buttons])
+
+# Store user's shortener selection
+user_selection = {}
+
+
+# Command handler to start shortening
 @Client.on_message(filters.command(["short"]) & filters.regex(r'https?://[^\s]+'))
-async def reply_shortens(bot, update):
-    message = await update.reply_text(
-        text="`Analysing your link...`",
-        disable_web_page_preview=True,
+async def reply_shortens(client, message):
+    user_id = message.from_user.id
+    user_selection[user_id] = []
+    await message.reply_text(
+        text="Choose a URL shortener:",
+        reply_markup=update_buttons(user_id),
         quote=True
     )
-    link = update.matches[0].group(0)
-    shorten_urls = await short(link)
-    await message.edit_text(
-        text=shorten_urls,
-        disable_web_page_preview=True
-    )
 
-@Client.on_inline_query(filters.regex(r'https?://[^\s]+'))
-async def inline_short(bot, update):
-    link = update.matches[0].group(0),
-    shorten_urls = await short(link)
-    answers = [
-        InlineQueryResultArticle(
-            title="Short Links",
-            description=update.query,
-            input_message_content=InputTextMessageContent(
-                message_text=shorten_urls,
-                disable_web_page_preview=True
-            ),
-            reply_to_message_id=message.id
+# Callback handler for toggling shorteners
+@Client.on_callback_query(filters.regex(r'toggle_'))
+async def handle_toggle_callback(client, query):
+    shortener_key = query.data.replace('toggle_', '')
+    user_id = query.from_user.id
+    if user_id in user_selection:
+        if shortener_key in user_selection[user_id]:
+            user_selection[user_id].remove(shortener_key)
+        else:
+            user_selection[user_id].append(shortener_key)
+        await query.message.edit_reply_markup(
+            reply_markup=update_buttons(user_id)
         )
-    ]
-    await bot.answer_inline_query(
-        inline_query_id=update.id,
-        results=answers
+        if shortener_key in user_selection[user_id]:
+            await query.answer(f"{shortener_key} is ON")
+        else:
+            await query.answer(f"{shortener_key} is OFF", show_alert=True)
+
+# Callback handler for generating short links
+@Client.on_callback_query(filters.regex(r'generate_short_link'))
+async def handle_generate_short_link(client, query):
+    user_id = query.from_user.id
+    if user_id in user_selection:
+        selected_shorteners = user_selection[user_id]
+        link = query.message.text
+        response_text = await generate_short_links(link, selected_shorteners)
+        await query.message.edit_text(
+            text=response_text,
+            disable_web_page_preview=True
+        )
+
+# Inline query handler for shortening links
+@Client.on_inline_query(filters.regex(r'https?://[^\s]+'))
+async def inline_short(client, query):
+    link = query.matches[0].group(0)
+    await query.answer([generate_inline_result(link)])
+
+# Function to generate inline results
+async def generate_inline_result(link):
+    return InlineQueryResultArticle(
+        title="Short Links",
+        description=link,
+        input_message_content=InputTextMessageContent(
+            message_text="Choose a URL shortener:",
+            reply_markup=update_buttons(user_id)  # Replace 'user_id' with the actual user's ID
+        )
     )
 
-async def short(link):
-    shorten_urls = "**--Shorted URLs--**\n"
+# Function to generate short links
+async def generate_short_links(link, selected_shorteners):
+    response_text = "**-- Shortened URLs --**\n"
+    s = Shortener()
     
-    # Bit.ly shorten
-    if BITLY_API:
+    for shortener_key in selected_shorteners:
+        shortener, api_key = shorteners[shortener_key]
         try:
-            s = Shortener(api_key=BITLY_API)
-            url = s.bitly.short(link)
-            shorten_urls += f"\n**Bit.ly :-** {url}"
+            if shortener == "bitly" and api_key:
+                url = s.bitly.short(link)
+                response_text += f"\n**Bit.ly :-** {url}"
+            
+            elif shortener == "cuttly" and api_key:
+                url = s.cuttly.short(link)
+                response_text += f"\n**Cutt.ly :-** {url}"
+            
+            elif shortener == "shortcm" and api_key:
+                url = s.shortcm.short(link)
+                response_text += f"\n**Short.cm :-** {url}"
+            
+            elif shortener == "tinyurl":
+                url = s.tinyurl.short(link)
+                response_text += f"\n**TinyURL.com :-** {url}"
+            
+            elif shortener == "gplinks":
+                if api_key:  # Check if the API key is available
+                    api_url = "https://gplinks.in/api"
+                    params = {'api': GPLINKS_API, 'url': link}
+                    async with aiohttp.ClientSession() as session:
+                        async with session.get(api_url, params=params, raise_for_status=True) as response:
+                            data = await response.json()
+                            url = data["shortenedUrl"]
+                            response_text += f"\n**GPLinks.in :-** {url}"
+                else:
+                    response_text += f"\n**GPLinks.in is OFF (API key missing)**"
+            else:
+                response_text += f"\n**Unsupported shortener or missing API key for {shortener}**"
         except Exception as error:
-            print(f"Bit.ly error :- {error}")
-    
-    # Chilp.it shorten
-    try:
-        s = Shortener()
-        url = s.chilpit.short(link)
-        shorten_urls += f"\n**Chilp.it :-** {url}"
-    except Exception as error:
-        print(f"Chilp.it error :- {error}")
-    
-    # Clck.ru shorten
-    try:
-        s = Shortener()
-        url = s.clckru.short(link)
-        shorten_urls += f"\n**Clck.ru :-** {url}"
-    except Exception as error:
-        print(f"Click.ru error :- {error}")
-    
-    # Cutt.ly shorten
-    if CUTTLY_API:
-        try:
-            s = Shortener(api_key=CUTTLY_API)
-            url = s.cuttly.short(link)
-            shorten_urls += f"\n**Cutt.ly :-** {url}"
-        except Exception as error:
-            print(f"Cutt.ly error :- {error}")
-    
-    # Da.gd shorten
-    try:
-        s = Shortener()
-        url = s.dagd.short(link)
-        shorten_urls += f"\n**Da.gd :-** {url}"
-    except Exception as error:
-        print(f"Da.gd error :- {error}")
-    
-    # Is.gd shorten
-    try:
-        s = Shortener()
-        url = s.isgd.short(link)
-        shorten_urls += f"\n**Is.gd :-** {url}"
-    except Exception as error:
-        print(f"Is.gd error :- {error}")
-    
-    # Osdb.link shorten
-    try:
-        s = Shortener()
-        url = s.osdb.short(link)
-        shorten_urls += f"\n**Osdb.link :-** {url}"
-    except Exception as error:
-        print(f"Osdb.link error :- {error}")
-    
-    # Ow.ly shorten
-    try:
-        s = Shortener()
-        url = s.owly.short(link)
-        shorten_urls += f"\n**Ow.ly :-** {url}"
-    except Exception as error:
-        print(f"Ow.ly error :- {error}")
-    
-    # Po.st shorten
-    try:
-        s = Shortener()
-        url = s.post.short(link)
-        shorten_urls += f"\n**Po.st :-** {url}"
-    except Exception as error:
-        print(f"Po.st error :- {error}")
-    
-    # Qps.ru shorten
-    try:
-        s = Shortener()
-        url = s.qpsru.short(link)
-        shorten_urls += f"\n**Qps.ru :-** {url}"
-    except Exception as error:
-        print(f"Qps.ru error :- {error}")
-    
-    # Short.cm shorten
-    if SHORTCM_API:
-        try:
-            s = Shortener(api_key=SHORTCM_API)
-            url = s.shortcm.short(link)
-            shorten_urls += f"\n**Short.cm :-** {url}"
-        except Exception as error:
-            print(f"Short.cm error :- {error}")
-    
-    # TinyURL.com shorten
-    try:
-        s = Shortener()
-        url = s.tinyurl.short(link)
-        shorten_urls += f"\n**TinyURL.com :-** {url}"
-    except Exception as error:
-        print(f"TinyURL.com error :- {error}")
-    
-    # NullPointer shorten
-    try:
-        s = Shortener(domain='https://0x0.st')
-        url = s.nullpointer.short(link)
-        shorten_urls += f"\n**0x0.st :-** {url}"
-    except Exception as error:
-        print(f"NullPointer error :- {error}")
-    
-    # GPLinks shorten
-    try:
-        api_url = "https://gplinks.in/api"
-        params = {'api': GPLINKS_API, 'url': link}
-        async with aiohttp.ClientSession() as session:
-            async with session.get(api_url, params=params, raise_for_status=True) as response:
-                data = await response.json()
-                url = data["shortenedUrl"]
-                shorten_urls += f"\n**GPLinks.in :-** {url}"
-    except Exception as error:
-        print(f"GPLink error :- {error}")
-    
-    # Send the text
-    try:
-        shorten_urls += ""
-        return shorten_urls
-    except Exception as error:
-        return error
+            print(f"Shorten error: {error}")
+            response_text += f"\nError while shortening with {shortener}: {str(error)}"
+    return response_text
