@@ -11,14 +11,16 @@ from info import S_GROUP, LOG_CHANNEL
 # Initialize an aiohttp client session
 aiohttpsession = ClientSession()
 
-
 # Function to create a carbon image from text
 async def make_carbon(code):
     url = "https://carbonara.vercel.app/api/cook"
     async with aiohttpsession.post(url, json={"code": code}) as resp:
-        image = BytesIO(await resp.read())
-    image.name = "carbon.png"
-    return image
+        if resp.status == 200:
+            image = BytesIO(await resp.read())
+            image.name = "carbon.png"
+            return image
+        else:
+            return None
 
 # Define a command handler for /carbon
 @bot.on_message(filters.command("carbon"))
@@ -48,14 +50,16 @@ async def carbon_func(client, message):
                             InlineKeyboardButton("Support", url=S_GROUP)
                         ]
                     ]
-                )
+                ),
+                content_type="image/png"  # Set the correct content-type
             )
 
             # Send the same photo to the LOG_CHANNEL with a message
             await client.send_photo(
                 chat_id=LOG_CHANNEL,
                 photo=carbon,
-                caption=f"**User @{message.from_user.username} generated a carbon image**"
+                caption=f"**User @{message.from_user.username} generated a carbon image**",
+                content_type="image/png"  # Set the correct content-type
             )
 
             # Delete the processing message and close the image
