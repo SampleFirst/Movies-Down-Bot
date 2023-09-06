@@ -44,11 +44,11 @@ async def carbon_func(client, message):
                 caption="**This pic is a nice one...**",
                 reply_markup=InlineKeyboardMarkup(
                     [
-                        InlineKeyboardButton("Support", url=S_GROUP)
+                        [
+                            InlineKeyboardButton("Support", url=S_GROUP)
+                        ]
                     ]
                 ),
-            )
-
             # Send the same photo to the LOG_CHANNEL with a message
             await client.send_photo(
                 chat_id=LOG_CHANNEL,
