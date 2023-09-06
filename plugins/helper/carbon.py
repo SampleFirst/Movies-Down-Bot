@@ -3,7 +3,6 @@ from pyrogram.types import *
 from aiohttp import ClientSession
 from telegraph import upload_file
 from io import BytesIO
-from info import LOG_CHANNEL 
 
 ai_client = ClientSession()
 
@@ -18,6 +17,7 @@ async def make_carbon(code, tele=False):
         return f"https://graph.org{uf[0]}"
     return image
 
+
 @Client.on_message(filters.command("carbon"))
 async def carbon_func(b, message):
     if not message.reply_to_message:
@@ -26,28 +26,12 @@ async def carbon_func(b, message):
         return await message.reply_text("ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴛᴇxᴛ ᴍᴇssᴀɢᴇ ᴛᴏ ᴍᴀᴋᴇ ᴄᴀʀʙᴏɴ.")
     user_id = message.from_user.id
     m = await message.reply_text("ᴘʀᴏᴄᴇssɪɴɢ...")
-    try:
-        carbon = await make_carbon(message.reply_to_message.text)
-        await m.edit("ᴜᴘʟᴏᴀᴅɪɴɢ..")
-        await message.reply_photo(
-            photo=carbon,
-            caption="**ᴍᴀᴅᴇ ʙʏ:**",
-            reply_markup=InlineKeyboardMarkup(
-                [
-                    [
-                        InlineKeyboardButton("ꜱᴜᴩᴩᴏʀᴛ ᴜꜱ", url="https://t.me/mkn_bots_updates")
-                    ]
-                ]
-            ),
-        )
-        # Send the same photo to the LOG_CHANNEL with a message
-        await client.send_photo(
-            chat_id=LOG_CHANNEL,
-            photo=carbon,
-            caption=f"**User @{message.from_user.username} generated a carbon image**",
-        )
-        # Delete the processing message and close the image
-        await m.delete()
-        carbon.close()
-    except Exception as e:
-        await m.edit(f"An error occurred: {str(e)}")
+    carbon = await make_carbon(message.reply_to_message.text)
+    await m.edit("ᴜᴘʟᴏᴀᴅɪɴɢ..")
+    await message.reply_photo(
+        photo=carbon,
+        caption="**ᴍᴀᴅᴇ ʙʏ: @mkn_bots_updates**",
+        reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("ꜱᴜᴩᴩᴏʀᴛ ᴜꜱ", url="https://t.me/mkn_bots_updates")]]),                   
+    )
+    await m.delete()
+    carbon.close()
