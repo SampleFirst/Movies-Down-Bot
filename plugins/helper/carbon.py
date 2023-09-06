@@ -33,32 +33,34 @@ async def carbon_func(client, message):
         # Create a carbon image from the replied text
         carbon = await make_carbon(message.reply_to_message.text)
 
-        # Inform the user that the image is being uploaded
-        await m.edit("Uploading...")
+        if carbon:
+            # Inform the user that the image is being uploaded
+            await m.edit("Uploading...")
 
-        # Reply with the carbon image and a support button
-        await client.send_photo(
-            chat_id=message.chat.id,
-            photo=carbon,
-            caption="**This pic is a nice one...**",
-            reply_markup=InlineKeyboardMarkup(
-                [
+            # Reply with the carbon image and a support button
+            await client.send_photo(
+                chat_id=message.chat.id,
+                photo=carbon,
+                caption="**This pic is a nice one...**",
+                reply_markup=InlineKeyboardMarkup(
                     [
                         InlineKeyboardButton("Support", url=S_GROUP)
                     ]
-                ]
-            ),
-        )
+                ),
+            )
 
-        # Send the same photo to the LOG_CHANNEL with a message
-        await client.send_photo(
-            chat_id=LOG_CHANNEL,
-            photo=carbon,
-            caption=f"**User @{message.from_user.username} generated a carbon image**"
-        )
+            # Send the same photo to the LOG_CHANNEL with a message
+            await client.send_photo(
+                chat_id=LOG_CHANNEL,
+                photo=carbon,
+                caption=f"**User @{message.from_user.username} generated a carbon image**"
+            )
 
-        # Delete the processing message and close the image
-        await m.delete()
-        carbon.close()
+            # Delete the processing message and close the image
+            await m.delete()
+            carbon.close()
+        else:
+            await m.edit("Failed to generate a valid image.")
     except Exception as e:
         await m.edit(f"An error occurred: {str(e)}")
+        
