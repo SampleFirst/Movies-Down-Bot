@@ -48,7 +48,9 @@ async def carbon_func(client, message):
                             InlineKeyboardButton("Support", url=S_GROUP)
                         ]
                     ]
-                ),
+                )
+            )
+
             # Send the same photo to the LOG_CHANNEL with a message
             await client.send_photo(
                 chat_id=LOG_CHANNEL,
@@ -63,4 +65,3 @@ async def carbon_func(client, message):
             await m.edit("Failed to generate a valid image.")
     except Exception as e:
         await m.edit(f"An error occurred: {str(e)}")
-        
