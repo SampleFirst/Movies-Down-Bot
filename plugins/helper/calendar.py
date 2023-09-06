@@ -1,8 +1,6 @@
 import calendar
 from pyrogram import Client, filters
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from pyrogram import CallbackQuery
-
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
 
 
 @Client.on_message(filters.command("calendar"))
