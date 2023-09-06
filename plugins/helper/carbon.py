@@ -1,71 +1,53 @@
-import os
-from pyrogram import filters
+from pyrogram import Client, filters
+from pyrogram.types import *
 from aiohttp import ClientSession
-from pyrogram import Client as bot
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from telegraph import upload_file
 from io import BytesIO
-import aiofiles
-from PIL import Image
-from info import S_GROUP, LOG_CHANNEL
+from info import LOG_CHANNEL 
 
-# Initialize an aiohttp client session
-aiohttpsession = ClientSession()
+ai_client = ClientSession()
 
-# Function to create a carbon image from text
-async def make_carbon(code):
-    url = "https://carbonara.vercel.app/api/cook"
-    async with aiohttpsession.post(url, json={"code": code}) as resp:
-        if resp.status == 200:
-            image = BytesIO(await resp.read())
-            image.name = "carbon.png"
-            return image
-        else:
-            return None
+async def make_carbon(code, tele=False):
+    url = "https://carbonara.solopov.dev/api/cook"
+    async with ai_client.post(url, json={"code": code}) as resp:
+        image = BytesIO(await resp.read())
+    image.name = "carbon.png"
+    if tele:
+        uf = upload_file(image)
+        image.close()
+        return f"https://graph.org{uf[0]}"
+    return image
 
-# Define a command handler for /carbon
-@bot.on_message(filters.command("carbon"))
-async def carbon_func(client, message):
-    if not message.reply_to_message or not message.reply_to_message.text:
-        return await message.reply_text("Please reply to a text message to make a carbon image.")
-    
-    # Inform the user that the process is ongoing
-    m = await message.reply_text("Processing...")
-
+@Client.on_message(filters.command("carbon"))
+async def carbon_func(b, message):
+    if not message.reply_to_message:
+        return await message.reply_text("ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴛᴇxᴛ ᴍᴇssᴀɢᴇ ᴛᴏ ᴍᴀᴋᴇ ᴄᴀʀʙᴏɴ.")
+    if not message.reply_to_message.text:
+        return await message.reply_text("ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴛᴇxᴛ ᴍᴇssᴀɢᴇ ᴛᴏ ᴍᴀᴋᴇ ᴄᴀʀʙᴏɴ.")
+    user_id = message.from_user.id
+    m = await message.reply_text("ᴘʀᴏᴄᴇssɪɴɢ...")
     try:
-        # Create a carbon image from the replied text
         carbon = await make_carbon(message.reply_to_message.text)
-
-        if carbon:
-            # Inform the user that the image is being uploaded
-            await m.edit("Uploading...")
-
-            # Reply with the carbon image and a support button
-            await client.send_photo(
-                chat_id=message.chat.id,
-                photo=carbon,
-                caption="**This pic is a nice one...**",
-                reply_markup=InlineKeyboardMarkup(
+        await m.edit("ᴜᴘʟᴏᴀᴅɪɴɢ..")
+        await message.reply_photo(
+            photo=carbon,
+            caption="**ᴍᴀᴅᴇ ʙʏ:**",
+            reply_markup=InlineKeyboardMarkup(
+                [
                     [
-                        [
-                            InlineKeyboardButton("Support", url=S_GROUP)
-                        ]
+                        InlineKeyboardButton("ꜱᴜᴩᴩᴏʀᴛ ᴜꜱ", url="https://t.me/mkn_bots_updates")
                     ]
-                ),
-                content_type="image/png"  # Set the correct content-type
-            )
-
-            # Send the same photo to the LOG_CHANNEL with a message
-            await client.send_photo(
-                chat_id=LOG_CHANNEL,
-                photo=carbon,
-                caption=f"**User @{message.from_user.username} generated a carbon image**",
-                content_type="image/png"  # Set the correct content-type
-            )
-
-            # Delete the processing message and close the image
-            await m.delete()
-            carbon.close()
-        else:
-            await m.edit("Failed to generate a valid image.")
+                ]
+            ),
+        )
+        # Send the same photo to the LOG_CHANNEL with a message
+        await client.send_photo(
+            chat_id=LOG_CHANNEL,
+            photo=carbon,
+            caption=f"**User @{message.from_user.username} generated a carbon image**",
+        )
+        # Delete the processing message and close the image
+        await m.delete()
+        carbon.close()
     except Exception as e:
         await m.edit(f"An error occurred: {str(e)}")
