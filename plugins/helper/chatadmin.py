@@ -36,34 +36,38 @@ async def list_admins(client, message):
         await message.reply("Invalid chat ID. Please use '/admins CHAT_ID' to list admins.")
         return
 
-    # Get the chat members and filter for administrators
-    chat = await client.get_chat(chat_id)
-    admins = []
+    # Get all chat members
+    chat_members = await client.get_chat_members(chat_id)
+    admins = [member for member in chat_members if member.status == "administrator"]
 
-    async for member in client.iter_chat_members(chat_id, filter=ChatMember.Administrators):
-        admin_info = f"{member.user.mention} - {member.user.first_name}\n"
+    if not admins:
+        await message.reply("There are no administrators in this chat.")
+        return
+
+    admin_info_list = []
+    for admin in admins:
+        admin_info = f"{admin.user.mention} - {admin.user.first_name}\n"
         privileges = []
         permissions = []
 
         # Check if the chat is a channel, group, or supergroup
+        chat = await client.get_chat(chat_id)
         if chat.type in ["channel", "supergroup"]:
             for privilege, privilege_name in privilege_names.items():
-                if getattr(member, privilege):
+                if getattr(admin, privilege):
                     privileges.append(privilege_name)
         else:  # For groups
             for permission, permission_name in permission_names.items():
-                if getattr(member.permissions, permission):
+                if getattr(admin.permissions, permission):
                     permissions.append(permission_name)
 
         if privileges:
             admin_info += "Privileges: " + ", ".join(privileges)
         if permissions:
             admin_info += "Permissions: " + ", ".join(permissions)
-        admins.append(admin_info)
 
-    if not admins:
-        await message.reply("There are no administrators in this chat.")
-        return
+        admin_info_list.append(admin_info)
 
-    response_message = f"Admins in {chat.title}:\n\n" + "\n\n".join(admins)
+    response_message = f"Admins in {chat.title}:\n\n" + "\n\n".join(admin_info_list)
     await message.reply(response_message)
+    
