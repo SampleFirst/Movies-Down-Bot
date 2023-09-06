@@ -33,9 +33,10 @@ async def show_calendar(client, message):
         ]
 
         reply_markup = InlineKeyboardMarkup(keyboard)
+        text = f"Here's the {year} {month} calendar"
 
         # Send the calendar with navigation buttons
-        await message.reply_text(cal, reply_markup=reply_markup)
+        await message.reply_text(text + "\n" + cal, reply_markup=reply_markup)
 
     except Exception as e:
         await message.reply_text(f"An error occurred: {str(e)}")
@@ -70,6 +71,10 @@ async def update_calendar(client, callback_query: CallbackQuery):
     ]
 
     reply_markup = InlineKeyboardMarkup(keyboard)
-
+    text = f"Here's the {year} {month} calendar"
+    
     # Edit the message with the updated calendar and navigation buttons
-    await callback_query.edit_message_text(cal, reply_markup=reply_markup)
+    await callback_query.edit_message_text(text + "\n" + cal, reply_markup=reply_markup)
+
+    # Answer the callback query with a message
+    await callback_query.answer(f"Showing the {year} {month} calendar")
