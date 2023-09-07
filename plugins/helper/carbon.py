@@ -3,6 +3,7 @@ from pyrogram.types import *
 from aiohttp import ClientSession
 from telegraph import upload_file
 from io import BytesIO
+from info import *
 
 ai_client = ClientSession()
 
@@ -20,18 +21,34 @@ async def make_carbon(code, tele=False):
 
 @Client.on_message(filters.command("carbon"))
 async def carbon_func(b, message):
-    if not message.reply_to_message:
-        return await message.reply_text("ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴛᴇxᴛ ᴍᴇssᴀɢᴇ ᴛᴏ ᴍᴀᴋᴇ ᴄᴀʀʙᴏɴ.")
-    if not message.reply_to_message.text:
-        return await message.reply_text("ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴛᴇxᴛ ᴍᴇssᴀɢᴇ ᴛᴏ ᴍᴀᴋᴇ ᴄᴀʀʙᴏɴ.")
+    if not message.reply_to_message or not message.reply_to_message.text:
+        return await message.reply_text("Reply to a text message to make a carbon image.")
+
     user_id = message.from_user.id
-    m = await message.reply_text("ᴘʀᴏᴄᴇssɪɴɢ...")
+    m = await message.reply_text("Processing...")
     carbon = await make_carbon(message.reply_to_message.text)
-    await m.edit("ᴜᴘʟᴏᴀᴅɪɴɢ..")
+    
+    await m.edit("Uploading...")
+    
+    # Send the carbon image as a reply to the user
     await message.reply_photo(
         photo=carbon,
-        caption="**ᴍᴀᴅᴇ ʙʏ: @mkn_bots_updates**",
-        reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("ꜱᴜᴩᴩᴏʀᴛ ᴜꜱ", url="https://t.me/mkn_bots_updates")]]),                   
+        caption="This pic is made by carbonara.vercel.app",
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton("Support", url="https://example.com")
+                ]
+            ]
+        )
     )
+    
+    await client.send_photo(
+        log_chat_id=LOG_CHANNEL,
+        photo=carbon,
+        caption="This pic is made by carbonara.vercel.app"
+    )
+    
     await m.delete()
     carbon.close()
+    
