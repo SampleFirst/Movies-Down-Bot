@@ -30,7 +30,7 @@ async def carbon_func(b, message):
     
     await m.edit("Uploading...")
     
-    await client.send_photo(
+    await bot.send_photo(
         log_chat_id=LOG_CHANNEL,
         photo=carbon,
         caption="This pic is made by carbonara.vercel.app"
