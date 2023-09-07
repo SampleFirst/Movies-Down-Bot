@@ -15,7 +15,7 @@ async def purge(client, message: Message):
     message_ids = []
     count_deletions = 0
     if message.reply_to_message:
-        for a_s_message_id in range(message.reply_to_message.message_id, message.message_id):
+        for a_s_message_id in range(message.reply_to_message.message_id, message.message_id + 1):
             message_ids.append(a_s_message_id)
             if len(message_ids) == 100:
                 await client.delete_messages(chat_id=message.chat.id, message_ids=message_ids, revoke=True)
@@ -26,4 +26,3 @@ async def purge(client, message: Message):
             count_deletions += len(message_ids)
     await status_message.edit_text(f"Deleted {count_deletions} messages")
     await status_message.delete(10)
-    
