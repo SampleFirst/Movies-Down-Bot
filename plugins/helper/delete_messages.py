@@ -23,6 +23,7 @@ async def purge(client, message):
     await message.delete()
 
     message_ids = []
+    message = msg
     count_deleted_messages = 0
 
     if message.reply_to_message:
