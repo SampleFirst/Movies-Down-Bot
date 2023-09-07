@@ -9,7 +9,8 @@ from info import *
 async def list_admins(client, message):
     try:
         chat_id = message.chat.id
-        async for member in client.iter_chat_members(chat_id):
+        chat = await client.get_chat(chat_id)  # Get the chat object
+        async for member in chat.iter_chat_members():
             if member.status in [ChatMember.ADMINISTRATOR, ChatMember.OWNER]:
                 admin_info = {
                     'User ID': member.user.id,
