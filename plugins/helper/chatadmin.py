@@ -39,8 +39,11 @@ async def list_admins(client, message):
     admins = []
 
     try:
+        # Use the get_chat method to get the chat object
+        chat = await client.get_chat(chat_id)
+        
         # Get all chat members (using .iter_chat_members to get an async generator)
-        async for member in client.iter_chat_members(chat_id):
+        async for member in chat.iter_chat_members():
             if member.status == "administrator":
                 admins.append(member)
     except Exception as e:
@@ -54,7 +57,6 @@ async def list_admins(client, message):
         permissions = []
 
         # Check if the chat is a channel, group, or supergroup
-        chat = await client.get_chat(chat_id)
         if chat.type in ["channel", "supergroup"]:
             for privilege, privilege_name in privilege_names.items():
                 if getattr(admin, privilege):
