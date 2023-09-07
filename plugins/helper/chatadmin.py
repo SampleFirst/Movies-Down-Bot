@@ -38,7 +38,7 @@ async def list_admins(client, message):
 
     try:
         # Get all chat members (using .iter_chat_members to get an async generator)
-        async for member in client.iter_chat_members(chat_id):
+        async for member in client.get_chat_members(chat_id):
             if member.status == "administrator":
                 admins.append(member)
     except Exception as e:
