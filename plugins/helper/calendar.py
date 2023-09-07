@@ -2,6 +2,7 @@ import calendar
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
 
+
 @Client.on_message(filters.command("calendar"))
 async def show_calendar(client, message):
     try:
@@ -16,7 +17,7 @@ async def show_calendar(client, message):
         month = int(month)
 
         # Create a calendar for the specified year and month
-        cal = calendar.monthcalendar(year, month)
+        cal = calendar.month(year, month)
 
         # Create an inline keyboard for navigation
         prev_month = month - 1 if month > 1 else 12
@@ -32,18 +33,10 @@ async def show_calendar(client, message):
         ]
 
         reply_markup = InlineKeyboardMarkup(keyboard)
-        month_name = calendar.month_name[month]
-        calendar_text = f"{month_name} {year}\n"
-        for week in cal:
-            for day in week:
-                if day == 0:
-                    calendar_text += "   "  # Three spaces for empty days
-                else:
-                    calendar_text += f"{day:2d} "
-            calendar_text += "\n"
+        text = f"Here's the {year} {month} calendar"
 
-        # Send the formatted calendar with navigation buttons
-        await message.reply_text(calendar_text, reply_markup=reply_markup)
+        # Send the calendar with navigation buttons
+        await message.reply_text(text + "\n" + cal, reply_markup=reply_markup)
 
     except Exception as e:
         await message.reply_text(f"An error occurred: {str(e)}")
@@ -68,7 +61,7 @@ async def update_calendar(client, callback_query: CallbackQuery):
             year += 1
 
     # Create a new calendar for the updated year and month
-    cal = calendar.monthcalendar(year, month)
+    cal = calendar.month(year, month)
 
     keyboard = [
         [
@@ -78,19 +71,10 @@ async def update_calendar(client, callback_query: CallbackQuery):
     ]
 
     reply_markup = InlineKeyboardMarkup(keyboard)
-    month_name = calendar.month_name[month]
-    calendar_text = f"{month_name} {year}\n"
-    for week in cal:
-        for day in week:
-            if day == 0:
-                calendar_text += "   "  # Three spaces for empty days
-            else:
-                calendar_text += f"{day:2d} "
-        calendar_text += "\n"
-
+    text = f"Here's the {year} {month} calendar"
+    
     # Edit the message with the updated calendar and navigation buttons
-    await callback_query.edit_message_text(calendar_text, reply_markup=reply_markup)
+    await callback_query.edit_message_text(text + "\n" + cal, reply_markup=reply_markup)
 
     # Answer the callback query with a message
-    await callback_query.answer(f"Showing the {year} {month_name} calendar")
-    
+    await callback_query.answer(f"Showing the {year} {month} calendar")
