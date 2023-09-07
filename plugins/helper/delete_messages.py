@@ -20,14 +20,14 @@ async def purge(client, message):
 
     # Delete the original command message
     await message.delete()
-
+    last_text = message.message_id
     count_deleted_messages = 0  # Initialize count_deleted_messages
     message_ids = []
 
     if message.reply_to_message:
         # Collect message IDs for deletion
-        async for msg in client.get_history(message.chat.id, offset_id=message.reply_to_message.message_id + 1):
-            message_ids.append(msg.message_id)
+        for msg_id in range(message.reply_to_message.message_id, message.message_id):
+            message_ids.append(msg_id)
             # Delete messages in batches of 100 to avoid rate limits
             if len(message_ids) == 100:
                 await client.delete_messages(
