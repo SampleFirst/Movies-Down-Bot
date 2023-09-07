@@ -2,7 +2,6 @@ from pyrogram import Client, filters, enums
 from pyrogram.types import Message
 from info import ADMINS
 
-
 @Client.on_message(filters.command("purge") & (filters.group | filters.channel))
 async def purge(client, message: Message):
     if message.chat.type not in [enums.ChatType.SUPERGROUP, enums.ChatType.CHANNEL]:
@@ -27,3 +26,4 @@ async def purge(client, message: Message):
             count_deletions += len(message_ids)
     await status_message.edit_text(f"Deleted {count_deletions} messages")
     await status_message.delete(10)
+    
