@@ -19,7 +19,7 @@ async def show_calendar(client, message):
         cal = calendar.month(year, month)
         
         # Format the calendar for better view
-        formatted_cal = f"```\n{cal}```"
+        formatted_cal = f"```{cal}```"
 
         # Create an inline keyboard for navigation
         prev_month = month - 1 if month > 1 else 12
