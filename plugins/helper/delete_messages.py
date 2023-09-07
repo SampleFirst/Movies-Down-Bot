@@ -1,29 +1,26 @@
-from pyrogram import Client, filters
+from pyrogram import filters, Client, 
 from pyrogram.types import Message
 
-# Define a command handler
-@Client.on_message(filters.command("delete_msg"))
-async def delete_all_messages(client, message: Message):
-    # Check if the user is an administrator (or the bot itself) in the chat
-    chat_id = message.command[1] if len(message.command) > 1 else None
-    if chat_id:
-        try:
-            chat_id = int(chat_id)
-        except ValueError:
-            await message.reply("Invalid chat ID. Please provide a valid numeric chat ID.")
-            return
-
-        chat = await client.get_chat(chat_id)
-        if not chat:
-            await message.reply("Chat not found. Please provide a valid chat ID.")
-            return
-
-        # Check if the user has the necessary permissions to delete messages
-        if chat.type in ["private", "group", "supergroup"]:
-            # Delete all messages in the specified chat
-            await message.delete(revoke=True)
-            await message.reply(f"All messages in chat {chat.title} have been deleted.")
-        else:
-            await message.reply("This command can only be used in private chats, groups, or supergroups.")
-    else:
-        await message.reply("Please provide a valid chat ID with the command, like this: /delete_all <chat_id>")
+@Client.on_message(filters.command("purge_all") & (filters.group | filters.channel))                   
+async def purge(client, message: Message):
+    if message.chat.type not in (enums.ChatType.SUPERGROUP, enums.ChatType.CHANNEL):
+        return
+    is_admin = await admin_check(message)
+    if not is_admin:
+        return
+    status_message = await message.reply_text("...", quote=True)
+    await message.delete()
+    message_ids = []
+    count_deletions = 0
+    if message.reply_to_message:
+        for a_s_message_id in range(message.reply_to_message.message_id, message.message_id):
+            message_ids.append(a_s_message_id)
+            if len(message_ids) == 100:
+                await client.delete_messages(chat_id=message.chat.id, message_ids=message_ids, revoke=True)              
+                count_deletions += len(message_ids)
+                message_ids = []
+        if len(message_ids) > 0:
+            await client.delete_messages(chat_id=message.chat.id, message_ids=message_ids, revoke=True)
+            count_deletions += len(message_ids)
+    await status_message.edit_text(f"Deleted {count_deletions} messages")
+    await status_message.delete(10)
