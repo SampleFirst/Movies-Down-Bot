@@ -6,7 +6,7 @@ from info import ADMINS
 @Client.on_message(filters.command("purge") & (filters.group | filters.channel))
 async def purge(client, message):
     # Check if the chat type is a supergroup or channel
-    if message.chat.type not in (enums.ChatType.SUPERGROUP, enums.ChatType.CHANNEL):
+    if message.chat.type not in ('supergroup', 'channel'):
         return
 
     # Check if the user sending the command is an admin
@@ -22,11 +22,12 @@ async def purge(client, message):
     message_ids = []
 
     if message.reply_to_message:
-        # Get the message ID of the replied-to message
-        replied_to_message_id = message.reply_to_message.message_id
+        # Define the range for message deletion (inclusive)
+        start_message_id = message.reply_to_message.message_id
+        end_message_id = message.message_id
 
-        # Collect message IDs for deletion
-        for msg_id in range(replied_to_message_id - 1, replied_to_message_id - 101, -1):
+        # Collect message IDs for deletion within the defined range
+        for msg_id in range(start_message_id, end_message_id + 1):
             message_ids.append(msg_id)
             # Delete messages in batches of 100 to avoid rate limits
             if len(message_ids) == 100:
