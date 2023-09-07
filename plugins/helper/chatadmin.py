@@ -45,7 +45,7 @@ async def list_admins(client, message):
         await message.reply(f"Error getting chat members: {str(e)}")
         return
 
-    if not admins:
+    if not ADMINS:
         await message.reply("There are no administrators in this chat.")
         return
 
