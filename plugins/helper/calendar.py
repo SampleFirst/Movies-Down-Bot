@@ -8,7 +8,7 @@ async def show_calendar(client, message):
         # Parse the input message for year and month
         text = message.text.split()
         if len(text) != 3:
-            await message.reply_text("Please use the /calendar command followed by year and month (e.g., /calendar 2023 9).")
+            await message.reply_text("Please use the /calendar command followed by year and month (e.g., /calendar 2023 12).")
             return
 
         _, year, month = text
@@ -16,7 +16,10 @@ async def show_calendar(client, message):
         month = int(month)
 
         # Create a calendar for the specified year and month
-        cal = calendar.monthcalendar(year, month)
+        cal = calendar.month(year, month)
+        
+        # Format the calendar for better view
+        formatted_cal = f"```\n{cal}```"
 
         # Create an inline keyboard for navigation
         prev_month = month - 1 if month > 1 else 12
@@ -32,24 +35,10 @@ async def show_calendar(client, message):
         ]
 
         reply_markup = InlineKeyboardMarkup(keyboard)
-        text = f"Here's the {year} {calendar.month_name[month]} calendar"
-
-        # Format the calendar with each date below the day of the week
-        formatted_cal = []
-        for week in cal:
-            formatted_week = []
-            for day in week:
-                if day == 0:
-                    formatted_week.append("  ")  # Replace empty days with spaces
-                else:
-                    formatted_week.append(f"{day:2d}")
-            formatted_cal.append(formatted_week)
-
-        # Combine the formatted calendar into a single string
-        cal_text = "\n".join([" ".join(week) for week in formatted_cal])
+        text = f"Here's the {calendar.month_name[month]} {year} calendar"  # Use month_name for month name
 
         # Send the calendar with navigation buttons
-        await message.reply_text(text + "\n" + cal_text, reply_markup=reply_markup)
+        await message.reply_text(text + "\n" + formatted_cal, reply_markup=reply_markup, parse_mode='markdown')
 
     except Exception as e:
         await message.reply_text(f"An error occurred: {str(e)}")
@@ -74,7 +63,10 @@ async def update_calendar(client, callback_query: CallbackQuery):
             year += 1
 
     # Create a new calendar for the updated year and month
-    cal = calendar.monthcalendar(year, month)
+    cal = calendar.month(year, month)
+    
+    # Format the calendar for better view
+    formatted_cal = f"```\n{cal}```"
 
     keyboard = [
         [
@@ -84,26 +76,10 @@ async def update_calendar(client, callback_query: CallbackQuery):
     ]
 
     reply_markup = InlineKeyboardMarkup(keyboard)
-    text = f"Here's the {year} {calendar.month_name[month]} calendar"
-
-    # Format the calendar with each date below the day of the week
-    formatted_cal = []
-    for week in cal:
-        formatted_week = []
-        for day in week:
-            if day == 0:
-                formatted_week.append("  ")  # Replace empty days with spaces
-            else:
-                formatted_week.append(f"{day:2d}")
-        formatted_cal.append(formatted_week)
-
-    # Combine the formatted calendar into a single string
-    cal_text = "\n".join([" ".join(week) for week in formatted_cal])
-
+    text = f"Here's the {calendar.month_name[month]} {year} calendar"  # Use month_name for month name
+    
     # Edit the message with the updated calendar and navigation buttons
-    await callback_query.edit_message_text(text + "\n" + cal_text, reply_markup=reply_markup)
+    await callback_query.edit_message_text(text + "\n" + formatted_cal, reply_markup=reply_markup, parse_mode='markdown')
 
     # Answer the callback query with a message
-    await callback_query.answer(f"Showing the {year} {calendar.month_name[month]} calendar")
-    
-    
+    await callback_query.answer(f"Showing the {calendar.month_name[month]} {year} calendar")
