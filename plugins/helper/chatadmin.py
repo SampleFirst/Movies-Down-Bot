@@ -35,8 +35,7 @@ async def list_admins(client, message):
         await message.reply("Invalid chat ID. Please use '/admins CHAT_ID' to list admins.")
         return
 
-    admins = []  # Initialize an empty list to store admins
-
+    
     try:
         # Get all chat members (using .iter_chat_members to get an async generator)
         async for member in client.get_chat_members(chat_id):
@@ -46,10 +45,7 @@ async def list_admins(client, message):
         await message.reply(f"Error getting chat members: {str(e)}")
         return
 
-    if not admins:  # Check if the admins list is empty
-        await message.reply("There are no administrators in this chat.")
-        return
-
+    
     admin_info_list = []
     for admin in admins:
         admin_info = f"{admin.user.mention} - {admin.user.first_name}\n"
