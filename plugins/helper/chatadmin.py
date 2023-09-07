@@ -42,8 +42,8 @@ async def list_admins(client, message):
         # Use the get_chat method to get the chat object
         chat = await client.get_chat(chat_id)
         
-        # Get all chat members (using .iter_chat_members to get an async generator)
-        async for member in chat.iter_chat_members():
+        # Get all chat members (using .iter_members to get an async generator)
+        async for member in chat.iter_members():
             if member.status == "administrator":
                 admins.append(member)
     except Exception as e:
@@ -75,4 +75,3 @@ async def list_admins(client, message):
 
     response_message = f"Admins in {chat.title}:\n\n" + "\n\n".join(admin_info_list)
     await message.reply(response_message)
-    
