@@ -18,8 +18,7 @@ async def purge(client, message):
     # Send a status message to indicate the purge is in progress
     status_message = await message.reply_text("Purging...", quote=True)
 
-    # Delete the original command message
-    await message.delete()
+    
     last_text = message.message_id
     count_deleted_messages = 0  # Initialize count_deleted_messages
     message_ids = []
