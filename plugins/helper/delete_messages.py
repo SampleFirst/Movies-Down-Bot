@@ -1,4 +1,4 @@
-from pyrogram import filters, Client, 
+from pyrogram import filters, Client
 from pyrogram.types import Message
 
 @Client.on_message(filters.command("purge_all") & (filters.group | filters.channel))                   
