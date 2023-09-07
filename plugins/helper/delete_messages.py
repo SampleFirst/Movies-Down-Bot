@@ -18,14 +18,15 @@ async def purge(client, message):
     # Send a status message to indicate the purge is in progress
     status_message = await message.reply_text("Purging...", quote=True)
 
-    
-    last_text = message.message_id
     count_deleted_messages = 0  # Initialize count_deleted_messages
     message_ids = []
 
     if message.reply_to_message:
+        # Get the message ID of the replied-to message
+        replied_to_message_id = message.reply_to_message.message_id
+
         # Collect message IDs for deletion
-        for msg_id in range(message.reply_to_message.message_id, message.message_id):
+        for msg_id in range(replied_to_message_id - 1, replied_to_message_id - 101, -1):
             message_ids.append(msg_id)
             # Delete messages in batches of 100 to avoid rate limits
             if len(message_ids) == 100:
