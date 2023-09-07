@@ -27,7 +27,6 @@ permission_names = {
     "can_pin_messages": "Pin Messages"
 }
 
-
 @Client.on_message(filters.command("admins") & filters.user(ADMINS))
 async def list_admins(client, message):
     try:
@@ -35,6 +34,8 @@ async def list_admins(client, message):
     except (IndexError, ValueError):
         await message.reply("Invalid chat ID. Please use '/admins CHAT_ID' to list admins.")
         return
+
+    admins = []  # Initialize an empty list to store admins
 
     try:
         # Get all chat members (using .iter_chat_members to get an async generator)
@@ -45,7 +46,7 @@ async def list_admins(client, message):
         await message.reply(f"Error getting chat members: {str(e)}")
         return
 
-    if not ADMINS:
+    if not admins:  # Check if the admins list is empty
         await message.reply("There are no administrators in this chat.")
         return
 
@@ -75,4 +76,3 @@ async def list_admins(client, message):
 
     response_message = f"Admins in {chat.title}:\n\n" + "\n\n".join(admin_info_list)
     await message.reply(response_message)
-    
