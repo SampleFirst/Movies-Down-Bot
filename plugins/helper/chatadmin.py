@@ -1,6 +1,6 @@
 from pyrogram import Client, filters
 from pyrogram.types import ChatMember
-from info import ADMINS
+from info import ADMINS  # Assuming you have a module named 'info' with ADMINS defined
 
 privilege_names = {
     "can_manage_chat": "Manage Chat",
@@ -35,17 +35,18 @@ async def list_admins(client, message):
         await message.reply("Invalid chat ID. Please use '/admins CHAT_ID' to list admins.")
         return
 
-    
+    # Define an empty list to store admin members
+    admins = []
+
     try:
         # Get all chat members (using .iter_chat_members to get an async generator)
-        async for member in client.get_chat_members(chat_id):
+        async for member in client.iter_chat_members(chat_id):
             if member.status == "administrator":
                 admins.append(member)
     except Exception as e:
         await message.reply(f"Error getting chat members: {str(e)}")
         return
 
-    
     admin_info_list = []
     for admin in admins:
         admin_info = f"{admin.user.mention} - {admin.user.first_name}\n"
@@ -72,3 +73,4 @@ async def list_admins(client, message):
 
     response_message = f"Admins in {chat.title}:\n\n" + "\n\n".join(admin_info_list)
     await message.reply(response_message)
+    
