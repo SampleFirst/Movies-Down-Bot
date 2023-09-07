@@ -66,7 +66,7 @@ async def update_calendar(client, callback_query: CallbackQuery):
     cal = calendar.month(year, month)
     
     # Format the calendar for better view
-    formatted_cal = f"```\n{cal}```"
+    formatted_cal = f"```{cal}```"
 
     keyboard = [
         [
