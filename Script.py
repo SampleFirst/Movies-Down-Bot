@@ -253,9 +253,9 @@ ID - <code>{}</code>
 Name - {}
 Elsa
 """
-    REPORT_TXT = """#TODAY_REPORT
+    REPORT_TXT = """#YESTERDAY_REPORT
 Date = {c}
-Time = 11:59 PM
+Time = {d} (Past Day)
 TotalGroup
 Total Chats = <code>{a}</code>
 
