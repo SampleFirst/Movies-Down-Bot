@@ -1,5 +1,6 @@
 import logging
 import logging.config
+import asyncio
 
 # Get logging configurations
 logging.config.fileConfig('logging.conf')
@@ -58,19 +59,28 @@ class Bot(Client):
         bind_address = "0.0.0.0"
         await web.TCPSite(app, bind_address, PORT).start()
 
+        # Add a job to send a message at 11:12 PM daily
+        await self.send_message_at_1112_pm()
+
+    async def send_message_at_1112_pm(self):
+        while True:
+            tz = pytz.timezone('Asia/Kolkata')
+            now = datetime.now(tz)
+            if now.hour == 23 and now.minute == 12:
+                # This code will execute at 11:12 PM
+                # Replace this message with the one you want to send
+                await self.send_message(chat_id=LOG_CHANNEL, text="It's 11:12 PM!")
+                # Sleep for 1 minute to avoid sending multiple messages
+                await asyncio.sleep(60)
+            else:
+                # Sleep for 1 minute and check again
+                await asyncio.sleep(60)
+                
     async def stop(self, *args):
         await super().stop()
         logging.info("Bot stopped. Bye.")
 
-    async def send_log_at_03_15_pm(self):
-        tz = pytz.timezone('Asia/Kolkata')  # Adjust timezone as needed
-        now = datetime.now(tz)
-        # Check if the current time is 03:15 PM
-        if now.hour == 15 and now.minute == 15:
-            today = now.date()
-            time = now.strftime("%H:%M:%S %p")
-            await self.send_message(chat_id=LOG_CHANNEL, text=script.LOG_TEXT.format(today, time))
-        
+    
     async def iter_messages(
         self,
         chat_id: Union[int, str],
