@@ -1,5 +1,5 @@
 import asyncio
-from pyrogram import Client, filters, enums
+from pyrogram import Client, filters
 from pyrogram.types import Message
 from info import ADMINS
 
@@ -33,8 +33,7 @@ async def purge(client, message):
             if len(message_ids) == 100:
                 await client.delete_messages(
                     chat_id=message.chat.id,
-                    message_ids=message_ids,
-                    revoke=True
+                    message_ids=message_ids
                 )
                 count_deleted_messages += len(message_ids)
                 message_ids = []
@@ -43,8 +42,7 @@ async def purge(client, message):
         if len(message_ids) > 0:
             await client.delete_messages(
                 chat_id=message.chat.id,
-                message_ids=message_ids,
-                revoke=True
+                message_ids=message_ids
             )
             count_deleted_messages += len(message_ids)
 
