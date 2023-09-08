@@ -253,14 +253,14 @@ ID - <code>{}</code>
 Name - {}
 Elsa
 """
-    DAILY_REPORT = """#TODAY_REPORT
-Date = {today}
+    REPORT_TXT = """#TODAY_REPORT
+Date = {c}
 Time = 11:59 PM
 TotalGroup
-Total Chats = <code>{total_chats}</code>
+Total Chats = <code>{a}</code>
 
 TodayUsers
-Total Users = <code>{total_users}</code>
+Total Users = <code>{b}</code>
 """
     
     FILE_MSG = """
