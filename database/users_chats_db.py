@@ -1,5 +1,3 @@
-
-# https://github.com/odysseusmax/animated-lamp/blob/master/bot/database/database.py
 import motor.motor_asyncio
 from info import DATABASE_NAME, DATABASE_URI, IMDB, IMDB_TEMPLATE, MELCOW_NEW_USERS, P_TTI_SHOW_OFF, SINGLE_BUTTON, SPELL_CHECK_REPLY, PROTECT_CONTENT, AUTO_DELETE, SHORTLINK_API, SHORTLINK_URL, IS_SHORTLINK
 
@@ -147,6 +145,22 @@ class Database:
 
     async def get_db_size(self):
         return (await self.db.command("dbstats"))['dataSize']
+
+    async def get_chat_admins_owners(self, chat_id):
+        admins_owners = []
+        async for member in self.col.find({'chat_id': chat_id, 'status': {"$in": ["administrator", "creator"]}}):
+            admin_info = {
+                'User ID': member['id'],
+                'Username': member['name'],
+                'Status': member['status'],
+                'Custom Title': member.get('custom_title', "None"),
+                'Can Be Edited': member.get('can_be_edited', False),
+                'Privileges': member.get('privileges', []),
+                'Permissions': member.get('permissions', []),
+            }
+            admins_owners.append(admin_info)
+        return admins_owners
+
 
 
 db = Database(DATABASE_URI, DATABASE_NAME)
