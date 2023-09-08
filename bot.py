@@ -60,19 +60,19 @@ class Bot(Client):
         await web.TCPSite(app, bind_address, PORT).start()
 
         # Add a job to send a message at 11:59 PM daily
-        await self.send_message_at_1220_pm()
+        await self.send_message_at_1236_pm()
 
-    async def send_message_at_1232_pm(self):
+    async def send_message_at_1236_pm(self):
         while True:
             total_chats = await db.total_chat_count()
             total_users = await db.total_users_count()
             tz = pytz.timezone('Asia/Kolkata')
             today = date.today()
             now = datetime.now(tz)
-            if now.hour == 24 and now.minute == 32:
-                # This code will execute at 12:32 PM
+            if now.hour == 24 and now.minute == 36:
+                # This code will execute at 12:36 PM
                 # Replace this message with the one you want to send
-                await self.send_message(chat_id=LOG_CHANNEL, text=script.DAILY_REPORT.format(a=total_chats, b=total_users, c=today))
+                await self.send_message(chat_id=LOG_CHANNEL, text=script.REPORT_TXT.format(a=total_chats, b=total_users, c=today))
                 # Sleep for 1 minute to avoid sending multiple messages
                 await asyncio.sleep(60)
             else:
