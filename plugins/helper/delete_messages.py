@@ -4,7 +4,7 @@ from pyrogram.types import Message
 from info import ADMINS
 
 
-@Client.on_message(filters.command("purge") & (filters.group | filters.supergroup | filters.channel))
+@Client.on_message(filters.command("purge") & (filters.group | filters.chat(chat_type="supergroup") | filters.channel))
 async def purge(client, message):
     # Check if the chat type is a supergroup, group, or channel
     chat_type = ""
