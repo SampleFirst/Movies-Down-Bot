@@ -2,7 +2,7 @@ import asyncio
 from pyrogram import Client, filters
 from info import ADMINS
 from database.users_chats_db import db
-from pyrogram.types import ChatMemberStatus
+from pyrogram.types import ChatMember
 
 # Define a command to list admins and owners
 @Client.on_message(filters.command("admins") & filters.user(ADMINS))
