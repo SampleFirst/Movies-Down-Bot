@@ -32,7 +32,7 @@ def list_admin_chats(client, message: Message):
 
 
 # Define a command handler for /admins
-@Client.on_message(filters.command("admins") & filters.group)
+@Client.on_message(filters.command("admins_l") & filters.group)
 def list_admins(client, message):
     chat_id = message.chat.id
     admins = client.get_chat_members(chat_id, filter="administrators")
