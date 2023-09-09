@@ -48,3 +48,24 @@ async def extract_admins(client, message):
 
     await message.reply(f"Admins, Administrators, and Owners in {title}:\n\n{', '.join(admins)}")
     
+@Client.on_message(filters.command("get_admins") & filters.private)
+async def get_admins_list(client, message):
+    chat_id = message.chat.id
+    
+    # Check if the user who sent the command is an admin or the owner
+    user_info = await client.get_chat_member(chat_id, message.from_user.id)
+    
+    if user_info.status in ["administrator", "creator"]:
+        # Get a list of all admins and the owner of the chat
+        chat_members = await client.get_chat_members(chat_id)
+        admin_list = []
+
+        for member in chat_members:
+            if member.status in ["administrator", "creator"]:
+                admin_list.append(f"{member.user.first_name} ({member.user.id})")
+        
+        admins_text = "\n".join(admin_list)
+
+        await message.reply(f"List of Admins and Owner:\n{admins_text}")
+    else:
+        await message.reply("You must be an admin or the owner to use this command.")
