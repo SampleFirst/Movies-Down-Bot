@@ -22,13 +22,13 @@ async def purge(client, message):
     message_ids = []
 
     if message.reply_to_message:
-        # Define the range for message deletion (inclusive)
-        start_message_id = message.reply_to_message.message_id
-        end_message_id = message.message_id
-
         # Collect message IDs for deletion within the defined range
-        for msg_id in range(start_message_id, end_message_id + 1):
-            message_ids.append(msg_id)
+        async for msg in client.iter_history(
+            chat_id=message.chat.id,
+            reverse=True,
+            offset_id=message.reply_to_message.message_id,
+        ):
+            message_ids.append(msg.message_id)
             # Delete messages in batches of 100 to avoid rate limits
             if len(message_ids) == 100:
                 await client.delete_messages(
