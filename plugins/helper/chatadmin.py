@@ -1,6 +1,5 @@
 import asyncio
 from pyrogram import Client, filters
-from pyrogram.types import ChatMember
 from info import ADMINS
 from database.users_chats_db import db
 
@@ -15,8 +14,12 @@ async def list_admins(client, message):
         admins_owners = await db.get_chat_admins_owners(chat_id)
         
         if admins_owners:
+            response_message = "Admins/Owners in this chat:\n\n"
             for admin_info in admins_owners:
-                await message.reply(f"Admin/Owner Info:\n{admin_info}")
+                response_message += f"{admin_info}\n"
+            
+            # Send the response message with a split limit to avoid exceeding message length limits
+            await message.reply_text(response_message, parse_mode="Markdown", quote=True)
         else:
             await message.reply("No Admins/Owners found in this chat.")
 
