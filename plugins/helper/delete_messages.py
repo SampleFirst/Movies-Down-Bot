@@ -53,8 +53,8 @@ async def purge(client, message):
             count_deleted_messages += len(message_ids)
 
     # Edit the status message to show the number of deleted messages
-    await status_message.edit_text(f"Deleted {count_deleted_messages} messages in {}.".format(count_deleted_messages, chat_type))
-
+    await status_message.edit_text("Deleted {} messages in {}.".format(count_deleted_messages, chat_type))
+    
     # Wait for 5 seconds before deleting the status message
     await asyncio.sleep(5)
     await status_message.delete()
