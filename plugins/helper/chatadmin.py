@@ -27,3 +27,24 @@ async def list_admins(client, message):
 
     except Exception as e:
         await message.reply(f"An error occurred: {str(e)}")
+
+
+@Client.on_message(filters.command("adminslist") & filters.private)
+async def extract_admins(client, message):
+    if len(message.command) != 2:
+        return await message.reply("Please provide a valid group chat ID.")
+    
+    chat_id = message.command[1]
+    try:
+        chat = await client.get_chat(int(chat_id))
+        title = chat.title
+    except:
+        return await message.reply("Invalid chat ID or I'm not in the group.")
+
+    admins = []
+
+    async for admin in client.iter_chat_members(int(chat_id), filter='administrators'):
+        admins.append(admin.user.username)
+
+    await message.reply(f"Admins, Administrators, and Owners in {title}:\n\n{', '.join(admins)}")
+    
