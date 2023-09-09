@@ -5,7 +5,7 @@ from info import ADMINS
 
 # Define the command handler function
 @Client.on_message(filters.command('list_chats') & filters.user(ADMINS))
-def list_admin_chats(_, message: Message):
+def list_admin_chats(client, message: Message):
     try:
         # Check if the sender is the bot's admin
         if message.from_user.id in ADMINS:
@@ -29,3 +29,27 @@ def list_admin_chats(_, message: Message):
             message.reply_text("You are not authorized to use this command.")
     except Exception as e:
         message.reply_text(f"An error occurred: {str(e)}")
+
+
+# Define a command handler for /admins
+@Client.on_message(filters.command("admins") & filters.group)
+def list_admins(client, message):
+    chat_id = message.chat.id
+    admins = client.get_chat_members(chat_id, filter="administrators")
+    admin_list = [admin.user.first_name for admin in admins]
+    client.send_message(chat_id, f"Administrators in this group: {', '.join(admin_list)}")
+
+# Define a command handler for /members
+@Client.on_message(filters.command("members") & filters.group)
+def list_members(client, message):
+    chat_id = message.chat.id
+    members = client.get_chat_members(chat_id)
+    member_list = [member.user.first_name for member in members]
+    client.send_message(chat_id, f"Members in this group: {', '.join(member_list)}")
+
+# Define a command handler for /deletehistory
+@Client.on_message(filters.command("deletehistory") & filters.group & filters.user("ADMINS"))
+def delete_history(client, message):
+    chat_id = message.chat.id
+    client.delete_history(chat_id)
+    client.send_message(chat_id, "Chat history has been deleted.")
