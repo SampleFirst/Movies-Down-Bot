@@ -4,7 +4,7 @@ from info import ADMINS
 
 
 # Define the command handler function
-@client.on_message(filters.command('list_chats') & filters.user(ADMINS))
+@Client.on_message(filters.command('list_chats') & filters.user(ADMINS))
 def list_admin_chats(_, message: Message):
     try:
         # Check if the sender is the bot's admin
