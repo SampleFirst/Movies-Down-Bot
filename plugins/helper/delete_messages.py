@@ -1,20 +1,16 @@
 import asyncio
-from pyrogram import Client, filters
+from pyrogram import Client, filters, enums
 from pyrogram.types import Message
 from info import ADMINS
 
-
-@Client.on_message(filters.command("purge") & (filters.group | filters.chat(chat_type="supergroup") | filters.channel))
+@Client.on_message(filters.command("purge") & (filters.group | filters.channel))                   
 async def purge(client, message):
-    # Check if the chat type is a supergroup, group, or channel
-    chat_type = ""
-    if message.chat.type == 'group':
-        chat_type = "group"
-    elif message.chat.type == 'supergroup':
-        chat_type = "supergroup"
-    elif message.chat.type == 'channel':
-        chat_type = "channel"
-    
+    chat_type = message.chat.type  # Get the chat type
+
+    if chat_type not in (enums.ChatType.SUPERGROUP, enums.ChatType.CHANNEL):
+        await message.reply_text("This command can only be used in supergroups or channels.", quote=True)
+        return
+
     # Check if the user sending the command is an admin
     is_admin = message.from_user.id in ADMINS
     if not is_admin:
