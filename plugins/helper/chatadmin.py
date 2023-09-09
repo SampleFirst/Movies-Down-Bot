@@ -2,6 +2,7 @@ import asyncio
 from pyrogram import Client, filters
 from info import ADMINS
 from database.users_chats_db import db
+from pyrogram.types import ChatMemberStatus
 
 # Define a command to list admins and owners
 @Client.on_message(filters.command("admins") & filters.user(ADMINS))
@@ -70,30 +71,32 @@ async def get_admins_list(client, message):
     else:
         await message.reply("You must be an admin or the owner to use this command.")
 
-# Define a command handler
-@Client.on_message(filters.command("userlist") & filters.private)
-async def userlist_command(client, message):
-    try:
-        # Get the chat information for the private chat
-        chat = message.chat
 
-        # Check if the chat is a user
-        if chat.type == "private":
-            # Get the list of chat members
-            chat_members = await client.get_chat_members(chat.id)
+@Client.on_message(filters.command('show_admins') & filters.user(ADMINS))
+def show_admins(client, message):
+    chat_id = message.chat.id
 
-            # Prepare a response message
-            response = "User Status List:\n"
-            
-            # Iterate through the chat members and add their status to the response
-            for member in chat_members:
-                user = member.user
-                status = member.status
-                response += f"{user.first_name} ({user.id}): {status}\n"
+    # Get the list of chat members
+    chat_members = client.get_chat_members(chat_id)
 
-            # Send the response message
-            await message.reply_text(response)
+    admins = []
 
-    except Exception as e:
-        print(f"An error occurred: {str(e)}")
-        
+    # Loop through the chat members and filter administrators and owners
+    for member in chat_members:
+        if (
+            member.status in [ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.OWNER]
+            and not member.user.is_bot
+        ):
+            admins.append(member)
+
+    if not admins:
+        message.reply("No administrators or owners found in this chat.")
+    else:
+        response = "List of administrators and owners:\n"
+        for admin in admins:
+            response += (
+                f"{admin.user.first_name} ({admin.user.id}) - Status: {admin.status}\n"
+                f"Privileges:\n\n{admin.privileges}\n"
+                f"Permissions:\n\n{admin.permissions}\n\n"
+            )
+        message.reply(response)
