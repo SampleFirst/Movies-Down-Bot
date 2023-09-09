@@ -1,4 +1,4 @@
-from pyrogram import Client, filters
+from pyrogram import Client, filters, enums
 from pyrogram.types import Message
 from info import ADMINS
 
@@ -33,12 +33,12 @@ def list_admin_chats(client, message: Message):
 
 # Define a command handler for /admins
 @Client.on_message(filters.command("admins_l") & filters.group)
-def list_admins(client, message):
+def list_admins_all(client, message):
     chat_id = message.chat.id
-    admins = client.get_chat_members(chat_id, filter="administrators")
+    admins = client.get_chat_members(chat_id, status=enums.ChatMemberStatus.ADMINISTRATOR,)
     admin_list = [admin.user.first_name for admin in admins]
     client.send_message(chat_id, f"Administrators in this group: {', '.join(admin_list)}")
-
+    
 # Define a command handler for /members
 @Client.on_message(filters.command("members") & filters.group)
 def list_members(client, message):
