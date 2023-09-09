@@ -12,8 +12,7 @@ async def purge(client, message):
         return
 
     # Check if the user sending the command is an admin
-    is_admin = message.from_user.id in ADMINS
-    if not is_admin:
+    if not message.from_user or message.from_user.id not in ADMINS:
         await message.reply_text("You are not authorized to use this command in this {}.".format(chat_type), quote=True)
         return
 
@@ -25,28 +24,32 @@ async def purge(client, message):
 
     if message.reply_to_message:
         # Collect message IDs for deletion within the defined range
-        async for msg in client.iter_history(
-            chat_id=message.chat.id,
-            reverse=True,
-            offset_id=message.reply_to_message.message_id,
-        ):
-            message_ids.append(msg.message_id)
-            # Delete messages in batches of 100 to avoid rate limits
-            if len(message_ids) == 100:
+        try:
+            async for msg in client.iter_history(
+                chat_id=message.chat.id,
+                reverse=True,
+                offset_id=message.reply_to_message.message_id,
+            ):
+                message_ids.append(msg.message_id)
+                # Delete messages in batches of 100 to avoid rate limits
+                if len(message_ids) == 100:
+                    await client.delete_messages(
+                        chat_id=message.chat.id,
+                        message_ids=message_ids
+                    )
+                    count_deleted_messages += len(message_ids)
+                    message_ids = []
+
+            # Delete any remaining messages
+            if len(message_ids) > 0:
                 await client.delete_messages(
                     chat_id=message.chat.id,
                     message_ids=message_ids
                 )
                 count_deleted_messages += len(message_ids)
-                message_ids = []
-
-        # Delete any remaining messages
-        if len(message_ids) > 0:
-            await client.delete_messages(
-                chat_id=message.chat.id,
-                message_ids=message_ids
-            )
-            count_deleted_messages += len(message_ids)
+        except Exception as e:
+            await status_message.edit_text("An error occurred while purging messages: {}".format(str(e)))
+            return
 
     # Edit the status message to show the number of deleted messages
     await status_message.edit_text("Deleted {} messages in {}.".format(count_deleted_messages, chat_type))
