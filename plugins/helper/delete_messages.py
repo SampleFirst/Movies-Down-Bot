@@ -25,7 +25,7 @@ async def purge(client, message):
     if message.reply_to_message:
         # Collect message IDs for deletion within the defined range
         try:
-            async for msg in client.iter_history(
+            async for msg in client.iter_history_messages(
                 chat_id=message.chat.id,
                 reverse=True,
                 offset_id=message.reply_to_message.message_id,
@@ -39,7 +39,7 @@ async def purge(client, message):
                     )
                     count_deleted_messages += len(message_ids)
                     message_ids = []
-
+    
             # Delete any remaining messages
             if len(message_ids) > 0:
                 await client.delete_messages(
@@ -57,3 +57,4 @@ async def purge(client, message):
     # Wait for 5 seconds before deleting the status message
     await asyncio.sleep(5)
     await status_message.delete()
+    
