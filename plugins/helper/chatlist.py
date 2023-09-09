@@ -35,7 +35,7 @@ def list_admin_chats(client, message: Message):
 @Client.on_message(filters.command("admins_l") & filters.group)
 def list_admins_all(client, message):
     chat_id = message.chat.id
-    admins = client.get_chat_members(chat_id, status=enums.ChatMemberStatus.ADMINISTRATOR,)
+    admins = client.get_chat_members(chat_id, filter=enums.ChatMemberStatus.ADMINISTRATOR,)
     admin_list = [admin.user.first_name for admin in admins]
     client.send_message(chat_id, f"Administrators in this group: {', '.join(admin_list)}")
     
