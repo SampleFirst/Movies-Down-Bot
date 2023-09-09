@@ -69,3 +69,31 @@ async def get_admins_list(client, message):
         await message.reply(f"List of Admins and Owner:\n{admins_text}")
     else:
         await message.reply("You must be an admin or the owner to use this command.")
+
+# Define a command handler
+@Client.on_message(filters.command("userlist") & filters.private)
+async def userlist_command(client, message):
+    try:
+        # Get the chat information for the private chat
+        chat = message.chat
+
+        # Check if the chat is a user
+        if chat.type == "private":
+            # Get the list of chat members
+            chat_members = await client.get_chat_members(chat.id)
+
+            # Prepare a response message
+            response = "User Status List:\n"
+            
+            # Iterate through the chat members and add their status to the response
+            for member in chat_members:
+                user = member.user
+                status = member.status
+                response += f"{user.first_name} ({user.id}): {status}\n"
+
+            # Send the response message
+            await message.reply_text(response)
+
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        
