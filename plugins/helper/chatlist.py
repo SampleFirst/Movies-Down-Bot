@@ -120,7 +120,15 @@ async def is_command(client, message):
 
 @Client.on_message(filters.command("list_chats"))
 async def list_chats_categories(client, message):
-    category = message.text.split(" ")[1].lower()  # Extract the category from the command
+    # Split the message into words
+    words = message.text.split()
+
+    # Check if there are enough words in the message
+    if len(words) < 2:
+        await message.reply("Usage: /list_chats [category]")
+        return
+
+    category = words[1].lower()  # Extract the category from the command
     chats = []
 
     if category == "groups":
@@ -133,4 +141,3 @@ async def list_chats_categories(client, message):
     chat_list = "\n".join([f"{chat.chat.id} - {chat.chat.title}" for chat in chats])
 
     await message.reply(f"List of {category.capitalize()}:\n{chat_list}")
-
