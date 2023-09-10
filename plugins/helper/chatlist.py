@@ -98,25 +98,22 @@ async def list_all_recent(client, message):
 @Client.on_message(filters.command("is"))
 async def is_command(client, message):
     # Get a list of all the chats where the bot is a member
-    chats = await client.get_dialogs()
-    
-    # Initialize variables to count the types of chats
-    supergroups = 0
-    groups = 0
-    channels = 0
-    
-    # Iterate through the chats and count each type
-    for chat in chats:
+    async for chat in client.get_dialogs():
+        # Initialize variables to count the types of chats
+        supergroups = 0
+        groups = 0
+        channels = 0
+
         if chat.chat.type == "supergroup":
             supergroups += 1
         elif chat.chat.type == "group":
             groups += 1
         elif chat.chat.type == "channel":
             channels += 1
-    
+
     # Compose the response message
     response = f"Supergroups: {supergroups}\nGroups: {groups}\nChannels: {channels}"
-    
+
     # Send the response back to the user
     await message.reply(response)
     
