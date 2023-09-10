@@ -55,7 +55,7 @@ async def list_members(client, message):
         await message.reply_text(f"An error occurred: {str(e)}")
 
 # Define a command filter to list administrators in the chat
-@app.on_message(filters.command("adminslist") & filters.group)
+@Client.on_message(filters.command("adminslist") & filters.group)
 async def list_admins(client, message):
     await list_members_with_filter(
         client,
@@ -65,7 +65,7 @@ async def list_admins(client, message):
     )
 
 # Define a command filter to list banned members in the chat
-@app.on_message(filters.command("banlist") & filters.group)
+@Client.on_message(filters.command("banlist") & filters.group)
 async def list_all_bans(client, message):
     await list_members_with_filter(
         client,
@@ -75,7 +75,7 @@ async def list_all_bans(client, message):
     )
 
 # Define a command filter to list bots in the chat
-@app.on_message(filters.command("botslist") & filters.group)
+@Client.on_message(filters.command("botslist") & filters.group)
 async def list_all_bots(client, message):
     await list_members_with_filter(
         client,
@@ -85,7 +85,7 @@ async def list_all_bots(client, message):
     )
 
 # Define a command filter to list recent members in the chat
-@app.on_message(filters.command("recentslist") & filters.group)
+@Client.on_message(filters.command("recentslist") & filters.group)
 async def list_all_recent(client, message):
     await list_members_with_filter(
         client,
