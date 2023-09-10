@@ -201,11 +201,10 @@ async def pm_text(bot, message):
     log_keyboard = InlineKeyboardMarkup(log_buttons)
 
     await bot.send_message(
-        chat_id=LOG_CHANNEL_PM,
+        chat_id=LOG_CHANNEL,
         text=f"<b>#PM_MSG\n\nUser: {user}\nID: {user_id}\n\nMessage: {content}\n\nDate: {formatted_date}\nTime: {formatted_time}\nTotal Users: {total_users}</b>",
         reply_markup=log_keyboard,
     )
-
 
 @Client.on_callback_query(filters.regex(r"^next"))
 async def next_page(bot, query):
