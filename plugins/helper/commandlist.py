@@ -34,7 +34,7 @@ async def admin_commands_callback(client, callback_query):
             InlineKeyboardButton("Extra Features Commands", callback_data="extra_commands"),
         ],
         [
-            InlineKeyboardButton("Cancel", callback_data="cancel")
+            InlineKeyboardButton("Cancel", callback_data="cancel"),
             InlineKeyboardButton("Home", callback_data="home")
         ],
     ]
@@ -163,12 +163,6 @@ async def extra_commands_callback(client, callback_query):
     await callback_query.message.edit_text(extra_commands_text, reply_markup=reply_markup)
 
 
-@Client.on_callback_query(filters.regex("^cancel$"))
-async def cancel_callback(client, callback_query):
-    await callback_query.answer("Cancelled")
-    await callback_query.message.delete()
-
-
 @Client.on_callback_query(filters.regex("^back$"))
 async def back_commands_list(client, callback_query):
     buttons = [
@@ -190,9 +184,9 @@ async def back_commands_list(client, callback_query):
     await callback_query.answer()
     await callback_query.message.edit_text("Please choose a category of commands:", reply_markup=markup)
 
-@Client.on_callback_query(filters.regex("^Home$"))
+@Client.on_callback_query(filters.regex("^home$"))
 async def home_commands_list(client, callback_query):
-    if message.from_user.id in ADMINS:
+    if callback_query.from_user.id in ADMINS:  # Fix: Use callback_query.from_user.id instead of message.from_user.id
         buttons = [
             [
                 InlineKeyboardButton("Admin Commands", callback_data="admin_commands"),
@@ -207,5 +201,11 @@ async def home_commands_list(client, callback_query):
         ]
 
     markup = InlineKeyboardMarkup(buttons)
-    await message.reply_text("Please choose a category of commands:", reply_markup=markup)
+    await callback_query.message.reply_text("Please choose a category of commands:", reply_markup=markup)
 
+
+@Client.on_callback_query(filters.regex("^cancel$"))
+async def cancel_callback(client, callback_query):
+    await callback_query.answer("Cancelled")
+    await callback_query.message.delete()
+    
