@@ -41,11 +41,11 @@ async def list_members(client, message):
             async for member in client.get_chat_members(chat_id):
                 user = member.user
                 member_info = f"Username: @{member.user.username}\n" \
-                                f"User ID: {member.user.id}\n" \
-                                f"First Name: {member.user.first_name}\n" \
-                                f"Last Name: {member.user.last_name}"
+                              f"User ID: {member.user.id}\n" \
+                              f"First Name: {member.user.first_name}\n" \
+                              f"Last Name: {member.user.last_name}"
     
-                    members_info.append(member_info)
+                members_info.append(member_info)
             
             members_list_text = "\n".join(members_info)
             await message.reply(f"Members in this group:\n{members_list_text}")
@@ -53,7 +53,6 @@ async def list_members(client, message):
             await message.reply("You are not authorized to use this command.")
     except Exception as e:
         await message.reply_text(f"An error occurred: {str(e)}")
-
 
 # Define a command filter to list administrators in the chat
 @app.on_message(filters.command("adminslist") & filters.group)
