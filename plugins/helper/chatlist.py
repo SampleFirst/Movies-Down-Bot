@@ -47,7 +47,7 @@ async def list_members(client, message):
     
                 members_info.append(member_info)
             
-            members_list_text = "\n".join(members_info)
+            members_list_text = "\n\n".join(members_info)
             await message.reply(f"Members in this group:\n{members_list_text}")
         else:
             await message.reply("You are not authorized to use this command.")
