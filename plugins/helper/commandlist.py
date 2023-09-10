@@ -4,7 +4,26 @@ from info import ADMINS
 
 @Client.on_message(filters.command("admincommands") & filters.user(ADMINS))
 async def send_commands_list(client, message: Message):
-    # Create buttons for different command categories
+    if message.from_user.id in ADMINS:
+        buttons = [
+            [
+                InlineKeyboardButton("Admin Commands", callback_data="admin_commands"),
+                InlineKeyboardButton("Users Commands", callback_data="users_commands"),
+            ],
+        ]
+    else:
+        buttons = [
+            [
+                InlineKeyboardButton("Users Commands", callback_data="users_commands"),
+            ],
+        ]
+
+    markup = InlineKeyboardMarkup(buttons)
+    await message.reply_text("Please choose a category of commands:", reply_markup=markup)
+
+
+@Client.on_callback_query(filters.regex("^admin_commands$"))
+async def admin_commands_callback(client, callback_query):
     buttons = [
         [
             InlineKeyboardButton("Bot Commands", callback_data="bot_commands"),
@@ -16,17 +35,32 @@ async def send_commands_list(client, message: Message):
         ],
         [
             InlineKeyboardButton("Cancel", callback_data="cancel")
+            InlineKeyboardButton("Home", callback_data="home")
         ],
     ]
 
-    # Create an InlineKeyboardMarkup with the buttons
     markup = InlineKeyboardMarkup(buttons)
+    await callback_query.answer()
+    await callback_query.message.edit_text("Please choose a category of commands:", reply_markup=markup)
 
-    # Send a message with the buttons
-    await message.reply_text("Please choose a category of commands:", reply_markup=markup)
+
+@Client.on_callback_query(filters.regex("^users_commands$"))
+async def users_commands_callback(client, callback_query):
+    buttons = [
+        [
+            InlineKeyboardButton("Bot Command", callback_data="bot_commands"),
+        ],
+        [
+            InlineKeyboardButton("Cancel", callback_data="cancel"),
+            InlineKeyboardButton("Home", callback_data="home")
+        ],
+    ]
+
+    markup = InlineKeyboardMarkup(buttons)
+    await callback_query.answer()
+    await callback_query.message.edit_text("Please choose a category of commands:", reply_markup=markup)
 
 
-# Define callback handlers for category buttons
 @Client.on_callback_query(filters.regex("^bot_commands$"))
 async def bot_commands_callback(client, callback_query):
     bot_commands_text = """
@@ -137,7 +171,6 @@ async def cancel_callback(client, callback_query):
 
 @Client.on_callback_query(filters.regex("^back$"))
 async def back_commands_list(client, callback_query):
-    # Create buttons for different command categories
     buttons = [
         [
             InlineKeyboardButton("Bot Commands", callback_data="bot_commands"),
@@ -152,8 +185,27 @@ async def back_commands_list(client, callback_query):
         ],
     ]
 
-    # Create an InlineKeyboardMarkup with the buttons
     markup = InlineKeyboardMarkup(buttons)
 
     await callback_query.answer()
     await callback_query.message.edit_text("Please choose a category of commands:", reply_markup=markup)
+
+@Client.on_callback_query(filters.regex("^Home$"))
+async def home_commands_list(client, callback_query):
+    if message.from_user.id in ADMINS:
+        buttons = [
+            [
+                InlineKeyboardButton("Admin Commands", callback_data="admin_commands"),
+                InlineKeyboardButton("Users Commands", callback_data="users_commands"),
+            ],
+        ]
+    else:
+        buttons = [
+            [
+                InlineKeyboardButton("Users Commands", callback_data="users_commands"),
+            ],
+        ]
+
+    markup = InlineKeyboardMarkup(buttons)
+    await message.reply_text("Please choose a category of commands:", reply_markup=markup)
+
