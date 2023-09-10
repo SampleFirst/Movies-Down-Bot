@@ -117,3 +117,20 @@ async def is_command(client, message):
     # Send the response back to the user
     await message.reply(response)
     
+
+@Client.on_message(filters.command("list_chats"))
+async def list_chats_categories(client, message):
+    category = message.text.split(" ")[1].lower()  # Extract the category from the command
+    chats = []
+
+    if category == "groups":
+        chats = await client.get_dialogs(filters=Client.FILTERS_GROUP)
+    elif category == "supergroups":
+        chats = await client.get_dialogs(filters=Client.FILTERS_SUPERGROUPS)
+    elif category == "channels":
+        chats = await client.get_dialogs(filters=Client.FILTERS_CHANNELS)
+
+    chat_list = "\n".join([f"{chat.chat.id} - {chat.chat.title}" for chat in chats])
+
+    await message.reply(f"List of {category.capitalize()}:\n{chat_list}")
+
