@@ -36,14 +36,14 @@ def list_admin_chats(client, message: Message):
 async def list_admins(client, message):
     try:
         chat_id = message.chat.id
-    
+
         # Check if the sender is the bot's admin
         if message.from_user.id in ADMINS:
             # Get and list administrators in the chat
             admins = []
             async for member in client.get_chat_members(chat_id, filter=enums.ChatMembersFilter.ADMINISTRATORS):
                 admins.append(member.user.first_name)
-    
+
             if admins:
                 # Send the list of administrators as a single message
                 await message.reply(f"Admins in this group: {', '.join(admins)}")
@@ -52,15 +52,24 @@ async def list_admins(client, message):
         else:
             await message.reply("You are not authorized to use this command.")
     except Exception as e:
-        message.reply_text(f"An error occurred: {str(e)}")
-        
+        await message.reply_text(f"An error occurred: {str(e)}")
+
 # Define a command handler for /members
 @Client.on_message(filters.command("members") & filters.group)
-def list_members(client, message):
-    chat_id = message.chat.id
-    members = client.get_chat_members(chat_id)
-    member_list = [member.user.first_name for member in members]
-    client.send_message(chat_id, f"Members in this group: {', '.join(member_list)}")
+async def list_members(client, message):
+    try:
+        chat_id = message.chat.id
+
+        # Check if the sender is the bot's admin
+        if message.from_user.id in ADMINS:
+            members = await client.get_chat_members(chat_id)
+            member_list = [member.user.first_name for member in members]
+            await message.reply(f"Members in this group: {', '.join(member_list)}")
+        else:
+            await message.reply("You are not authorized to use this command.")
+    except Exception as e:
+        await message.reply_text(f"An error occurred: {str(e)}")
+
 
 # Define a command handler for /deletehistory
 @Client.on_message(filters.command("deletehistory") & filters.group & filters.user("ADMINS"))
