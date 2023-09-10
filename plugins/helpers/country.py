@@ -1,12 +1,21 @@
 from countryinfo import CountryInfo
 from pyrogram import filters, Client 
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
-from Script import script
 
 @Client.on_message(filters.command(["country"]))
-async def country_info(bot, update):
-    country = update.text.split(" ", 1)[1]
-    country = CountryInfo(country)
+async def country_info(bot, message):
+    # Get the text after the /country command
+    input_text = message.text.split(" ", 1)[1]
+    
+    try:
+        country = CountryInfo(input_text)
+    except Exception as error:
+        await message.reply_text(
+            text=f"Error: {error}",
+            quote=True
+        )
+        return
+
     info = f"""𝖢𝗈𝗎𝗇𝗍𝗋𝗒 𝖨𝗇𝖿𝗈𝗋𝗆𝖺𝗍𝗂𝗈𝗇
 𝖭𝖺𝗆𝖾 : {country.name()}
 𝖭𝖺𝗍𝗂𝗏𝖾 𝖭𝖺𝗆𝖾 : {country.native_name()}
@@ -20,24 +29,28 @@ Population : <code>{country.population()}</code>
 𝖱𝖾𝗌𝗂𝖽𝖾𝗇𝖼𝖾 : {country.demonym()}
 𝖳𝗂𝗆𝖾𝗓𝗈𝗇𝖾 : <code>{country.timezones()}</code>
 """
-    country_name = country.name()
-    country_name = country_name.replace(" ", "+")
-    buttons=[[
-      InlineKeyboardButton("ᴡɪᴋɪᴘᴇᴅɪᴀ", url=f"{country.wiki()}"),
-      InlineKeyboardButton("ɢᴏᴏɢʟᴇ", url=f"https://www.google.com/search?q={country_name}")
-    ],[
-       InlineKeyboardButton('ᴄʟᴏsᴇ', callback_data='close_data')
-    ]]
+
+    country_name = country.name().replace(" ", "+")
+    
+    buttons = [
+        [
+            InlineKeyboardButton("ᴡɪᴋɪᴘᴇᴅɪᴀ", url=f"{country.wiki()}"),
+            InlineKeyboardButton("ɢᴏᴏɢʟᴇ", url=f"https://www.google.com/search?q={country_name}")
+        ],
+        [
+            InlineKeyboardButton('ᴄʟᴏsᴇ', callback_data='close_data')
+        ]
+    ]
+    
     try:
-        await update.reply_photo(
+        await message.reply_photo(
             photo="https://telegra.ph/file/834750cfadc32b359b40c.jpg",
             caption=info,
             reply_markup=InlineKeyboardMarkup(buttons),
             quote=True
         )
     except Exception as error:
-        await update.reply_text(
-            text=error,
-            disable_web_page_preview=True,
+        await message.reply_text(
+            text=f"Error: {error}",
             quote=True
         )
