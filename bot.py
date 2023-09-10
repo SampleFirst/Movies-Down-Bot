@@ -1,27 +1,42 @@
+# Standard Library Imports
+import asyncio
 import logging
 import logging.config
-import asyncio
+import pytz
+from datetime import date, datetime
+from typing import Union, Optional, AsyncGenerator
 
-# Get logging configurations
+# Third-Party Library Imports
+from aiohttp import web
+from pyrogram import Client, __version__, filters, types
+from pyrogram.raw.all import layer
+
+# Database Imports
+from database.ia_filterdb import Media
+from database.users_chats_db import db
+
+# Local Imports
+from utils import temp
+from plugins import web_server
+from Script import script
+
+# Environment Variables
+from info import(
+    SESSION,
+    API_ID,
+    API_HASH,
+    BOT_TOKEN,
+    LOG_STR,
+    LOG_CHANNEL,
+    PORT
+)
+
+# Logging Configuration
 logging.config.fileConfig('logging.conf')
 logging.getLogger().setLevel(logging.INFO)
 logging.getLogger("pyrogram").setLevel(logging.ERROR)
 logging.getLogger("imdbpy").setLevel(logging.ERROR)
 
-
-from pyrogram import Client, __version__, filters
-from pyrogram.raw.all import layer
-from database.ia_filterdb import Media
-from database.users_chats_db import db
-from info import SESSION, API_ID, API_HASH, BOT_TOKEN, LOG_STR, LOG_CHANNEL, PORT
-from utils import temp
-from typing import Union, Optional, AsyncGenerator
-from pyrogram import types
-from Script import script 
-from datetime import date, datetime 
-import pytz
-from aiohttp import web
-from plugins import web_server
 
 class Bot(Client):
 
@@ -83,7 +98,6 @@ class Bot(Client):
     async def stop(self, *args):
         await super().stop()
         logging.info("Bot stopped. Bye.")
-
     
     async def iter_messages(
         self,
@@ -123,9 +137,6 @@ class Bot(Client):
             for message in messages:
                 yield message
                 current += 1
-
-
-
 
 app = Bot()
 app.run()
