@@ -1,11 +1,9 @@
-# made by Devil-Botz
-
-from pyrogram import Client, filters, types, enums
+from pyrogram import Client, filters, enums
 import requests
 from info import *
 
 
-@Client.on_message(filters.command("repo") & filters.chat(SUPPORT_CHAT_ID))
+@Client.on_message(filters.command("repo") & filters.user(ADMINS))
 async def repo(client, message):
     # Split the message text and check if there are enough elements
     command_parts = message.text.split("/repo ", 1)
@@ -35,15 +33,14 @@ async def repo(client, message):
                     f"Fork Count: {fork_count}"
                 )
 
-                await client.send_message(
-                    message.chat.id,
-                    text=message_text,
+                await message.reply_text(
+                    message_text,
                     disable_web_page_preview=True,
                     parse_mode=enums.ParseMode.HTML  # Enable HTML formatting
                 )
             else:
-                await client.send_message(message.chat.id, "No matching repositories found.")
+                await message.reply_text("No matching repositories found.")
         else:
-            await client.send_message(message.chat.id, "An error occurred while fetching data.")
+            await message.reply_text("An error occurred while fetching data.")
     else:
-        await client.send_message(message.chat.id, "Invalid usage. Provide a query after /repo command.")
+        await message.reply_text("Invalid usage. Provide a query after /repo command.")
