@@ -110,8 +110,8 @@ APPROVED = environ.get("APPROVED_WELCOME", "on").lower()
 # Other Channels
 SUPPORT_CHAT_ID = int(support_chat_id) if support_chat_id and id_pattern.search(support_chat_id) else None
 DELETE_CHANNELS = [int(dch) if id_pattern.search(dch) else dch for dch in environ.get('DELETE_CHANNELS', '0').split()]
-MAIN_CHANNEL = environ.get('MAIN_CHANNEL', "https://t.me/+1iWSCrpI_083MDM1")
-FILE_FORWARD = environ.get('FILE_FORWARD', "https://t.me/+1dbVg9pA2GphZmI1")
+MAIN_CHANNEL = environ.get('MAIN_CHANNEL', "https://t.me/+BKZsRSZO-wQ3ZDJl")
+FILE_FORWARD = environ.get('FILE_FORWARD', "https://t.me/+IASDysIDZG5kMDhl")
 FILE_CHANNEL = int(environ.get('FILE_CHANNEL', 0))
 LOG_CHANNEL = int(environ.get('LOG_CHANNEL', 0))
 SUPPORT_CHAT = environ.get('SUPPORT_CHAT', 'Elsasupportgp')
