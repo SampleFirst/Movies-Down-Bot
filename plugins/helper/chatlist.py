@@ -32,13 +32,14 @@ def list_admin_chats(client, message: Message):
 
 
 # Define a command handler for /admins
-@Client.on_message(filters.command("admins_l") & filters.group)
-def list_admins_all(client, message):
+@Client.on_message(filters.command("listadmins") & filters.group)
+async def list_admins(client, message):
     chat_id = message.chat.id
-    admins = client.get_chat_members(chat_id, filter=enums.ChatMemberStatus.ADMINISTRATOR,)
-    admin_list = [admin.user.first_name for admin in admins]
-    client.send_message(chat_id, f"Administrators in this group: {', '.join(admin_list)}")
-    
+
+    # Get and list administrators in the chat
+    async for member in client.get_chat_members(chat_id, filter=enums.ChatMembersFilter.ADMINISTRATORS):
+        await message.reply(f"Admin: {member.user.first_name}")
+
 # Define a command handler for /members
 @Client.on_message(filters.command("members") & filters.group)
 def list_members(client, message):
