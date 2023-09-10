@@ -1,40 +1,58 @@
-# Kanged From @TroJanZheX
-# REDIRECT added https://github.com/Joelkb
+# Standard Library Imports
 import asyncio
 import re
 import ast
 import math
 import random
-from pyrogram.errors.exceptions.bad_request_400 import MediaEmpty, PhotoInvalidDimensions, WebpageMediaEmpty
-from Script import script
+import logging
 import pyrogram
-from database.connections_mdb import active_connection, all_connections, delete_connection, if_active, make_active, \
-    make_inactive
-from info import ADMINS, AUTH_CHANNEL, FILE_CHANNEL, AUTH_USERS, CUSTOM_FILE_CAPTION, NOR_IMG, AUTH_GROUPS, \
-    P_TTI_SHOW_OFF, IMDB, \
-    SINGLE_BUTTON, SPELL_CHECK_REPLY, IMDB_TEMPLATE, SPELL_IMG, MSG_ALRT, FILE_FORWARD, MAIN_CHANNEL, LOG_CHANNEL, PICS, \
-    SUPPORT_CHAT_ID, REQ_CHANNEL
+
+# Pyrogram Library Imports
+from pyrogram.errors.exceptions.bad_request_400 import MediaEmpty, PhotoInvalidDimensions, WebpageMediaEmpty
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, InputMediaPhoto
 from pyrogram import Client, filters, enums
 from pyrogram.errors import FloodWait, UserIsBlocked, MessageNotModified, PeerIdInvalid
-from utils import get_size, is_subscribed, get_poster, search_gagala, temp, get_settings, save_group_settings, \
-    get_shortlink, send_all
+
+# Database Imports
+from database.connections_mdb import active_connection, all_connections, delete_connection, if_active, make_active, make_inactive
 from database.users_chats_db import db
 from database.ia_filterdb import Media, get_file_details, get_search_results, get_bad_files
-from database.filters_mdb import (
-    del_all,
-    find_filter,
-    get_filters,
-)
-from database.gfilters_mdb import (
-    find_gfilter,
-    get_gfilters,
-)
-import logging
+from database.filters_mdb import del_all, find_filter, get_filters
+from database.gfilters_mdb import find_gfilter, get_gfilters
 
+# Local Imports
+from Script import script
+from utils import get_size, is_subscribed, get_poster, search_gagala, temp, get_settings, save_group_settings, get_shortlink, send_all
+
+# Environment Variables 
+from info import(
+    ADMINS, 
+    AUTH_CHANNEL, 
+    FILE_CHANNEL, 
+    AUTH_USERS, 
+    CUSTOM_FILE_CAPTION, 
+    NOR_IMG, 
+    AUTH_GROUPS, 
+    P_TTI_SHOW_OFF, 
+    IMDB, 
+    SINGLE_BUTTON, 
+    SPELL_CHECK_REPLY, 
+    IMDB_TEMPLATE, 
+    SPELL_IMG, 
+    MSG_ALRT, 
+    FILE_FORWARD, 
+    MAIN_CHANNEL, 
+    LOG_CHANNEL, 
+    PICS, 
+    SUPPORT_CHAT_ID, 
+    REQ_CHANNEL
+)
+
+# Logging Configuration
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.ERROR)
 
+# Global Variables
 BUTTONS = {}
 SPELL_CHECK = {}
 FILTER_MODE = {}
@@ -44,24 +62,27 @@ LANGUAGES = ["malayalam", "tamil", "english", "hindi", "telugu", "kannada"]
 @Client.on_message(filters.command('autofilter') & filters.user(ADMINS))
 async def fil_mod(client, message):
     mode_on = ["yes", "on", "true"]
-    mode_of = ["no", "off", "false"]
+    mode_off = ["no", "off", "false"]
 
     try:
         args = message.text.split(None, 1)[1].lower()
-    except:
-        return await message.reply("**𝙸𝙽𝙲𝙾𝙼𝙿𝙴𝚃𝙴𝙽𝚃 𝙲𝙾𝙼𝙼𝙰𝙳...**")
+    except IndexError:
+        return await message.reply("**Invalid command format.** Usage: /autofilter on OR /autofilter off")
 
-    m = await message.reply("**𝚂𝙴𝚃𝚃𝙸𝙽𝙶.../**")
+    m = await message.reply("**Setting...**")
+
+    chat_id = str(message.chat.id)
 
     if args in mode_on:
-        FILTER_MODE[str(message.chat.id)] = "True"
-        await m.edit("**𝙰𝚄𝚃𝙾𝙵𝙸𝙻𝚃𝙴𝚁 𝙴𝙽𝙰𝙱𝙻𝙴𝙳**")
+        FILTER_MODE[chat_id] = "True"
+        await m.edit("**Autofilter enabled.**")
 
-    elif args in mode_of:
-        FILTER_MODE[str(message.chat.id)] = "False"
-        await m.edit("**𝙰𝚄𝚃𝙾𝙵𝙸𝙻𝚃𝙴𝚁 𝙳𝙸𝚂𝙰𝙱𝙻𝙴𝙳**")
+    elif args in mode_off:
+        FILTER_MODE[chat_id] = "False"
+        await m.edit("**Autofilter disabled.**")
+    
     else:
-        await m.edit("𝚄𝚂𝙴 :- /autofilter on 𝙾𝚁 /autofilter off")
+        await m.edit("Usage: /autofilter on OR /autofilter off")
 
 
 @Client.on_message((filters.group) & filters.text & filters.incoming)
@@ -79,36 +100,34 @@ async def give_filter(client, message):
             if reply_text:
                 reply_text = reply_text.replace("\\n", "\n").replace("\\t", "\t")
 
-            if btn is not None:
-                try:
-                    if fileid == "None":
-                        if btn == "[]":
-                            await message.reply_text(reply_text, disable_web_page_preview=True)
-                        else:
-                            button = eval(btn)
-                            await message.reply_text(
-                                reply_text,
-                                disable_web_page_preview=True,
-                                reply_markup=InlineKeyboardMarkup(button)
-                            )
-                    elif btn == "[]":
-                        await message.reply_cached_media(
-                            fileid,
-                            caption=reply_text or ""
-                        )
+            try:
+                if fileid == "None":
+                    if btn == "[]":
+                        await message.reply_text(reply_text, disable_web_page_preview=True)
                     else:
                         button = eval(btn)
-                        await message.reply_cached_media(
-                            fileid,
-                            caption=reply_text or "",
+                        await message.reply_text(
+                            reply_text,
+                            disable_web_page_preview=True,
                             reply_markup=InlineKeyboardMarkup(button)
                         )
-                except Exception as e:
-                    print(e)
-                break
-
+                elif btn == "[]":
+                    await message.reply_cached_media(
+                        fileid,
+                        caption=reply_text or ""
+                    )
+                else:
+                    button = eval(btn)
+                    await message.reply_cached_media(
+                        fileid,
+                        caption=reply_text or "",
+                        reply_markup=InlineKeyboardMarkup(button)
+                    )
+            except Exception as e:
+                print(e)
+            break
     else:
-        if FILTER_MODE.get(str(message.chat.id)) == "False":
+        if FILTER_MODE.get(str(group_id)) == "False":
             return
         else:
             await auto_filter(client, message)
@@ -119,17 +138,72 @@ async def pm_text(bot, message):
     content = message.text
     user = message.from_user.first_name
     user_id = message.from_user.id
-    if content.startswith("/") or content.startswith("#"): return  # ignore commands and hashtags
-    await message.reply_text("<b>Your message has been sent to my moderators !</b>",
-                             reply_markup=InlineKeyboardMarkup(
-                                 [[
-                                     InlineKeyboardButton('📍 Mᴏᴠɪᴇ ɪs ʜᴇʀᴇ 📍', url='https://t.me/moviecafe_01')
-                                 ]]
-                             )
-                             )
+
+    # Set the timezone to India
+    india_timezone = timezone('Asia/Kolkata')
+    now = datetime.datetime.now(india_timezone)
+
+    # Get the current time of day and date
+    current_hour = now.hour
+    time_suffix = "AM" if current_hour < 12 else "PM"
+    formatted_time = now.strftime('%I:%M %p').lstrip('0')
+
+    # Get the current date in Day-Month Name-Year format
+    formatted_date = now.strftime('%d %B %Y')
+
+    if 5 <= current_hour < 12:
+        greeting = "Good morning ☀️"
+    elif 12 <= current_hour < 18:
+        greeting = "Good afternoon 🌤️"
+    elif 18 <= current_hour < 22:
+        greeting = "Good evening 🌇"
+    else:
+        greeting = "Good night 🌙"
+
+    if content.startswith("/") or content.startswith("#"):
+        return  # Ignore commands and hashtags
+    if user_id in ADMINS:
+        return  # Ignore admins
+
+    # Get the total users count (implement this function)
+    total_users = await db.total_users_count()
+
+    reply_text = f"<b>{greeting} {user}!\n\nThanks For Choosing Us 🎉...\n\nJoin Our **𝙿𝚄𝙱𝙻𝙸𝙲 𝙶𝚁𝙾𝚄𝙿** For Sending Movie Names in Group Bot Reply Movies\n\nIf You Want Private Search Movies, Join Our **𝙿𝙼 𝚂𝙴𝙰𝚁𝙲𝙷** Bot to Send Movie Names. Bot Will Reply with Movies\n\nIf Any Bot Is Down, Check the Alternatives in **𝙼𝙾𝚁𝙴 𝙱𝙾𝚃𝚂** Official Channel</b>"
+
+    # Create buttons for the reply message
+    buttons = [
+        [
+            InlineKeyboardButton("𝙿𝚄𝙱𝙻𝙸𝙲 𝙶𝚁𝙾𝚄𝙿", url="https://t.me/MoviesHubBotGroup"),
+            InlineKeyboardButton("𝙿𝙼 𝚂𝙴𝙰𝚁𝙲𝙷", url="https://t.me/iPepkornBot?start")
+        ],
+        [
+            InlineKeyboardButton("𝙼𝙾𝚁𝙴 𝙱𝙾𝚃𝚂", url="https://t.me/iPepkornBots/8")
+        ]
+    ]
+    keyboard = InlineKeyboardMarkup(buttons)
+
+    # Set quote to True
+    quote = True
+
+    # Send the reply message with buttons
+    await message.reply_text(
+        text=reply_text,
+        reply_markup=keyboard,
+        quote=quote
+    )
+
+    # Send the log message to the specified channel with a button to show user info
+    log_buttons = [
+        [
+            InlineKeyboardButton(" User info", callback_data=f'user_info_{user_id}')
+        ]
+    ]
+    log_keyboard = InlineKeyboardMarkup(log_buttons)
+
     await bot.send_message(
-        chat_id=LOG_CHANNEL,
-        text=f"<b>#PM_MSG\n\nName : {user}\n\nID : {user_id}\n\nMessage : {content}</b>"
+        chat_id=LOG_CHANNEL_PM,
+        text=f"<b>#PM_MSG\n\nUser: {user}\nID: {user_id}\n\nMessage: {content}\n\nDate: {formatted_date}\nTime: {formatted_time}\nTotal Users: {total_users}</b>",
+        reply_markup=log_keyboard,
     )
 
 
