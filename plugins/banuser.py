@@ -1,7 +1,7 @@
 import pyrogram
 from pyrogram import filters
 from pyrogram import Client
-from pyrogram.types import Message
+from pyrogram.types import Message, Chat
 import re
 from info import ADMINS 
 
@@ -53,7 +53,7 @@ async def delete_and_warn(client, message: Message):
         links_warnings[user_id] += 1
         client.send_message(message.chat.id, f"Warning: Please do not send links ({links_warnings[user_id]}/3)")
         if links_warnings[user_id] >= 3:
-            client.kick_chat_member(message.chat.id, user_id)
+            await client.kick_chat_member(message.chat.id, user_id)
             del links_warnings[user_id]
         return True
 
@@ -63,7 +63,7 @@ async def delete_and_warn(client, message: Message):
         mention_warnings[user_id] += 1
         client.send_message(message.chat.id, f"Warning: Please do not mention usernames ({mention_warnings[user_id]}/3)")
         if mention_warnings[user_id] >= 3:
-            client.kick_chat_member(message.chat.id, user_id)
+            await client.kick_chat_member(message.chat.id, user_id)
             del mention_warnings[user_id]
         return True
 
@@ -73,6 +73,6 @@ async def delete_and_warn(client, message: Message):
         word_warnings[user_id] += 1
         client.send_message(message.chat.id, f"Warning: Please do not use banned words ({word_warnings[user_id]}/3)")
         if word_warnings[user_id] >= 3:
-            client.kick_chat_member(message.chat.id, user_id)
+            await client.kick_chat_member(message.chat.id, user_id)
             del word_warnings[user_id]
         return True
