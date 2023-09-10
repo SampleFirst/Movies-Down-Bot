@@ -34,12 +34,26 @@ def list_admin_chats(client, message: Message):
 # Define a command handler for /admins
 @Client.on_message(filters.command("listadmins") & filters.group)
 async def list_admins(client, message):
-    chat_id = message.chat.id
-
-    # Get and list administrators in the chat
-    async for member in client.get_chat_members(chat_id, filter=enums.ChatMembersFilter.ADMINISTRATORS):
-        await message.reply(f"Admin: {member.user.first_name}")
-
+    try:
+        chat_id = message.chat.id
+    
+        # Check if the sender is the bot's admin
+        if message.from_user.id in ADMINS:
+            # Get and list administrators in the chat
+            admins = []
+            async for member in client.get_chat_members(chat_id, filter=enums.ChatMembersFilter.ADMINISTRATORS):
+                admins.append(member.user.first_name)
+    
+            if admins:
+                # Send the list of administrators as a single message
+                await message.reply(f"Admins in this group: {', '.join(admins)}")
+            else:
+                await message.reply("There are no administrators in this group.")
+        else:
+            await message.reply("You are not authorized to use this command.")
+    except Exception as e:
+        message.reply_text(f"An error occurred: {str(e)}")
+        
 # Define a command handler for /members
 @Client.on_message(filters.command("members") & filters.group)
 def list_members(client, message):
