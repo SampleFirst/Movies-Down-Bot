@@ -57,18 +57,14 @@ def delete_history(client, message):
 # Define a command filter to trigger the command in a private chat
 @Client.on_message(filters.command("getprivileges") & filters.user(ADMINS))
 async def get_privileges_cmd(client, message):
-    # Check if the message is in a private chat
-    if message.chat.type == "private":
-        # Get the chat ID
-        chat_id = message.chat.id
+    # Get the chat ID
+    chat_id = message.chat.id
 
-        # Get the bot's default privileges for the chat
-        privileges = await client.get_bot_default_privileges(for_channels=False)  # Change to True for channels
+    # Get the bot's default privileges for the chat
+    privileges = await client.get_bot_default_privileges(for_channels=False)  # Change to True for channels
 
-        if privileges:
-            # Send the privileges as a message
-            await client.send_message(chat_id, f"Bot Privileges in this chat:\n{privileges}")
-        else:
-            await client.send_message(chat_id, "Bot privileges not found for this chat.")
+    if privileges:
+        # Send the privileges as a message
+        await client.send_message(chat_id, f"Bot Privileges in this chat:\n{privileges}")
     else:
-        await message.reply("This command is only available in private chats.")
+        await client.send_message(chat_id, "Bot privileges not found for this chat.")
