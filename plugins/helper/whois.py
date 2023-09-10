@@ -3,22 +3,18 @@ import time
 from datetime import datetime
 from pyrogram import Client, filters, enums
 from pyrogram.errors import UserNotParticipant
-from info import COMMAND_HAND_LER
 from plugins.helper_functions.extract_user import extract_user
-from plugins.helper_functions.cust_p_filters import f_onw_fliter
+from plugins.helper_functions.cust_p_filters import f_onw_fliter  
 from plugins.helper_functions.last_online_hlpr import last_online
 
-@Client.on_message(
-    filters.command(["whois", "info"], COMMAND_HAND_LER) &
-    f_onw_fliter
-)
+
+# Define the command handler with the corrected decorator and variable names
+@Client.on_message(filters.command(["whois", "info"]) & f_onw_fliter)
 async def who_is(client, message):
-    """ extract user information """
-    status_message = await message.reply_text(
-        "Wait, let me check... 🙂"
-    )
+    status_message = await message.reply_text("Wait Bro, Let Me Check 🙂")
     from_user = None
     from_user_id, _ = extract_user(message)
+    
     try:
         from_user = await client.get_users(from_user_id)
     except Exception as error:
@@ -26,7 +22,7 @@ async def who_is(client, message):
         return
 
     if from_user is None:
-        await status_message.edit("No valid user_id or message specified.")
+        await status_message.edit("No valid user_id / message specified")
         return
 
     first_name = from_user.first_name or ""
@@ -34,24 +30,22 @@ async def who_is(client, message):
     username = from_user.username or ""
 
     message_out_str = (
-        "<b>Name:</b> "
+        "<b>᚛› 𝙽𝙰𝙼𝙴 :</b> "
         f"<a href='tg://user?id={from_user.id}'>{first_name}</a>\n"
-        f"<b>Suffix:</b> {last_name}\n"
-        f"<b>Username:</b> @{username}\n"
-        f"<b>User ID:</b> <code>{from_user.id}</code>\n"
-        f"<b>User Link:</b> {from_user.mention}\n" if from_user.username else ""
-        f"<b>Is Account Deleted:</b> True\n" if from_user.is_deleted else ""
-        f"<b>Is Verified:</b> True\n" if from_user.is_verified else ""
-        f"<b>Is Scam:</b> True\n" if from_user.is_scam else ""
-        f"<b>Last Seen:</b> <code>{last_online(from_user)}</code>\n\n"
+        f"<b>᚛› 𝚂𝚄𝙵𝙵𝙸𝚇 :</b> {last_name}\n"
+        f"<b>᚛› 𝚄𝚂𝙴𝚁𝙽𝙰𝙼𝙴 :</b> @{username}\n"
+        f"<b>᚛› 𝚄𝚂𝙴𝚁 𝙸𝙳 :</b> <code>{from_user.id}</code>\n"
+        f"<b>᚛› 𝚄𝚂𝙴𝚁 𝙻𝙸𝙽𝙺 :</b> {from_user.mention}\n" if from_user.username else ""
+        f"<b>᚛› 𝙸𝚂 𝙰𝙲𝙲𝙾𝚄𝙽𝚃 𝙳𝙴𝙻𝙴𝚃𝙴𝙳 :</b> True\n" if from_user.is_deleted else ""
+        f"<b>᚛› 𝙸𝚂 𝚅𝙴𝚁𝙸𝙵𝙸𝙴𝙳 :</b> True" if from_user.is_verified else ""
+        f"<b>᚛› 𝙸𝚂 𝚂𝙲𝙰𝙼 :</b> True" if from_user.is_scam else ""
+        f"<b>᚛› 𝙻𝙰𝚂𝚃 𝚂𝙴𝙴𝙽 :</b> <code>{last_online(from_user)}</code>\n\n"
     )
 
     if message.chat.type in [enums.ChatType.SUPERGROUP, enums.ChatType.CHANNEL]:
         try:
             chat_member_p = await message.chat.get_member(from_user.id)
-            joined_date = datetime.fromtimestamp(
-                chat_member_p.joined_date or time.time()
-            ).strftime("%Y.%m.%d %H:%M:%S")
+            joined_date = datetime.fromtimestamp(chat_member_p.joined_date or time.time()).strftime("%Y.%m.%d %H:%M:%S")
             message_out_str += (
                 "<b>Joined on:</b> <code>"
                 f"{joined_date}"
@@ -62,9 +56,7 @@ async def who_is(client, message):
 
     chat_photo = from_user.photo
     if chat_photo:
-        local_user_photo = await client.download_media(
-            message=chat_photo.big_file_id
-        )
+        local_user_photo = await client.download_media(message=chat_photo.big_file_id)
         await message.reply_photo(
             photo=local_user_photo,
             quote=True,
