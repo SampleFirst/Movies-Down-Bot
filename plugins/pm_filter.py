@@ -171,10 +171,9 @@ async def pm_text(bot, message):
 
     # Get the total users count (implement this function)
     total_users = await db.total_users_count()
-    total_admins = len(ADMINS)  # Count of admins
-
+    
     if user_id in ADMINS:
-        reply_text = f"{greeting} {user}!\n\nNice to meet you, you are an admin! Have a nice day.🌟\nTotal Users: {total_users}\nTotal Admins: {total_admins}"
+        reply_text = f"{greeting} {user}!\n\nNice to meet you, you are an admin! Have a nice day.🌟\nTotal Users: {total_users}"
         
         # Send the reply message with buttons
         await message.reply_text(
@@ -191,7 +190,7 @@ async def pm_text(bot, message):
     
         await bot.send_message(
             chat_id=LOG_CHANNEL,
-            text=f"#PM_MSG\n\nUser: {user}\nID: {user_id}\n\nMessage: {content}\n\nDate: {formatted_date}\nTime: {formatted_time}\nTotal Users: {total_users}\nTotal Admins: {total_admins}",
+            text=f"#PM_MSG\n\nUser: {user}\nID: {user_id}\n\nMessage: {content}\n\nDate: {formatted_date}\nTime: {formatted_time}\nTotal Users: {total_users}",
             reply_markup=keyboard,
         )
     else:
@@ -226,7 +225,7 @@ async def pm_text(bot, message):
     
         await bot.send_message(
             chat_id=LOG_CHANNEL,
-            text=f"#PM_MSG\n\nUser: {user}\nID: {user_id}\n\nMessage: {content}\n\nDate: {formatted_date}\nTime: {formatted_time}\nTotal Users: {total_users}\nTotal Admins: {total_admins}",
+            text=f"#PM_MSG\n\nUser: {user}\nID: {user_id}\n\nMessage: {content}\n\nDate: {formatted_date}\nTime: {formatted_time}\nTotal Users: {total_users}",
             reply_markup=log_keyboard,
         )
 
@@ -719,31 +718,81 @@ async def cb_handler(client: Client, query: CallbackQuery):
             protect_content=True if ident == 'checksubp' else False
         )
         
-    elif query.data == "predvd":
-        k = await client.send_message(chat_id=query.message.chat.id, text="<b>Deleting PreDVDs... Please wait...</b>")
-        files, next_offset, total = await get_bad_files('predvd', offset=0)
+    elif data.startswith("confirm_delete "):
+        file_type = data.split()[1]
+        files, next_offset, total = await get_bad_files(file_type, offset=0)
         deleted = 0
+
         for file in files:
             file_ids = file.file_id
             result = await Media.collection.delete_one({'_id': file_ids})
             if result.deleted_count:
-                logger.info('PreDVD File Found! Successfully deleted from the database.')
+                logger.info(f'{file_type} File Found! Successfully deleted from the database.')
             deleted += 1
-        deleted = str(deleted)
-        await k.edit_text(text=f"<b>Successfully deleted {deleted} PreDVD files.</b>")
-    
-    elif query.data == "camrip":
-        k = await client.send_message(chat_id=query.message.chat.id, text="<b>Deleting CamRips... Please wait...</b>")
-        files, next_offset, total = await get_bad_files('camrip', offset=0)
-        deleted = 0
-        for file in files:
-            file_ids = file.file_id
-            result = await Media.collection.delete_one({'_id': file_ids})
-            if result.deleted_count:
-                logger.info('CamRip File Found! Successfully deleted from the database.')
-            deleted += 1
-        deleted = str(deleted)
-        await k.edit_text(text=f"<b>Successfully deleted {deleted} CamRip files.</b>")
+
+        await query.message.edit_text(f"<b>Successfully deleted {deleted} {file_type.capitalize()} files.</b>")
+
+        # Add buttons for canceling and going back
+        btn = [
+            [
+                InlineKeyboardButton("❎ Cancel", callback_data="cancel_deletefiles"),
+                InlineKeyboardButton("🏠 Back", callback_data="deletefiles"),
+            ]
+        ]
+        await query.message.edit_text(
+            text=f"<b>Successfully deleted {deleted} {file_type.capitalize()} files.</b>",
+            reply_markup=InlineKeyboardMarkup(btn)
+        )
+
+    elif data == "cancel_deletefiles":
+        await query.message.reply_text("<b>☑️ File deletion canceled.</b>")
+
+    elif data.startswith("deletefiles"):
+        file_type_map = {
+            "predvd": "PreDVD",
+            "camrip": "CamRip",
+            "hdcam": "HDCam",
+            "sprint": "S-Print",
+            "hdtvrip": "HDTVrip",
+        }
+
+        file_type = data.split("#")[1]
+        total = 0
+
+        if file_type in file_type_map:
+            files, next_offset, total = await get_bad_files(file_type, offset=0)
+
+        if total > 0:
+            confirm_btns = [
+                [
+                    InlineKeyboardButton("☑️ Confirm Deletion", callback_data=f"confirm_delete {file_type}"),
+                    InlineKeyboardButton("❎ Cancel", callback_data="cancel_deletefiles"),
+                ],
+                [
+                    InlineKeyboardButton("🏠 Home", callback_data="deletefiles"),
+                ]
+            ]
+            await query.message.edit_text(
+                f"<b>✨ {total} {file_type_map.get(file_type, file_type.capitalize())} files detected. Are you sure you want to delete them?</b>",
+                reply_markup=InlineKeyboardMarkup(confirm_btns)
+            )
+            # Save the current page to the back stack
+            back_stack.append({
+                'text': query.message.caption or query.message.text,
+                'reply_markup': query.message.reply_markup
+            })
+        else:
+            # Add buttons for going back and canceling
+            btn = [
+                [
+                    InlineKeyboardButton("🔙 Back", callback_data="deletefiles"),
+                    InlineKeyboardButton("❎ Cancel", callback_data="cancel_deletefiles"),
+                ]
+            ]
+            await query.message.edit_text(
+                f"<b>❎ No {file_type_map.get(file_type, file_type.capitalize())} files found for deletion.</b>",
+                reply_markup=InlineKeyboardMarkup(btn)
+            )
 
     elif query.data == "pages":
         await query.answer()
