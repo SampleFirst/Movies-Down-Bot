@@ -88,8 +88,8 @@ DOWNLOAD_LOCATION = environ.get("DOWNLOAD_LOCATION", "./DOWNLOADS/AudioBoT/")
 # Fsub
 auth_channel = environ.get('AUTH_CHANNEL')
 AUTH_CHANNEL = int(auth_channel) if auth_channel and id_pattern.search(auth_channel) else None
-req_channel = environ.get("REQ_CHANNEL", True)
-REQ_CHANNEL = int(req_channel) if req_channel and id_pattern.search(req_channel) else False
+req_channel = environ.get('REQ_CHANNEL')
+REQ_CHANNEL = int(req_channel) if req_channel and id_pattern.search(req_channel) else None
 JOIN_REQS_DB = environ.get("JOIN_REQS_DB", DATABASE_URI)
 
 # URL links
