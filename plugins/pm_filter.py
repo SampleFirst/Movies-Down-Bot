@@ -162,8 +162,6 @@ async def pm_text(bot, message):
 
     if content.startswith("/") or content.startswith("#"):
         return  # Ignore commands and hashtags
-    if user_id in ADMINS:
-        return  # Ignore admins
 
     # Get the total users count (implement this function)
     total_users = await db.total_users_count()
