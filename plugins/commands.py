@@ -19,7 +19,7 @@ from database.connections_mdb import active_connection
 
 # Local Imports
 from Script import script
-from utils import get_settings, get_size, is_subscribed, save_group_settings, temp
+from utils import get_settings, get_size, is_subscribed, save_group_settings, remove_group_settings, temp
 
 # Environment Variables
 from info import(
@@ -608,3 +608,19 @@ async def shortlink(bot, message):
     await save_group_settings(grpid, 'is_shortlink', True)
     
     await reply.edit_text(f"<b>Successfully added shortlink API for {title}.\n\nCurrent Shortlink Website: <code>{shortlink_url}</code>\nCurrent API: <code>{api}</code></b>")
+
+@Client.on_message(filters.command("removeshortlink") & filters.user(ADMINS))
+async def removeshortlink(bot, message):
+    chat_type = message.chat.type
+    if chat_type == enums.ChatType.PRIVATE:
+        return await message.reply_text(f"<b>Hey {message.from_user.mention}, This command only works in groups!</b>")
+    
+    grpid = message.chat.id
+    title = message.chat.title
+    
+    await remove_group_settings(grpid, 'shortlink')
+    await remove_group_settings(grpid, 'shortlink_api')
+    await remove_group_settings(grpid, 'is_shortlink')
+    
+    await message.reply_text(f"<b>Successfully removed shortlink API for {title}.</b>")
+
