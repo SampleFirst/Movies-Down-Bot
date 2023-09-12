@@ -83,7 +83,7 @@ COMMAND_HANDLER = environ.get("COMMAND_HANDLER", "/")
 # MongoDB information
 DATABASE_URI = environ.get('DATABASE_URI', "")
 DATABASE_NAME = environ.get('DATABASE_NAME', "")
-COLLECTION_NAME = environ.get('COLLECTION_NAME', '')
+COLLECTION_NAME = environ.get('COLLECTION_NAME', 'Telegram_files')
 MONGO_URL = os.environ.get('MONGO_URL', "")
 
 # Downloader
@@ -92,9 +92,6 @@ DOWNLOAD_LOCATION = environ.get("DOWNLOAD_LOCATION", "./DOWNLOADS/AudioBoT/")
 # Fsub
 auth_channel = environ.get('AUTH_CHANNEL')
 AUTH_CHANNEL = int(auth_channel) if auth_channel and id_pattern.search(auth_channel) else None
-req_channel = environ.get('REQ_CHANNEL')
-REQ_CHANNEL = int(req_channel) if req_channel and id_pattern.search(req_channel) else None
-JOIN_REQS_DB = environ.get("JOIN_REQS_DB", DATABASE_URI)
 
 # URL links
 SHORTLINK_URL = environ.get('SHORTLINK_URL', '')
