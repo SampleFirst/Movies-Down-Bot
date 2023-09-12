@@ -6,6 +6,7 @@ import base64
 import logging
 import random
 import asyncio
+import html
 
 # Pyrogram Library Imports
 from pyrogram import Client, filters, enums
