@@ -4,38 +4,34 @@ from pyrogram.errors.exceptions.bad_request_400 import QueryIdInvalid
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, InlineQueryResultCachedDocument, InlineQuery
 from database.ia_filterdb import get_search_results
 from utils import is_subscribed, get_size, temp
-from info import CACHE_TIME, AUTH_USERS, AUTH_CHANNEL, CUSTOM_FILE_CAPTION, REQ_CHANNEL
+from info import CACHE_TIME, AUTH_USERS, AUTH_CHANNEL, CUSTOM_FILE_CAPTION
 
 logger = logging.getLogger(__name__)
 cache_time = 0 if AUTH_USERS or AUTH_CHANNEL else CACHE_TIME
-
 
 async def inline_users(query: InlineQuery):
     if AUTH_USERS:
         if query.from_user and query.from_user.id in AUTH_USERS:
             return True
-        else:
-            return False
     if query.from_user and query.from_user.id not in temp.BANNED_USERS:
         return True
     return False
 
-
 @Client.on_inline_query()
 async def answer(bot, query):
-    """Show search results for given inline query"""
-
+    """Show search results for the given inline query"""
+    
     if not await inline_users(query):
         await query.answer(results=[],
                            cache_time=0,
-                           switch_pm_text='okDa',
-                           switch_pm_parameter="hehe")
+                           switch_pm_text='You are not authorized to use this bot.',
+                           switch_pm_parameter="unauthorized")
         return
 
-    if (AUTH_CHANNEL or REQ_CHANNEL) and not await is_subscribed(bot, query):
+    if AUTH_CHANNEL and not await is_subscribed(bot, query):
         await query.answer(results=[],
                            cache_time=0,
-                           switch_pm_text='You have to subscribe my channel to use the bot',
+                           switch_pm_text='You have to subscribe to my channel to use this bot.',
                            switch_pm_parameter="subscribe")
         return
 
@@ -51,9 +47,9 @@ async def answer(bot, query):
     offset = int(query.offset or 0)
     reply_markup = get_reply_markup(query=string)
     files, next_offset, total = await get_search_results(string,
-                                                         file_type=file_type,
-                                                         max_results=10,
-                                                         offset=offset)
+                                                  file_type=file_type,
+                                                  max_results=10,
+                                                  offset=offset)
 
     for file in files:
         title = file.file_name
@@ -62,8 +58,8 @@ async def answer(bot, query):
         if CUSTOM_FILE_CAPTION:
             try:
                 f_caption = CUSTOM_FILE_CAPTION.format(file_name='' if title is None else title,
-                                                       file_size='' if size is None else size,
-                                                       file_caption='' if f_caption is None else f_caption)
+                                                      file_size='' if size is None else size,
+                                                      file_caption='' if f_caption is None else f_caption)
             except Exception as e:
                 logger.exception(e)
                 f_caption = f_caption
@@ -111,3 +107,4 @@ def get_reply_markup(query):
         ]
     ]
     return InlineKeyboardMarkup(buttons)
+    
