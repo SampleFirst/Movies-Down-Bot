@@ -294,10 +294,14 @@ async def channel_info(bot, message):
             chat = await bot.get_chat(channel)
             text += f'\n👥 **Title:** {chat.title or chat.first_name}'
             text += f'\n🆔 **ID:** {chat.id}'
+            
             if chat.username:
-                text += f'\n🌐 **Username:** @{chat.username}'
-
-        text += f'\n\n**Total:** {len(channels)}'
+                text += f'\n🌐 **Username:** @{chat.username}\n'
+            else:
+                invite_link = await bot.export_chat_invite_link(chat.id)
+                text += f'\n🔗 **Invite Link:** {invite_link}\n'
+                
+        text += f'**Total:** {len(channels)}'
 
         if len(text) < 4096:
             await message.reply(text)
@@ -310,11 +314,12 @@ async def channel_info(bot, message):
     except Exception as e:
         await message.reply(f"An error occurred: {str(e)}")
 
+
 @Client.on_message(filters.command('logs') & filters.user(ADMINS))
 async def log_file(bot, message):
     """Send log file"""
     try:
-        await message.reply_document('TelegramBot.log')
+        await message.reply_document('Log.txt')
     except Exception as e:
         await message.reply(str(e))
         
