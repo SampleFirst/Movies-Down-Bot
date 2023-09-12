@@ -25,7 +25,6 @@ from info import (
     SHORTLINK_URL,
     SHORTLINK_API,
     ADMINS,
-    REQ_CHANNEL,
     MAIN_CHANNEL,
     CUSTOM_FILE_CAPTION,
 )
