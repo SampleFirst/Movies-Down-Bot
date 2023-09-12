@@ -201,10 +201,23 @@ async def get_settings(group_id):
 
 
 async def save_group_settings(group_id, key, value):
-    current = await get_settings(group_id)
-    current[key] = value
-    temp.SETTINGS[group_id] = current
-    await db.update_settings(group_id, current)
+    try:
+        current = await get_settings(group_id)
+        current[key] = value
+        temp.SETTINGS[group_id] = current
+        await db.update_settings(group_id, current)
+    except Exception as e:
+        print(f"Error savings group setting: {e}")
+
+async def remove_group_settings(group_id, key):
+    try:
+        current = await get_settings(group_id)
+        if key in current:
+            del current[key]
+            temp.SETTINGS[group_id] = current
+            await db.update_settings(group_id, current)
+    except Exception as e:
+        print(f"Error removing group setting: {e}")
 
 
 def get_size(size):
