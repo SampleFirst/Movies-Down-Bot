@@ -1,21 +1,19 @@
 import io
 from pyrogram import filters, Client, enums
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from database.gfilters_mdb import(
+from database.gfilters_mdb import (
    add_gfilter,
    get_gfilters,
    delete_gfilter,
    count_gfilters,
    del_allg
 )
-
 from database.connections_mdb import active_connection
 from utils import get_file_id, gfilterparser, split_quotes
 from info import ADMINS
 
-
 @Client.on_message(filters.command(['gfilter', 'addg']) & filters.incoming & filters.user(ADMINS))
-async def addgfilter(client, message):
+async def add_gfilter_command(client, message):
     args = message.text.html.split(None, 1)
 
     if len(args) < 2:
@@ -35,7 +33,6 @@ async def addgfilter(client, message):
         if not reply_text:
             await message.reply_text("You cannot have buttons alone, give some text to go with it!", quote=True)
             return
-
     elif message.reply_to_message and message.reply_to_message.reply_markup:
         try:
             rm = message.reply_to_message.reply_markup
@@ -50,10 +47,9 @@ async def addgfilter(client, message):
             alert = None
         except:
             reply_text = ""
-            btn = "[]" 
+            btn = "[]"
             fileid = None
             alert = None
-
     elif message.reply_to_message and message.reply_to_message.media:
         try:
             msg = get_file_id(message.reply_to_message)
@@ -77,22 +73,20 @@ async def addgfilter(client, message):
     await add_gfilter('gfilters', text, reply_text, btn, fileid, alert)
 
     await message.reply_text(
-        f"GFilter for  `{text}`  added",
+        f"GFilter for `{text}` added",
         quote=True,
         parse_mode=enums.ParseMode.MARKDOWN
     )
 
-
 @Client.on_message(filters.command(['viewgfilters', 'gfilters']) & filters.incoming & filters.user(ADMINS))
-async def get_all_gfilters(client, message):
+async def get_all_gfilters_command(client, message):
     texts = await get_gfilters('gfilters')
     count = await count_gfilters('gfilters')
     if count:
-        gfilterlist = f"Total number of gfilters : {count}\n\n"
+        gfilterlist = f"Total number of gfilters: {count}\n\n"
 
         for text in texts:
-            keywords = " ×  `{}`\n".format(text)
-
+            keywords = f" × `{text}`\n"
             gfilterlist += keywords
 
         if len(gfilterlist) > 4096:
@@ -104,21 +98,21 @@ async def get_all_gfilters(client, message):
                 )
             return
     else:
-        gfilterlist = f"There are no active gfilters."
+        gfilterlist = "There are no active gfilters."
 
     await message.reply_text(
         text=gfilterlist,
         quote=True,
         parse_mode=enums.ParseMode.MARKDOWN
     )
-        
+
 @Client.on_message(filters.command('delg') & filters.incoming & filters.user(ADMINS))
-async def deletegfilter(client, message):
+async def delete_gfilter_command(client, message):
     try:
         cmd, text = message.text.split(" ", 1)
     except:
         await message.reply_text(
-            "<i>Mention the gfiltername which you wanna delete!</i>\n\n"
+            "Mention the gfilter name you want to delete!\n\n"
             "<code>/delg gfiltername</code>\n\n"
             "Use /viewgfilters to view all available gfilters",
             quote=True
@@ -129,20 +123,19 @@ async def deletegfilter(client, message):
 
     await delete_gfilter(message, query, 'gfilters')
 
-
 @Client.on_message(filters.command('delallg') & filters.user(ADMINS))
-async def delallgfill(client, message):
+async def delete_all_gfilters_command(client, message):
     await message.reply_text(
-            f"Do you want to continue??",
-            reply_markup=InlineKeyboardMarkup([
-                [InlineKeyboardButton(text="YES",callback_data="gconforme")],
-                [InlineKeyboardButton(text="CANCEL",callback_data="close_data")]
-            ]),
-            quote=True
-        )
-
+        "Do you want to continue?",
+        reply_markup=InlineKeyboardMarkup([
+            [InlineKeyboardButton(text="YES", callback_data="gconforme")],
+            [InlineKeyboardButton(text="CANCEL", callback_data="close_data")]
+        ]),
+        quote=True
+    )
 
 @Client.on_callback_query(filters.regex("gconforme"))
-async def dellacbd(client, message):
+async def delete_all_gfilters_callback(client, message):
     await del_allg(message.message, 'gfilters')
     return await message.reply("👍 Done")
+    
