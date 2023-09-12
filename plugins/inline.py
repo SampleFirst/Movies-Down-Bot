@@ -24,7 +24,7 @@ async def answer(bot, query):
     if not await inline_users(query):
         await query.answer(results=[],
                            cache_time=0,
-                           switch_pm_text='You are not authorized to use this bot.',
+                           switch_pm_text='You are not authorized to use this inline button bot.',
                            switch_pm_parameter="unauthorized")
         return
 
