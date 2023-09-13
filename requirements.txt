@@ -14,7 +14,7 @@ aiofiles
 ffmpeg-python
 ffmpeg
 youtube_search
-youtube_search_python
+
 youtube-search-python==1.4.6
 yt-dlp
 youtube-dl
@@ -38,4 +38,4 @@ speedtest-cli
 Flask==2.2.2
 gunicorn==20.1.0
 aiohttp==3.8.1
-pip==23.0.1
+pip==23.2.1
