@@ -37,7 +37,6 @@ from info import(
 )
 
 # Enable logging
-logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger(__name__)
 
 # Global Variables
