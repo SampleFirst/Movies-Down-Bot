@@ -1,6 +1,10 @@
 import asyncio
 from datetime import datetime, date
 import pytz
+from database.users_chats_db import db
+from info import LOG_CHANNEL
+from Script import script 
+
 
 async def send_log(self, interval):
     while True:
@@ -9,7 +13,7 @@ async def send_log(self, interval):
         tz = pytz.timezone('Asia/Kolkata')
         now = datetime.now(tz)
         
-        if interval == 'daily' and now.hour == 15 and now.minute == 20:
+        if interval == 'daily' and now.hour == 15 and now.minute == 22:
             # This code will execute at 11:59 PM for daily log
             today = date.today()
             time = now.strftime("%H:%M:%S %p")
