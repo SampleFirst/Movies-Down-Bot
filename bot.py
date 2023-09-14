@@ -60,7 +60,9 @@ class Bot(Client):
         await web.TCPSite(app, bind_address, PORT).start()
 
         # Add a job to send a message daily, weekly, and monthly
-        await send_log(self, interval)
+        await send_log(self, 'daily')
+        await send_log(self, 'weekly')
+        await send_log(self, 'monthly')
         
     async def stop(self, *args):
         await super().stop()
