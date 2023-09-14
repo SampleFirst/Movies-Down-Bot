@@ -112,12 +112,91 @@ async def pm_text(bot, message):
     content = message.text
     user = message.from_user.first_name
     user_id = message.from_user.id
-    if content.startswith("/") or content.startswith("#"): return  # ignore commands and hashtags
-    await message.reply_text("<b>Your message has been sent to my moderators !</b>")
-    await bot.send_message(
-        chat_id=LOG_CHANNEL,
-        text=f"<b>#PM_MSG\n\nName : {user}\n\nID : {user_id}\n\nMessage : {content}</b>"
-    )
+
+    # Set the timezone to India
+    india_timezone = timezone('Asia/Kolkata')
+    now = datetime.datetime.now(india_timezone)
+
+    # Get the current time of day and date
+    current_hour = now.hour
+    time_suffix = "AM" if current_hour < 12 else "PM"
+    formatted_time = now.strftime('%I:%M %p').lstrip('0')
+
+    # Get the current date in Day-Month Name-Year format
+    formatted_date = now.strftime('%d %B %Y')
+
+    if 5 <= current_hour < 12:
+        greeting = "Good morning ☀️"
+    elif 12 <= current_hour < 18:
+        greeting = "Good afternoon 🌤️"
+    elif 18 <= current_hour < 22:
+        greeting = "Good evening 🌇"
+    else:
+        greeting = "Good night 🌙"
+
+    if content.startswith("/") or content.startswith("#"):
+        return  # Ignore commands and hashtags
+
+    # Get the total users count (implement this function)
+    total_users = await db.total_users_count()
+    
+    if user_id in ADMINS:
+        reply_text = f"{greeting} {user}!\n\nNice to meet you, you are an admin! Have a nice day.🌟\nTotal Users: {total_users}"
+        
+        # Send the reply message with buttons
+        await message.reply_text(
+            text=reply_text
+            quote=True
+        )
+
+        # Send the log message to the specified channel with a button to show user info
+        buttons = [
+            [
+                InlineKeyboardButton("User info", callback_data=f'user_info_{user_id}')
+            ]
+        ]
+        keyboard = InlineKeyboardMarkup(buttons)
+    
+        await bot.send_message(
+            chat_id=LOG_CHANNEL,
+            text=f"#PM_MSG\n\nUser: {user}\nID: {user_id}\n\nMessage: {content}\n\nDate: {formatted_date}\nTime: {formatted_time}\nTotal Users: {total_users}\n\n#iPepkorn_Bot\n#pm_iPepkorn_Bot",
+            reply_markup=keyboard,
+        )
+    else:
+        reply_text = f"{greeting} {user}!\n\nThanks For Choosing Us 🎉...\n\nJoin Our **𝙿𝚄𝙱𝙻𝙸𝙲 𝙶𝚁𝙾𝚄𝙿** For Sending Movie Names in Group Bot Reply Movies\n\nIf You Want Private Search Movies, Join Our **𝙿𝙼 𝚂𝙴𝙰𝚁𝙲𝙷** Bot to Send Movie Names. Bot Will Reply with Movies\n\nIf Any Bot Is Down, Check the Alternatives in **𝙼𝙾𝚁𝙴 𝙱𝙾𝚃𝚂** Official Channel"
+    
+        # Create buttons for the reply message
+        buttons = [
+            [
+                InlineKeyboardButton("𝙿𝚄𝙱𝙻𝙸𝙲 𝙶𝚁𝙾𝚄𝙿", url="https://t.me/MoviesHubBotGroup"),
+                InlineKeyboardButton("𝙿𝙼 𝚂𝙴𝙰𝚁𝙲𝙷", url="https://t.me/iPepkornBot?start")
+            ],
+            [
+                InlineKeyboardButton("𝙼𝙾𝚁𝙴 𝙱𝙾𝚃𝚂", url="https://t.me/iPepkornBots/8")
+            ]
+        ]
+        keyboard = InlineKeyboardMarkup(buttons)
+    
+        # Send the reply message with buttons
+        await message.reply_text(
+            text=reply_text,
+            reply_markup=keyboard,
+            quote=True
+        )
+    
+        # Send the log message to the specified channel with a button to show user info
+        log_buttons = [
+            [
+                InlineKeyboardButton("User info", callback_data=f'user_info_{user_id}')
+            ]
+        ]
+        log_keyboard = InlineKeyboardMarkup(log_buttons)
+    
+        await bot.send_message(
+            chat_id=LOG_CHANNEL,
+            text=f"#PM_MSG\n\nUser: {user}\nID: {user_id}\n\nMessage: {content}\n\nDate: {formatted_date}\nTime: {formatted_time}\nTotal Users: {total_users}\n\n#iPepkorn_Bot\n#pm_iPepkorn_Bot",
+            reply_markup=log_keyboard,
+        )
 
 @Client.on_callback_query(filters.regex(r"^next"))
 async def next_page(bot, query):
