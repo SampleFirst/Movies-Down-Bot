@@ -5,7 +5,7 @@ from info import ADMINS
 
 
 # Define your command handler for adding admin in a group
-@Client.on_message(filters.command("addgroupadmin") & filters.group | filters.supergroup)
+@Client.on_message(filters.command("addgroupadmin") & filters.group)
 async def add_group_admin(client, message):
     if message.from_user.id not in ADMINS:
         await message.reply("You must be an admin to use this command.")
@@ -42,3 +42,19 @@ async def add_group_admin(client, message):
             await message.reply(f"The user must be a member of the chat {chat_id} to use this command.")
         except Exception as e:
             await message.reply(f"An error occurred: {str(e)}")
+
+
+# Define a command handler for /checkchattype
+@Client.on_message(filters.command("checkchattype"))
+async def check_chat_type(client, message):
+    chat_id = message.chat.id
+    chat_info = await client.get_chat(chat_id)
+
+    if chat_info.type == "group":
+        await message.reply("This is a Group chat.")
+    elif chat_info.type == "supergroup":
+        await message.reply("This is a Supergroup chat.")
+    elif chat_info.type == "channel":
+        await message.reply("This is a Channel chat.")
+    else:
+        await message.reply("This is an unknown chat type.")
