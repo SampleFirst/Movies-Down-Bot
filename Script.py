@@ -257,6 +257,17 @@ ID - <code>{}</code>
 Name - {}
 Elsa
 """
+
+    REPORT_TXT = """#YESTERDAY_REPORT
+Date = {c}
+Time = {d} (Past Day)
+TotalGroup
+Total Chats = <code>{a}</code>
+
+TodayUsers
+Total Users = <code>{b}</code>
+"""
+    
     FILE_MSG = """
 <b>Hai 👋 {} </b>😍
 
