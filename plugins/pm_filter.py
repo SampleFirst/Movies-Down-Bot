@@ -145,7 +145,7 @@ async def pm_text(bot, message):
         
         # Send the reply message with buttons
         await message.reply_text(
-            text=reply_text
+            text=reply_text,
             quote=True
         )
 
