@@ -258,14 +258,56 @@ Name - {}
 Elsa
 """
 
-    REPORT_TXT = """#YESTERDAY_REPORT
-Date = {c}
-Time = {d} (Past Day)
-TotalGroup
-Total Chats = <code>{a}</code>
+    REPORT_DAY_TXT = """#DAILY_REPORT
+    
+Bot = {a}
+Log Date = {b}
+Log Day = {c}
+Log Time = {d} (Past Day)
 
-TodayUsers
-Total Users = <code>{b}</code>
+Total Users = <code>{e}</code>
+Today users = <code>{g}</code>
+
+Total Chats = <code>{h}</code>
+Today Chats = <code>{i}</code>
+
+#iPepkorn_Bot
+#daily_iPepkorn_Bot
+"""
+
+    REPORT_WEEK_TXT = """#WEEKLY_REPORT
+    
+Bot = {a}
+Log Date = {b}
+Log Day = {c}
+Log Time = {d} (Past Day)
+
+Total Users = <code>{e}</code>
+Today users = <code>{g}</code>
+
+Total Chats = <code>{h}</code>
+Today Chats = <code>{i}</code>
+
+#iPepkorn_Bot
+#daily_iPepkorn_Bot
+"""
+
+    REPORT_MONTH_TXT = """#MONTHLY_REPORT
+    
+Bot = {a}
+Log Date = {b}
+Log Day = {c}
+Log Month = {d}
+Log Time = {e} (Past Day)
+
+Total Users = <code>{g}</code>
+Today users = <code>{h}</code>
+
+Total Chats = <code>{i}</code>
+Today Chats = <code>{j}</code>
+
+#iPepkorn_Bot
+#daily_iPepkorn_Bot
 """
     
     FILE_MSG = """
