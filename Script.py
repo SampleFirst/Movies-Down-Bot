@@ -248,7 +248,7 @@ This module only works for my admins
 <b>᚛› Total Members: <code>{d}</code></b>
 <b>᚛› Total Groups: <code>{j}</code></b>
 <b>᚛› Today Groups: <code>{h}</code></b>
-<b>᚛› Date: <code>{f}</code></b>
+<b>᚛› Date: <code>{k}</code></b>
 <b>᚛› Time: <code>{g}</code></b>
 <b>᚛› Added By: {e}</b>
 By {i}
@@ -264,7 +264,7 @@ Username: @{c}
 Total: {d}
 Today Users: {g}
 Date: <code>{e}</code>
-Time: <code>{f}</code>
+Time: <code>{k}</code>
 By {h}
 #iPepkorn_Bot
 #user_iPepkorn_Bot
