@@ -21,7 +21,7 @@ async def send_log(bot, interval):
             day_name = today.strftime("%A")
 
             await bot.send_message(chat_id=LOG_CHANNEL, text=script.REPORT_DAY_TXT.format(
-                a=temp.U_NAME, 
+                a=temp.B_NAME, 
                 b=today, 
                 c=day_name, 
                 d=time, 
@@ -41,7 +41,7 @@ async def send_log(bot, interval):
             day_name = today.strftime("%A")
 
             await bot.send_message(chat_id=LOG_CHANNEL, text=script.REPORT_WEEK_TXT.format(
-                a=temp.U_NAME, 
+                a=temp.B_NAME, 
                 b=today, 
                 c=day_name, 
                 d=time, 
@@ -62,7 +62,7 @@ async def send_log(bot, interval):
             day_name = today.strftime("%A")
 
             await bot.send_message(chat_id=LOG_CHANNEL, text=script.REPORT_MONTH_TXT.format(
-                a=temp.U_NAME, 
+                a=temp.B_NAME, 
                 b=today, 
                 c=day_name, 
                 d=month, 
