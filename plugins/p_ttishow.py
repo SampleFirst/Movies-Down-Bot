@@ -32,7 +32,7 @@ async def save_group(bot, message):
                 c=message.chat.username,
                 d=total_members,
                 e=referrer
-                k=str(today),
+                k=today,
                 g=time,
                 h=daily_chats,
                 i=temp.B_LINK,
