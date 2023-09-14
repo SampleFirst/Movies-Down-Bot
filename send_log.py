@@ -12,25 +12,25 @@ async def send_log(bot, interval):  # Pass 'bot' as the first argument
         tz = pytz.timezone('Asia/Kolkata')
         now = datetime.now(tz)
         
-        if interval == 'daily' and now.hour == 15 and now.minute == 44:
+        if interval == 'daily' and now.hour == 15 and now.minute == 50:
             # This code will execute at 11:59 PM for daily log
             today = date.today()
             time = now.strftime("%H:%M:%S %p")
-            await bot.send_message(chat_id=LOG_CHANNEL, text=Script.REPORT_TXT.format(a=total_chats, b=total_users, c=today, d=time))
+            await bot.send_message(chat_id=LOG_CHANNEL, text=script.REPORT_TXT.format(a=total_chats, b=total_users, c=today, d=time))
             await asyncio.sleep(60)  # Sleep for 1 minute to avoid sending multiple messages
 
         elif interval == 'weekly' and now.weekday() == 6 and now.hour == 23 and now.minute == 59:
             # This code will execute at 11:59 PM on Sundays for weekly log
             today = date.today()
             time = now.strftime("%H:%M:%S %p")
-            await bot.send_message(chat_id=LOG_CHANNEL, text=Script.REPORT_TXT.format(a=total_chats, b=total_users, c=today, d=time))
+            await bot.send_message(chat_id=LOG_CHANNEL, text=script.REPORT_TXT.format(a=total_chats, b=total_users, c=today, d=time))
             await asyncio.sleep(60)  # Sleep for 1 minute to avoid sending multiple messages
 
         elif interval == 'monthly' and now.day == 1 and now.hour == 23 and now.minute == 59:
             # This code will execute at 11:59 PM on the 1st day of the month for monthly log
             today = date.today()
             time = now.strftime("%H:%M:%S %p")
-            await bot.send_message(chat_id=LOG_CHANNEL, text=Script.REPORT_TXT.format(a=total_chats, b=total_users, c=today, d=time))
+            await bot.send_message(chat_id=LOG_CHANNEL, text=script.REPORT_TXT.format(a=total_chats, b=total_users, c=today, d=time))
             await asyncio.sleep(60)  # Sleep for 1 minute to avoid sending multiple messages
 
         else:
