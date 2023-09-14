@@ -12,7 +12,7 @@ async def send_log(bot, interval):  # Pass 'bot' as the first argument
         tz = pytz.timezone('Asia/Kolkata')
         now = datetime.now(tz)
         
-        if interval == 'daily' and now.hour == 15 and now.minute == 40:
+        if interval == 'daily' and now.hour == 15 and now.minute == 44:
             # This code will execute at 11:59 PM for daily log
             today = date.today()
             time = now.strftime("%H:%M:%S %p")
