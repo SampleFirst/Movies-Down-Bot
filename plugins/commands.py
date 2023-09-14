@@ -51,7 +51,7 @@ async def start(client, message):
                 k=str(today),
                 g=time,
                 h=daily_chats,
-                i=temp.B_LINK,
+                i=temp.B_NAME,
                 j=total_chat
             ))
             await db.add_chat(message.chat.id, message.chat.title, message.chat.username)
@@ -73,7 +73,7 @@ async def start(client, message):
             e=str(today),
             k=time,
             g=daily_users,
-            h=temp.B_LINK
+            h=temp.B_NAME
         ))
     if len(message.command) != 2:
         buttons = [[
