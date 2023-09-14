@@ -22,7 +22,7 @@ async def save_group(bot, message):
         if not await db.get_chat(message.chat.id):
             total_members = await bot.get_chat_members_count(message.chat.id)
             total_chat = await db.total_chat_count() + 1
-            tz = timezone('Asia/Kolkata')  # Corrected import and usage
+            tz = timezone('Asia/Kolkata')
             now = datetime.now(tz)
             time = now.strftime('%I:%M:%S %p')
             today = now.date()
@@ -51,7 +51,7 @@ async def save_group(bot, message):
             sent_message = await message.reply(
                 text=message_text,
                 reply_markup=reply_markup,
-                parse_mode='html'  # Corrected parse_mode
+                parse_mode="HTML"  # Added parse_mode to enable HTML formatting
             )
 
             try:
@@ -72,7 +72,7 @@ async def save_group(bot, message):
         await message.reply_text(
             text=welcome_message,
             reply_markup=reply_markup,
-            parse_mode='html'  # Corrected parse_mode
+            parse_mode="HTML"  # Added parse_mode to enable HTML formatting
         )
     else:
         settings = await get_settings(message.chat.id)
@@ -94,7 +94,6 @@ async def save_group(bot, message):
                             InlineKeyboardButton('Updates Channel', url=MAIN_CHANNEL)
                         ]]
                     ),
-                    parse_mode='html'  # Corrected parse_mode
                 )
 
         if settings["auto_delete"]:
