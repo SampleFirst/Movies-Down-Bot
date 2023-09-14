@@ -1,46 +1,58 @@
-import logging
-from pyrogram.errors import InputUserDeactivated, UserNotParticipant, FloodWait, UserIsBlocked, PeerIdInvalid
-from info import AUTH_CHANNEL, LONG_IMDB_DESCRIPTION, MAX_LIST_ELM, SHORTLINK_URL, SHORTLINK_API
-from imdb import Cinemagoer
-import asyncio
-from pyrogram.types import Message, InlineKeyboardButton
-from pyrogram import enums
-from typing import Union
 import re
 import os
-from datetime import datetime
+import asyncio
+import logging
 from typing import List
-from database.users_chats_db import db
-from bs4 import BeautifulSoup
-import requests
-import aiohttp
+from datetime import datetime
 
+# Third-party Library Imports
+import aiohttp
+import requests
+from typing import Union
+from bs4 import BeautifulSoup
+from pyrogram.errors import InputUserDeactivated, UserNotParticipant, FloodWait, UserIsBlocked, PeerIdInvalid
+from pyrogram import enums
+from pyrogram.types import Message, InlineKeyboardButton
+
+# Local Imports
+from imdb import Cinemagoer
+from database.users_chats_db import db
+from info import(
+    AUTH_CHANNEL, 
+    LONG_IMDB_DESCRIPTION, 
+    MAX_LIST_ELM, 
+    SHORTLINK_URL, 
+    SHORTLINK_API
+)
+
+# Logging Configuration
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
+# Global Variables
 BTN_URL_REGEX = re.compile(
     r"(\[([^\[]+?)\]\((buttonurl|buttonalert):(?:/{0,2})(.+?)(:same)?\))"
 )
 
-imdb = Cinemagoer() 
+imdb = Cinemagoer()
 
 BANNED = {}
 SMART_OPEN = '“'
 SMART_CLOSE = '”'
 START_CHAR = ('\'', '"', SMART_OPEN)
 
-# temp db for banned 
+# Temporary Database for Banned Users
 class temp(object):
     BANNED_USERS = []
     BANNED_CHATS = []
     ME = None
-    CURRENT=int(os.environ.get("SKIP", 2))
+    CURRENT = int(os.environ.get("SKIP", 2))
     CANCEL = False
     MELCOW = {}
     U_NAME = None
     B_NAME = None
     SETTINGS = {}
-
+    
 async def is_subscribed(bot, query):
     try:
         user = await bot.get_chat_member(AUTH_CHANNEL, query.from_user.id)
@@ -132,28 +144,7 @@ async def get_poster(query, bulk=False, id=False, file=None):
         'rating': str(movie.get("rating")),
         'url':f'https://www.imdb.com/title/tt{movieid}'
     }
-# https://github.com/odysseusmax/animated-lamp/blob/2ef4730eb2b5f0596ed6d03e7b05243d93e3415b/bot/utils/broadcast.py#L37
 
-async def broadcast_messages(user_id, message):
-    try:
-        await message.copy(chat_id=user_id)
-        return True, "Success"
-    except FloodWait as e:
-        await asyncio.sleep(e.x)
-        return await broadcast_messages(user_id, message)
-    except InputUserDeactivated:
-        await db.delete_user(int(user_id))
-        logging.info(f"{user_id}-Removed from Database, since deleted account.")
-        return False, "Deleted"
-    except UserIsBlocked:
-        logging.info(f"{user_id} -Blocked the bot.")
-        return False, "Blocked"
-    except PeerIdInvalid:
-        await db.delete_user(int(user_id))
-        logging.info(f"{user_id} - PeerIdInvalid")
-        return False, "Error"
-    except Exception as e:
-        return False, "Error"
 
 async def search_gagala(text):
     usr_agent = {
