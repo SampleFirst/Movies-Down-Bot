@@ -21,6 +21,7 @@ from datetime import date, datetime
 import pytz
 from aiohttp import web
 from plugins import web_server
+from send_log import send_log
 
 class Bot(Client):
 
@@ -58,6 +59,9 @@ class Bot(Client):
         bind_address = "0.0.0.0"
         await web.TCPSite(app, bind_address, PORT).start()
 
+        # Add a job to send a message daily, weekly, and monthly
+        await send_log(self, interval)
+        
     async def stop(self, *args):
         await super().stop()
         logging.info("Bot stopped. Bye.")
