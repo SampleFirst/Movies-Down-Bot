@@ -26,7 +26,7 @@ async def save_group(bot, message):
             today = now.date()
             daily_chats = await db.daily_chats_count(today) + 1
             referrer = message.from_user.mention if message.from_user else "Anonymous"
-            await client.send_message(LOG_CHANNEL, script.LOG_TEXT_G.format(
+            await bot.send_message(LOG_CHANNEL, script.LOG_TEXT_G.format(
                 a=message.chat.title,
                 b=message.chat.id,
                 c=message.chat.username,
