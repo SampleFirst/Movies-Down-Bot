@@ -1,4 +1,4 @@
-from pyrogram import Client, filters, enums
+from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from pyrogram.errors.exceptions.bad_request_400 import MessageTooLong, PeerIdInvalid
 from info import ADMINS, LOG_CHANNEL, SUPPORT_CHAT, MELCOW_NEW_USERS, MELCOW_IMG, MELCOW_VID, MAIN_CHANNEL, S_GROUP
@@ -8,9 +8,11 @@ from utils import get_size, temp, get_settings
 from Script import script
 from pyrogram.errors import ChatAdminRequired
 import asyncio
-import pytz
+from pytz import timezone  # Import the 'timezone' module
 from datetime import datetime
 
+
+# Handler for saving group information when new members join
 @Client.on_message(filters.new_chat_members & filters.group)
 async def save_group(bot, message):
     new_members = message.new_chat_members
@@ -20,7 +22,7 @@ async def save_group(bot, message):
         if not await db.get_chat(message.chat.id):
             total_members = await bot.get_chat_members_count(message.chat.id)
             total_chat = await db.total_chat_count() + 1
-            tz = pytz.timezone('Asia/Kolkata')
+            tz = timezone('Asia/Kolkata')  # Corrected import and usage
             now = datetime.now(tz)
             time = now.strftime('%I:%M:%S %p')
             today = now.date()
@@ -49,7 +51,7 @@ async def save_group(bot, message):
             sent_message = await message.reply(
                 text=message_text,
                 reply_markup=reply_markup,
-                parse_mode='HTML'
+                parse_mode='html'  # Corrected parse_mode
             )
 
             try:
@@ -70,7 +72,7 @@ async def save_group(bot, message):
         await message.reply_text(
             text=welcome_message,
             reply_markup=reply_markup,
-            parse_mode='HTML'
+            parse_mode='html'  # Corrected parse_mode
         )
     else:
         settings = await get_settings(message.chat.id)
@@ -92,9 +94,9 @@ async def save_group(bot, message):
                             InlineKeyboardButton('Updates Channel', url=MAIN_CHANNEL)
                         ]]
                     ),
-                    parse_mode='HTML'
+                    parse_mode='html'  # Corrected parse_mode
                 )
-               
+
         if settings["auto_delete"]:
             await asyncio.sleep(600)
             await temp.MELCOW['welcome'].delete()
@@ -103,8 +105,8 @@ async def save_group(bot, message):
         total_members = await bot.get_chat_members_count(message.chat.id)
         for new_member in new_members:
             await bot.send_message(LOG_CHANNEL, f"New member joined {message.chat.title} ({message.chat.id}): {new_member.first_name} ({new_member.id})\n#iPepkorn_Bot\n#NewMemiPepkorn_Bot")
-            
 
+# Handler for logging members leaving the group
 @Client.on_message(filters.left_chat_member)
 async def goodbye(bot, message):
     chat_id = message.chat.id
