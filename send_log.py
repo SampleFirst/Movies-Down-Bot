@@ -3,7 +3,7 @@ from datetime import datetime, date
 import pytz
 from database.users_chats_db import db
 from info import LOG_CHANNEL
-from Script import Script  
+from Script import script  
 
 async def send_log(bot, interval):  # Pass 'bot' as the first argument
     while True:
