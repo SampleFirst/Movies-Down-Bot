@@ -31,15 +31,48 @@ async def start(client, message):
             ]
         reply_markup = InlineKeyboardMarkup(buttons)
         await message.reply(script.START_TXT.format(message.from_user.mention if message.from_user else message.chat.title, temp.U_NAME, temp.B_NAME), reply_markup=reply_markup)
-        await asyncio.sleep(2) # 😢 https://github.com/EvamariaTG/EvaMaria/blob/master/plugins/p_ttishow.py#L17 😬 wait a bit, before checking.
+        await asyncio.sleep(2)
         if not await db.get_chat(message.chat.id):
-            total=await client.get_chat_members_count(message.chat.id)
-            await client.send_message(LOG_CHANNEL, script.LOG_TEXT_G.format(message.chat.title, message.chat.id, total, "Unknown"))       
-            await db.add_chat(message.chat.id, message.chat.title)
-        return 
+            total = await client.get_chat_members_count(message.chat.id)
+            total_chat = await db.total_chat_count() + 1
+            tz = pytz.timezone('Asia/Kolkata')
+            now = datetime.now(tz)
+            time = now.strftime('%I:%M:%S %p')
+            today = now.date()
+            daily_chats = await db.daily_chats_count(today) + 1
+            await client.send_message(LOG_CHANNEL, script.LOG_TEXT_G.format(
+                a=message.chat.title,
+                b=message.chat.id,
+                c=message.chat.username,
+                d=total,
+                e="Unknown",
+                f=str(today),
+                g=time,
+                h=daily_chats,
+                i=temp.B_LINK,
+                j=total_chat
+            ))
+            await db.add_chat(message.chat.id, message.chat.title, message.chat.username)
+        return
+
     if not await db.is_user_exist(message.from_user.id):
         await db.add_user(message.from_user.id, message.from_user.first_name)
-        await client.send_message(LOG_CHANNEL, script.LOG_TEXT_P.format(message.from_user.id, message.from_user.mention))
+        total_users = await db.total_users_count()
+        tz = pytz.timezone('Asia/Kolkata')
+        now = datetime.now(tz)
+        time = now.strftime('%I:%M:%S %p')
+        today = now.date()
+        daily_users = await db.daily_users_count(today)
+        await client.send_message(LOG_CHANNEL, script.LOG_TEXT_P.format(
+            a=message.from_user.id,
+            b=message.from_user.mention,
+            c=message.from_user.username,
+            d=total_users,
+            e=str(today),
+            f=time,
+            g=daily_users,
+            h=temp.B_LINK
+        ))
     if len(message.command) != 2:
         buttons = [[
             InlineKeyboardButton('sᴜʀᴘʀɪsᴇ', callback_data='start')
