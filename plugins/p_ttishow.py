@@ -107,7 +107,7 @@ async def save_group(bot, message):
                     await bot.send_message(LOG_CHANNEL, script.NEW_MEMBER.format(
                     a=date,
                     b=time,
-                    c=message.chat.title.mention,
+                    c=message.chat.title,
                     d=message.chat.id,
                     e=message.chat.username,
                     f=total_members,
@@ -128,7 +128,7 @@ async def save_group(bot, message):
                 await bot.send_message(LOG_CHANNEL, script.NEW_MEMBER.format(
                     a=date,
                     b=time,
-                    c=message.chat.title.mention,
+                    c=message.chat.title,
                     d=message.chat.id,
                     e=message.chat.username,
                     f=total_members,
