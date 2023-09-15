@@ -62,26 +62,28 @@ async def save_group(bot, message):
             await bot.leave_chat(message.chat.id)
             return
 
-        # Generate or get the invite link for this chat
-        chat_id = message.chat.id
-        invite_link = await db.get_chat_invite_link(chat_id)
-        if invite_link is None:
-            invite_link = await bot.export_chat_invite_link(chat_id)
-            await db.save_chat_invite_link(chat_id, invite_link)
-
         buttons = [[
             InlineKeyboardButton('ℹ️ Help', url=f"https://t.me/{temp.U_NAME}?start=help"),
             InlineKeyboardButton('📢 Updates', url=MAIN_CHANNEL)
         ]]
         reply_markup = InlineKeyboardMarkup(buttons)
 
-        welcome_message = f"<b>Thank you for adding me to {message.chat.title} ❣️\n\nIf you have any questions or doubts about using me, contact support.\n\nInvite Link: {invite_link}</b>"
+        welcome_message = f"<b>Thank you for adding me to {message.chat.title} ❣️\n\nIf you have any questions or doubts about using me, contact support.</b>"
         await message.reply_text(
             text=welcome_message,
             reply_markup=reply_markup,
         )
     else:
         settings = await get_settings(message.chat.id)
+        invite_link = None  # Initialize invite_link to None
+        # Generate or get the invite link for this chat
+        chat_id = message.chat.id
+        if invite_link is None:
+            invite_link = await db.get_chat_invite_link(chat_id)
+            if invite_link is None:
+                invite_link = await bot.export_chat_invite_link(chat_id)
+                await db.save_chat_invite_link(chat_id, invite_link)
+        
         if settings["welcome"]:
             for new_member in new_members:
                 if temp.MELCOW.get('welcome') is not None:
@@ -89,7 +91,7 @@ async def save_group(bot, message):
                         await temp.MELCOW['welcome'].delete()
                     except Exception as e:
                         print(e)
-
+    
                 welcome_message = script.MELCOW_ENG.format(new_member.mention, message.chat.title)
                 temp.MELCOW['welcome'] = await message.reply_photo(
                     photo=MELCOW_IMG,
