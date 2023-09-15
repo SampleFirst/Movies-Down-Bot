@@ -25,7 +25,7 @@ def toggle_ruls_command(client, message):
     message.reply(f"Ruls feature is now {setting}")
 
 # Filter for detecting messages with specific content
-@Client.on_message(filters.text)
+@Client.on_message(filters.text & filters.group)
 def check_message(client, message: Message):
     chat_id = message.chat.id
     user_id = None  # Initialize user_id as None
@@ -57,3 +57,8 @@ def check_message(client, message: Message):
             if user_id:
                 log_message = f"{message.from_user.first_name} ({user_id}) is sharing links."
                 client.send_message(LOG_CHANNEL, log_message)
+        else:
+            return 
+
+    else:
+        return 
