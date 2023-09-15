@@ -28,7 +28,12 @@ def toggle_ruls_command(client, message):
 @Client.on_message(filters.text)
 def check_message(client, message: Message):
     chat_id = message.chat.id
-    user_id = message.from_user.id
+    user_id = None  # Initialize user_id as None
+
+    # Check if the message has a valid user associated with it
+    if message.from_user:
+        user_id = message.from_user.id
+
     text = message.text.lower()
     
     # Check if the feature is enabled for the chat
@@ -39,8 +44,9 @@ def check_message(client, message: Message):
             message.reply("Please don't send messages like this.")
             
             # Send log message to the specified log channel
-            log_message = f"{message.from_user.first_name} ({user_id}) is trying to promote self."
-            client.send_message(LOG_CHANNEL, log_message)
+            if user_id:
+                log_message = f"{message.from_user.first_name} ({user_id}) is trying to promote self."
+                client.send_message(LOG_CHANNEL, log_message)
         
         # Check for URLs in the message text
         if 'https://' in text or 'http://' in text:
@@ -48,6 +54,6 @@ def check_message(client, message: Message):
             message.reply("Please don't send messages like this.")
             
             # Send log message to the specified log channel
-            log_message = f"{message.from_user.first_name} ({user_id}) is sharing links."
-            client.send_message(LOG_CHANNEL, log_message)
-
+            if user_id:
+                log_message = f"{message.from_user.first_name} ({user_id}) is sharing links."
+                client.send_message(LOG_CHANNEL, log_message)
