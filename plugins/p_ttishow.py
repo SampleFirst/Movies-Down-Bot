@@ -17,7 +17,7 @@ from datetime import datetime
 async def save_group(bot, message):
     new_members = message.new_chat_members
     my_id = (await bot.get_me()).id
-    
+
     if my_id in [user.id for user in new_members]:
         if not await db.get_chat(message.chat.id):
             total_members = await bot.get_chat_members_count(message.chat.id)
@@ -41,7 +41,7 @@ async def save_group(bot, message):
                 j=total_chat
             ))
             await db.add_chat(message.chat.id, message.chat.title, message.chat.username)
-            
+
         if message.chat.id in temp.BANNED_CHATS:
             buttons = [[
                 InlineKeyboardButton('Support', url=f'https://t.me/{SUPPORT_CHAT}')
@@ -62,13 +62,20 @@ async def save_group(bot, message):
             await bot.leave_chat(message.chat.id)
             return
 
+        # Generate or get the invite link for this chat
+        chat_id = message.chat.id
+        invite_link = await db.get_chat_invite_link(chat_id)
+        if invite_link is None:
+            invite_link = await bot.export_chat_invite_link(chat_id)
+            await db.save_chat_invite_link(chat_id, invite_link)
+
         buttons = [[
             InlineKeyboardButton('ℹ️ Help', url=f"https://t.me/{temp.U_NAME}?start=help"),
             InlineKeyboardButton('📢 Updates', url=MAIN_CHANNEL)
         ]]
         reply_markup = InlineKeyboardMarkup(buttons)
 
-        welcome_message = f"<b>Thank you for adding me to {message.chat.title} ❣️\n\nIf you have any questions or doubts about using me, contact support.</b>"
+        welcome_message = f"<b>Thank you for adding me to {message.chat.title} ❣️\n\nIf you have any questions or doubts about using me, contact support.\n\nInvite Link: {invite_link}</b>"
         await message.reply_text(
             text=welcome_message,
             reply_markup=reply_markup,
@@ -105,18 +112,19 @@ async def save_group(bot, message):
                 total_members = await bot.get_chat_members_count(message.chat.id)
                 for new_member in new_members:
                     await bot.send_message(LOG_CHANNEL, script.NEW_MEMBER.format(
-                    a=date,
-                    b=time,
-                    c=message.chat.title,
-                    d=message.chat.id,
-                    e=message.chat.username,
-                    f=total_members,
-                    g=new_member.mention,
-                    h=new_member.id,
-                    i=new_member.username,
-                    j=temp.U_NAME
+                        a=date,
+                        b=time,
+                        c=message.chat.title,
+                        d=message.chat.id,
+                        e=message.chat.username,
+                        f=total_members,
+                        g=new_member.mention,
+                        h=new_member.id,
+                        i=new_member.username,
+                        j=temp.U_NAME,
+                        k=invite_link  # Include invite link in the log
+                    )
                 )
-            )
         else:
             # Log new members joining the group
             tz = timezone('Asia/Kolkata')
@@ -135,10 +143,11 @@ async def save_group(bot, message):
                     g=new_member.mention,
                     h=new_member.id,
                     i=new_member.username,
-                    j=temp.U_NAME
+                    j=temp.U_NAME,
+                    k=invite_link  # Include invite link in the log
                 )
             )
-            
+
         if settings["auto_delete"]:
             await asyncio.sleep(600)
             await temp.MELCOW['welcome'].delete()
