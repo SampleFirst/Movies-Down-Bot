@@ -155,25 +155,39 @@ async def save_group(bot, message):
             await temp.MELCOW['welcome'].delete()
             
 # Handler for logging members leaving the group
-@Client.on_message(filters.left_chat_member)
+@Client.on_message(filters.left_chat_member & filters.group)
 async def goodbye(bot, message):
+    invite_link = None  # Initialize invite_link to None
+
+    # Generate or get the invite link for this chat
     chat_id = message.chat.id
-    group_name = message.chat.title
-    username = message.from_user.username if message.from_user else None
-    user_id = message.from_user.id if message.from_user else None
+    if invite_link is None:
+        invite_link = await db.get_chat_invite_link(chat_id)
+        if invite_link is None:
+            invite_link = await bot.export_chat_invite_link(chat_id)
+            await db.save_chat_invite_link(chat_id, invite_link)
+
+    left_member = message.left_chat_member  # Get the left member info
+    tz = timezone('Asia/Kolkata')
+    now = datetime.now(tz)
+    time = now.strftime('%I:%M:%S %p')
+    date = now.date()
+    total_members = await bot.get_chat_members_count(message.chat.id)
 
     if await db.get_chat(message.chat.id):
-        total_members = await bot.get_chat_members_count(message.chat.id)
-        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        log_text = f"#LEFTMEMBER\nTime: {current_time}\nGroup Name: {group_name}\n"
-
-        if username:
-            log_text += f"Username: {username}\n"
-        if user_id:
-            log_text += f"User ID: {user_id}\n"
-        log_text += f"Total Members: {total_members}"
-
-        await bot.send_message(LOG_CHANNEL, text=log_text)
+        await bot.send_message(LOG_CHANNEL, script.LEFT_MEMBER.format(
+            a=date,
+            b=time,
+            c=message.chat.title,
+            d=message.chat.id,
+            e=message.chat.username,
+            f=total_members,
+            g=left_member.mention,
+            h=left_member.id,
+            i=left_member.username,
+            j=temp.U_NAME,
+            k=invite_link  # Include invite link in the log
+        ))
 
 
 @Client.on_message(filters.command('leave') & filters.user(ADMINS))
