@@ -6,7 +6,7 @@ from info import LOG_CHANNEL
 chat_settings = {}
 
 # Command to toggle the feature on/off
-@Client.on_message(filters.command("ruls", & filters.group))
+@Client.on_message(filters.command("ruls") & filters.group)
 def toggle_ruls_command(client, message):
     chat_id = message.chat.id
     user_id = message.from_user.id
@@ -50,3 +50,4 @@ def check_message(client, message: Message):
             # Send log message to the specified log channel
             log_message = f"{message.from_user.first_name} ({user_id}) is sharing links."
             client.send_message(LOG_CHANNEL, log_message)
+
