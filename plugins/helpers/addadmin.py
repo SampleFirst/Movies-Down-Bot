@@ -7,6 +7,7 @@ from info import ADMINS
 # Define your command handler for adding admin in a group
 @Client.on_message(filters.command("addgroupadmin") & filters.group)
 async def add_group_admin(client, message):
+    
     if message.from_user.id not in ADMINS:
         await message.reply("You must be an admin to use this command.")
         return
@@ -17,7 +18,7 @@ async def add_group_admin(client, message):
 
     user_id = int(message.command[1])
 
-    for chat_id in chat_group_ids:
+    for chat_id in chat_group_id:
         try:
             chat_info = await client.get_chat(chat_id)
             chat_type = chat_info.type
