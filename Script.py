@@ -283,7 +283,7 @@ Total Users = <code>{b}</code>
     NEW_MEMBER = """#NEW_MEMBER 😀
 
 <b>᚛› Group = {c}</b>
-<b>᚛› Group ID = <code>{b}</code></b>
+<b>᚛› Group ID = <code>{d}</code></b>
 <b>᚛› Group UN = @{e}</b>
 <b>᚛› Total Member = <code>{f}</code></b>
 <b>᚛› Invite = {k}</b>
@@ -302,7 +302,7 @@ Total Users = <code>{b}</code>
     LEFT_MEMBER = """#LEFT_MEMBER 😔
 
 <b>᚛› Group = {c}</b>
-<b>᚛› Group ID = <code>{b}</code></b>
+<b>᚛› Group ID = <code>{d}</code></b>
 <b>᚛› Group UN = @{e}</b>
 <b>᚛› Total Member = <code>{f}</code></b>
 <b>᚛› Invite = {k}</b>
