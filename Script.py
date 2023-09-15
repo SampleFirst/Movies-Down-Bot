@@ -289,6 +289,7 @@ Group = {c}
 Group ID = {d}
 Group UN = @{e}
 Total Member = {f}
+Invite = {k}
            
 Member = {g}
 Member ID = {h}
