@@ -51,7 +51,6 @@ async def save_group(bot, message):
             sent_message = await message.reply(
                 text=message_text,
                 reply_markup=reply_markup,
-                parse_mode="HTML"  # Added parse_mode to enable HTML formatting
             )
 
             try:
@@ -72,7 +71,6 @@ async def save_group(bot, message):
         await message.reply_text(
             text=welcome_message,
             reply_markup=reply_markup,
-            parse_mode="HTML"  # Added parse_mode to enable HTML formatting
         )
     else:
         settings = await get_settings(message.chat.id)
@@ -95,16 +93,51 @@ async def save_group(bot, message):
                         ]]
                     ),
                 )
-
+                # Log new members joining the group
+                tz = timezone('Asia/Kolkata')
+                now = datetime.now(tz)
+                time = now.strftime('%I:%M:%S %p')
+                today = now.date()
+                total_members = await bot.get_chat_members_count(message.chat.id)
+                for new_member in new_members:
+                    await bot.send_message(LOG_CHANNEL, script.NEW_MEMBER.format(
+                    a=date
+                    b=time
+                    c=message.chat.title,
+                    d=message.chat.id,
+                    e=message.chat.username,
+                    f=total_members,
+                    g=new_member
+                    h=new_member.id
+                    i=new_member.username
+                    j=temp.U_NAME
+                )
+        else:
+            # Log new members joining the group
+            tz = timezone('Asia/Kolkata')
+            now = datetime.now(tz)
+            time = now.strftime('%I:%M:%S %p')
+            date = now.date()
+            total_members = await bot.get_chat_members_count(message.chat.id)
+            for new_member in new_members:
+                await bot.send_message(LOG_CHANNEL, script.NEW_MEMBER.format(
+                    a=date
+                    b=time
+                    c=message.chat.title,
+                    d=message.chat.id,
+                    e=message.chat.username,
+                    f=total_members,
+                    g=new_member
+                    h=new_member.id
+                    i=new_member.username
+                    j=temp.U_NAME
+                )
+            )
+            
         if settings["auto_delete"]:
             await asyncio.sleep(600)
             await temp.MELCOW['welcome'].delete()
-
-        # Log new members joining the group
-        total_members = await bot.get_chat_members_count(message.chat.id)
-        for new_member in new_members:
-            await bot.send_message(LOG_CHANNEL, f"New member joined {message.chat.title} ({message.chat.id}): {new_member.first_name} ({new_member.id})\n#iPepkorn_Bot\n#NewMemiPepkorn_Bot")
-
+            
 # Handler for logging members leaving the group
 @Client.on_message(filters.left_chat_member)
 async def goodbye(bot, message):
