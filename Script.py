@@ -303,7 +303,7 @@ Total Users = <code>{b}</code>
     LEFT_MEMBER = """=-----------😔😔😔😔😔-----------=
 #LEFT_MEMBER
 
-<b>᚛› Group = <a{k}>{c}</b></a>
+<b>᚛› Group = <a{k}>{c}</a></b>
 <b>᚛› Group ID = <code>{b}</code></b>
 <b>᚛› Group UN = @{e}</b>
 <b>᚛› Total Member = <code>{f}</code></b>
