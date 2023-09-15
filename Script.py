@@ -279,6 +279,42 @@ Total Chats = <code>{a}</code>
 TodayUsers
 Total Users = <code>{b}</code>
 """
+
+    NEW_MEMBER = """#NEW_MEMBER
+
+Date = {a}
+Time = {b}
+
+Group = {c}
+Group ID = {d}
+Group UN = {e}
+Total Member = {f}
+           
+Member = {g}
+Member ID = {h}
+Member UN = {i}
+
+#{j}
+#NewMem{j}
+"""
+
+    LEFT_MEMBER = """#LEFT_MEMBER
+
+Date = {a}
+Time = {b}
+
+Group = {c}
+Group ID = {d}
+Group UN = {e}
+Total Member = {f}
+           
+Member = {g}
+Member ID = {h}
+Member UN = {i}
+
+#{j}
+#LeftMem{j}
+"""
     
     FILE_MSG = """
 <b>Hai 👋 {} </b>😍
