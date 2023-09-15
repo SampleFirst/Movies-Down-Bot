@@ -300,10 +300,10 @@ Total Users = <code>{b}</code>
 #NewMem_{j}
 """
 
-    LEFT_MEMBER = """=-----------😔😔😔😔😔-----------=
+    LEFT_MEMBER = """=-----------😔😔😔-----------=
 #LEFT_MEMBER
 
-<b>᚛› Group = <a{k}>{c}</a></b>
+<b>᚛› Group</b> = <a{k}>{c}</a>
 <b>᚛› Group ID = <code>{b}</code></b>
 <b>᚛› Group UN = @{e}</b>
 <b>᚛› Total Member = <code>{f}</code></b>
