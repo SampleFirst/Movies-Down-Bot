@@ -111,7 +111,7 @@ async def save_group(bot, message):
                     d=message.chat.id,
                     e=message.chat.username,
                     f=total_members,
-                    g=new_member,
+                    g=new_member.mention,
                     h=new_member.id,
                     i=new_member.username,
                     j=temp.U_NAME
@@ -132,7 +132,7 @@ async def save_group(bot, message):
                     d=message.chat.id,
                     e=message.chat.username,
                     f=total_members,
-                    g=new_member,
+                    g=new_member.mention,
                     h=new_member.id,
                     i=new_member.username,
                     j=temp.U_NAME
