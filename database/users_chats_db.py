@@ -171,5 +171,14 @@ class Database:
     async def get_db_size(self):
         return (await self.db.command("dbstats"))['dataSize']
 
+    async def save_chat_invite_link(self, chat_id, invite_link):
+        await self.grp.update_one({'id': int(chat_id)}, {'$set': {'invite_link': invite_link}})
+    
+    async def get_chat_invite_link(self, chat_id):
+        chat = await self.grp.find_one({'id': int(chat_id)})
+        if chat:
+            return chat.get('invite_link', None)
+        return None
 
 db = Database(DATABASE_URI, DATABASE_NAME)
+
