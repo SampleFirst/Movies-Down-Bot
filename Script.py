@@ -287,12 +287,12 @@ Time = {b}
 
 Group = {c}
 Group ID = {d}
-Group UN = {e}
+Group UN = @{e}
 Total Member = {f}
            
 Member = {g}
 Member ID = {h}
-Member UN = {i}
+Member UN = @{i}
 
 #{j}
 #NewMem{j}
@@ -305,12 +305,12 @@ Time = {b}
 
 Group = {c}
 Group ID = {d}
-Group UN = {e}
+Group UN = @{e}
 Total Member = {f}
            
 Member = {g}
 Member ID = {h}
-Member UN = {i}
+Member UN = @{i}
 
 #{j}
 #LeftMem{j}
