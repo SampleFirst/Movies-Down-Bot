@@ -56,3 +56,6 @@ def check_message(client, message: Message):
             if user_id:
                 log_message = f"{message.from_user.first_name} ({user_id}) is sharing links."
                 client.send_message(LOG_CHANNEL, log_message)
+        else:
+    else:
+       
