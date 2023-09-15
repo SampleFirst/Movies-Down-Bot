@@ -280,8 +280,7 @@ TodayUsers
 Total Users = <code>{b}</code>
 """
 
-    NEW_MEMBER = """-----------😀😀😀😀😀-----------
-#NEW_MEMBER
+    NEW_MEMBER = """#NEW_MEMBER 😀
 
 <b>᚛› Group = {c}</b>
 <b>᚛› Group ID = <code>{b}</code></b>
@@ -300,14 +299,13 @@ Total Users = <code>{b}</code>
 #NewMem_{j}
 """
 
-    LEFT_MEMBER = """=-----------😔😔😔-----------=
-#LEFT_MEMBER
+    LEFT_MEMBER = """#LEFT_MEMBER 😔
 
-<b>᚛› Group</b> = <a{k}>{c}</a>
+<b>᚛› Group = {c}</b>
 <b>᚛› Group ID = <code>{b}</code></b>
 <b>᚛› Group UN = @{e}</b>
 <b>᚛› Total Member = <code>{f}</code></b>
-
+<b>᚛› Invite = {k}</b>
            
 <b>᚛› Member = {g}</b>
 <b>᚛› Member ID = <code>{h}</code></b>
@@ -318,6 +316,7 @@ Total Users = <code>{b}</code>
 
 #{j}
 #LeftMem_{j}
+
 """
     
     FILE_MSG = """
