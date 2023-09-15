@@ -1,4 +1,4 @@
-from pyrogram import Client, filters
+from pyrogram import Client, filters, enums
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from pyrogram.errors.exceptions.bad_request_400 import MessageTooLong, PeerIdInvalid
 from info import ADMINS, LOG_CHANNEL, SUPPORT_CHAT, MELCOW_NEW_USERS, MELCOW_IMG, MELCOW_VID, MAIN_CHANNEL, S_GROUP
@@ -51,6 +51,7 @@ async def save_group(bot, message):
             sent_message = await message.reply(
                 text=message_text,
                 reply_markup=reply_markup,
+                parse_mode=enums.ParseMode.HTML
             )
 
             try:
@@ -87,11 +88,14 @@ async def save_group(bot, message):
                     photo=MELCOW_IMG,
                     caption=welcome_message,
                     reply_markup=InlineKeyboardMarkup(
-                        [[
-                            InlineKeyboardButton('Support Group', url=S_GROUP),
-                            InlineKeyboardButton('Updates Channel', url=MAIN_CHANNEL)
-                        ]]
+                        [
+                            [
+                                InlineKeyboardButton('Support Group', url=S_GROUP),
+                                InlineKeyboardButton('Updates Channel', url=MAIN_CHANNEL)
+                            ]
+                        ]
                     ),
+                    parse_mode=enums.ParseMode.HTML
                 )
                 # Log new members joining the group
                 tz = timezone('Asia/Kolkata')
