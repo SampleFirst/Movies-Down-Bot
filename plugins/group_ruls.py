@@ -8,10 +8,11 @@ from utils import temp
 # A dictionary to keep track of users and their warning counts
 user_warning_counts = {}
 
+
 @Client.on_message(filters.text & filters.group)
 async def handle_text_message(client, message: Message):
     user_id = message.from_user.id
-    is_admin = message.from_user and message.from_user.id in ADMINS
+    is_admin = user_id in ADMINS
 
     if not is_admin:
         # Check for violations
@@ -31,6 +32,9 @@ async def handle_text_message(client, message: Message):
         for keyword in keywords:
             if keyword in message.text.lower():
                 violations.append("keyword_" + keyword)
+
+        # Initialize warning_msg with an empty string
+        warning_msg = ""
 
         # Handle violations
         for violation in violations:
@@ -55,14 +59,15 @@ async def handle_text_message(client, message: Message):
                 # Send the reason for the warning to the LOG_CHANNEL
                 await client.send_message(LOG_CHANNEL, f"User {user_id} received a warning for a {violation}. Reason: {violation.capitalize()} detected - {message.text}")
 
-                warning = await message.reply_text(warning_msg)
-                await asyncio.sleep(120)
-                await warning.delete()
-                await message.delete()
+        if warning_msg:
+            # Only send a warning message if warning_msg is not empty
+            warning = await message.reply_text(warning_msg)
+            await asyncio.sleep(120)
+            await warning.delete()
+            await message.delete()
 
         # Reset violation counts after a while (e.g., a day)
         await asyncio.sleep(24 * 60 * 60)  # Sleep for a day
         if user_id in user_warning_counts:
             for violation in violations:
                 user_warning_counts[user_id][violation + "_count"] = 0
-                
