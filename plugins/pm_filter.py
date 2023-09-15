@@ -619,6 +619,8 @@ async def cb_handler(client: Client, query: CallbackQuery):
                         await asyncio.sleep(600)
                         await Joel_tgx.delete()
                         await file_send.delete()
+                        
+                    await query.answer(MSG_ALRT)
                 else:
                     await query.answer(f"Hᴇʏ {query.from_user.first_name}, Tʜɪs Is Nᴏᴛ Yᴏᴜʀ Mᴏᴠɪᴇ Rᴇǫᴜᴇsᴛ. Rᴇǫᴜᴇsᴛ Yᴏᴜʀ's !", show_alert=True)
                 await query.answer('Cʜᴇᴄᴋ PM, I ʜᴀᴠᴇ sᴇɴᴛ ғɪʟᴇs ɪɴ PM', show_alert=True)
