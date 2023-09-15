@@ -40,8 +40,8 @@ async def save_group(bot, message):
                 i=temp.B_NAME,
                 j=total_chat
             ))
-            await db.add_chat(message.chat.id, message.chat.title)
-
+            await db.add_chat(message.chat.id, message.chat.title, message.chat.username)
+            
         if message.chat.id in temp.BANNED_CHATS:
             buttons = [[
                 InlineKeyboardButton('Support', url=f'https://t.me/{SUPPORT_CHAT}')
