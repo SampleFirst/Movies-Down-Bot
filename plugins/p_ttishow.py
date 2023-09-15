@@ -97,21 +97,22 @@ async def save_group(bot, message):
                 tz = timezone('Asia/Kolkata')
                 now = datetime.now(tz)
                 time = now.strftime('%I:%M:%S %p')
-                today = now.date()
+                date = now.date()
                 total_members = await bot.get_chat_members_count(message.chat.id)
                 for new_member in new_members:
                     await bot.send_message(LOG_CHANNEL, script.NEW_MEMBER.format(
-                    a=date
-                    b=time
+                    a=date,
+                    b=time,
                     c=message.chat.title,
                     d=message.chat.id,
                     e=message.chat.username,
                     f=total_members,
-                    g=new_member
-                    h=new_member.id
-                    i=new_member.username
+                    g=new_member,
+                    h=new_member.id,
+                    i=new_member.username,
                     j=temp.U_NAME
                 )
+            )
         else:
             # Log new members joining the group
             tz = timezone('Asia/Kolkata')
@@ -121,15 +122,15 @@ async def save_group(bot, message):
             total_members = await bot.get_chat_members_count(message.chat.id)
             for new_member in new_members:
                 await bot.send_message(LOG_CHANNEL, script.NEW_MEMBER.format(
-                    a=date
-                    b=time
+                    a=date,
+                    b=time,
                     c=message.chat.title,
                     d=message.chat.id,
                     e=message.chat.username,
                     f=total_members,
-                    g=new_member
-                    h=new_member.id
-                    i=new_member.username
+                    g=new_member,
+                    h=new_member.id,
+                    i=new_member.username,
                     j=temp.U_NAME
                 )
             )
