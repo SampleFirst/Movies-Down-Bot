@@ -21,24 +21,22 @@ async def handle_text_message(client, message: Message):
         if "http://" in message.text or "https://" in message.text:
             violations.append("link")
 
-        if (
-            f"@{message.from_user.username}" in message.text
-            and "@admin" not in message.text
-            and "@request" not in message.text
-        ):
-            violations.append("username")
+        if "@" in message.text:
+            # Skip checking and banning if the message contains "@admin" or "@admins"
+            if "@admin" not in message.text.lower() and "@admins" not in message.text.lower():
+                violations.append("username")
 
-        keywords = ["join", "bio"]
-        for keyword in keywords:
-            if keyword in message.text.lower():
-                violations.append("keyword_" + keyword)
+        banned_words = ["join", "bio"]
+        for word in banned_words:
+            if word in message.text.lower():
+                violations.append("banned_word")
 
         # Initialize warning_msg with an empty string
         warning_msg = ""
 
         # Handle violations
         for violation in violations:
-            user_warning_counts.setdefault(user_id, {"link_count": 0, "username_count": 0, "ban_word_count": 0})
+            user_warning_counts.setdefault(user_id, {"link_count": 0, "username_count": 0, "banned_words_count": 0})
             user_warning_counts[user_id][violation + "_count"] += 1
 
             count = user_warning_counts[user_id][violation + "_count"]
@@ -49,7 +47,9 @@ async def handle_text_message(client, message: Message):
                 warning_msg = f"You've violated the group rules by sending a {violation}, {message.from_user.first_name}. This is your final warning. One more {violation} and you will be banned."
             else:
                 try:
-                    await message.chat.ban_member(user_id=user_id)
+                    await message.delete()
+                    await client.send_message(LOG_CHANNEL, f"Deleted message from user {user_id} due to {violation}.")
+                    await message.chat.kick_member(user_id=user_id)
                 except Exception as error:
                     await client.send_message(LOG_CHANNEL, f"Error banning user {user_id}: {str(error)}")
                 else:
@@ -64,7 +64,6 @@ async def handle_text_message(client, message: Message):
             warning = await message.reply_text(warning_msg)
             await asyncio.sleep(120)
             await warning.delete()
-            await message.delete()
 
         # Reset violation counts after a while (e.g., a day)
         await asyncio.sleep(24 * 60 * 60)  # Sleep for a day
