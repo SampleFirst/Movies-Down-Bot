@@ -1,72 +1,52 @@
-import asyncio
 from pyrogram import Client, filters
 from pyrogram.types import Message
-from info import SUPPORT_CHAT, LOG_CHANNEL, ADMINS
-from database.users_chats_db import db
-from utils import temp
+from info import LOG_CHANNEL
 
-# A dictionary to keep track of users and their warning counts
-user_warning_counts = {}
+# Dictionary to store chat settings (on/off)
+chat_settings = {}
 
-
-@Client.on_message(filters.text & filters.group)
-async def handle_text_message(client, message: Message):
+# Command to toggle the feature on/off
+@Client.on_message(filters.command("ruls", & filters.group))
+def toggle_ruls_command(client, message):
+    chat_id = message.chat.id
     user_id = message.from_user.id
-    is_admin = user_id in ADMINS
 
-    if not is_admin:
-        # Check for violations
-        violations = []
+    if len(message.command) < 2:
+        message.reply("Usage: /ruls [on|off]")
+        return
 
-        if "http://" in message.text or "https://" in message.text:
-            violations.append("link")
+    setting = message.command[1].lower()
+    
+    if setting not in ["on", "off"]:
+        message.reply("Usage: /ruls [on|off]")
+        return
 
-        if "@" in message.text:
-            # Skip checking and banning if the message contains "@admin" or "@admins"
-            if "@admin" not in message.text.lower() and "@admins" not in message.text.lower():
-                violations.append("username")
+    chat_settings[chat_id] = setting
+    message.reply(f"Ruls feature is now {setting}")
 
-        banned_words = ["join", "bio"]
-        for word in banned_words:
-            if word in message.text.lower():
-                violations.append("banned_word")
-
-        # Initialize warning_msg with an empty string
-        warning_msg = ""
-
-        # Handle violations
-        for violation in violations:
-            user_warning_counts.setdefault(user_id, {"link_count": 0, "username_count": 0, "banned_words_count": 0})
-            user_warning_counts[user_id][violation + "_count"] += 1
-
-            count = user_warning_counts[user_id][violation + "_count"]
-
-            if count == 1:
-                warning_msg = f"You've violated the group rules by sending a {violation}, {message.from_user.first_name}. This is your first warning."
-            elif count == 2:
-                warning_msg = f"You've violated the group rules by sending a {violation}, {message.from_user.first_name}. This is your final warning. One more {violation} and you will be banned."
-            else:
-                try:
-                    await message.delete()
-                    await client.send_message(LOG_CHANNEL, f"Deleted message from user {user_id} due to {violation}.")
-                    await message.chat.kick_member(user_id=user_id)
-                except Exception as error:
-                    await client.send_message(LOG_CHANNEL, f"Error banning user {user_id}: {str(error)}")
-                else:
-                    warning_msg = f"You have been banned for repeatedly violating the group rules by sending a {violation}, {message.from_user.first_name}."
-
-            if count >= 3:
-                # Send the reason for the warning to the LOG_CHANNEL
-                await client.send_message(LOG_CHANNEL, f"User {user_id} received a warning for a {violation}. Reason: {violation.capitalize()} detected - {message.text}")
-
-        if warning_msg:
-            # Only send a warning message if warning_msg is not empty
-            warning = await message.reply_text(warning_msg)
-            await asyncio.sleep(120)
-            await warning.delete()
-
-        # Reset violation counts after a while (e.g., a day)
-        await asyncio.sleep(24 * 60 * 60)  # Sleep for a day
-        if user_id in user_warning_counts:
-            for violation in violations:
-                user_warning_counts[user_id][violation + "_count"] = 0
+# Filter for detecting messages with specific content
+@Client.on_message(filters.text)
+def check_message(client, message: Message):
+    chat_id = message.chat.id
+    user_id = message.from_user.id
+    text = message.text.lower()
+    
+    # Check if the feature is enabled for the chat
+    if chat_id in chat_settings and chat_settings[chat_id] == "on":
+        # Check for forbidden content in the message
+        if any(word in text for word in ["@", "join", "bio"]):
+            message.delete()
+            message.reply("Please don't send messages like this.")
+            
+            # Send log message to the specified log channel
+            log_message = f"{message.from_user.first_name} ({user_id}) is trying to promote self."
+            client.send_message(LOG_CHANNEL, log_message)
+        
+        # Check for URLs in the message text
+        if 'https://' in text or 'http://' in text:
+            message.delete()
+            message.reply("Please don't send messages like this.")
+            
+            # Send log message to the specified log channel
+            log_message = f"{message.from_user.first_name} ({user_id}) is sharing links."
+            client.send_message(LOG_CHANNEL, log_message)
