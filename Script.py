@@ -280,41 +280,44 @@ TodayUsers
 Total Users = <code>{b}</code>
 """
 
-    NEW_MEMBER = """#NEW_MEMBER
+    NEW_MEMBER = """-----------😀😀😀😀😀-----------
+#NEW_MEMBER
 
-Date = {a}
-Time = {b}
-
-Group = {c}
-Group ID = {d}
-Group UN = @{e}
-Total Member = {f}
-Invite = {k}
+<b>᚛› Group = {c}</b>
+<b>᚛› Group ID = <code>{b}</code></b>
+<b>᚛› Group UN = @{e}</b>
+<b>᚛› Total Member = <code>{f}</code></b>
+<b>᚛› Invite = {k}</b>
            
-Member = {g}
-Member ID = {h}
-Member UN = @{i}
+<b>᚛› Member = {g}</b>
+<b>᚛› Member ID = <code>{h}</code></b>
+<b>᚛› Member UN = @{i}</b>
+
+<b>᚛› Date = <code>{a}</code></b>
+<b>᚛› Time = <code>{b}</code></b>
 
 #{j}
-#NewMem{j}
+#NewMem_{j}
 """
 
-    LEFT_MEMBER = """#LEFT_MEMBER
+    LEFT_MEMBER = """-----------😔😔😔😔😔-----------
+#LEFT_MEMBER
 
-Date = {a}
-Time = {b}
-
-Group = {c}
-Group ID = {d}
-Group UN = @{e}
-Total Member = {f}
+<b>᚛› Group = {c}</b>
+<b>᚛› Group ID = <code>{b}</code></b>
+<b>᚛› Group UN = @{e}</b>
+<b>᚛› Total Member = <code>{f}</code></b>
+<b>᚛› Invite = {k}</b>
            
-Member = {g}
-Member ID = {h}
-Member UN = @{i}
+<b>᚛› Member = {g}</b>
+<b>᚛› Member ID = <code>{h}</code></b>
+<b>᚛› Member UN = @{i}</b>
+
+<b>᚛› Date = <code>{a}</code></b>
+<b>᚛› Time = <code>{b}</code></b>
 
 #{j}
-#LeftMem{j}
+#LeftMem_{j}
 """
     
     FILE_MSG = """
