@@ -38,24 +38,11 @@ def check_message(client, message: Message):
     # Check if the feature is enabled for the chat
     if chat_id in chat_settings and chat_settings[chat_id] == "on":
         # Check for forbidden content in the message
-        if any(word in text for word in ["@", "join", "bio"]):
+        if any(word in text for word in ["join", "bio"]) or any(link in text for link in ['https://', 'http://']):
             message.delete()
             message.reply("Please don't send messages like this.")
             
             # Send log message to the specified log channel
             if user_id:
-                log_message = f"{message.from_user.first_name} ({user_id}) is trying to promote self."
+                log_message = f"{message.from_user.first_name} ({user_id}) sent a message with forbidden content."
                 client.send_message(LOG_CHANNEL, log_message)
-        
-        # Check for URLs in the message text
-        if 'https://' in text or 'http://' in text:
-            message.delete()
-            message.reply("Please don't send messages like this.")
-            
-            # Send log message to the specified log channel
-            if user_id:
-                log_message = f"{message.from_user.first_name} ({user_id}) is sharing links."
-                client.send_message(LOG_CHANNEL, log_message)
-        else:
-    else:
-       
