@@ -6,6 +6,8 @@ import ast
 import math
 import random
 import datetime
+import shutil
+import psutil
 
 from pytz import timezone
 from pyrogram.errors.exceptions.bad_request_400 import MediaEmpty, PhotoInvalidDimensions, WebpageMediaEmpty
