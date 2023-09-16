@@ -132,6 +132,25 @@ To control Global Filters in your group, use the command /g_filter followed by o
 • /pin - Pin a message in your chat
 • /unpin - Unpin a message in your chat
 • /purge - Delete all messages from the replied-to message, or to the current message"""
+
+    EXTRAMOD_TXT = """<b>ExtraModule Help</b>
+
+<i>Just send any image to edit the image ✨</i>
+
+<b>Commands & Usage:</b>
+• /id - Get the ID of a specified user
+• /info - Get information about a user
+• /imdb - Get film information from IMDb source
+• /paste [text] - Paste the given text on Paste
+• /tts [text] - Convert text to speech
+• /telegraph - Send me this command, reply with a picture or video under (5MB)
+• /json - Reply with any message to get message info (useful for groups)
+• /written - Reply with text to get a file (useful for coders)
+• /carbon - Reply with text to get carbonated image
+• /font [text] - To change your text fonts to fancy fonts
+• /share - Reply with text to get text shareable link
+• /song [name] - To search the song on YouTube
+• /video [link] - To download the YouTube video"""    
     
     STATUS_TXT = """<b>★ TOTAL FILES: <code>{}</code>
 ★ TOTAL USERS: <code>{}</code>
