@@ -1,7 +1,7 @@
 import pytz
 from datetime import date, datetime
 import motor.motor_asyncio
-from info import DATABASE_NAME, DATABASE_URI, IMDB, IMDB_TEMPLATE, MELCOW_NEW_USERS, P_TTI_SHOW_OFF, SINGLE_BUTTON, SPELL_CHECK_REPLY, PROTECT_CONTENT, AUTO_DELETE, SHORTLINK_API, SHORTLINK_URL, IS_SHORTLINK
+from info import DATABASE_NAME, DATABASE_URI, IMDB, IMDB_TEMPLATE, MELCOW_NEW_USERS, P_TTI_SHOW_OFF, SINGLE_BUTTON, SPELL_CHECK_REPLY, PROTECT_CONTENT, AUTO_DELETE, SHORTLINK_API, SHORTLINK_URL, IS_SHORTLINK, RULS_ON
 
 class Database:
     
@@ -142,7 +142,8 @@ class Database:
             'template': IMDB_TEMPLATE,
             'shortlink': SHORTLINK_URL,
             'shortlink_api': SHORTLINK_API,
-            'is_shortlink': IS_SHORTLINK
+            'is_shortlink': IS_SHORTLINK,
+            'ruls_on': RULS_ON
     
         }
         chat = await self.grp.find_one({'id':int(id)})
