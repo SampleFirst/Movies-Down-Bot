@@ -108,12 +108,13 @@ FILE_STORE_CHANNEL = [int(ch) for ch in (environ.get('FILE_STORE_CHANNEL', '')).
 
 # Settings
 MELCOW_NEW_USERS = is_enabled((environ.get('MELCOW_NEW_USERS', "True")), True)
-SINGLE_BUTTON = is_enabled((environ.get('SINGLE_BUTTON', "False")), False)
+SINGLE_BUTTON = is_enabled((environ.get('SINGLE_BUTTON', "True")), True)
 P_TTI_SHOW_OFF = is_enabled((environ.get('P_TTI_SHOW_OFF', "False")), False)
 IMDB = is_enabled((environ.get('IMDB', "True")), True)
 IMDB_TEMPLATE = environ.get("IMDB_TEMPLATE", f"{script.IMDB_TEMPLATE_TXT}")
 SPELL_CHECK_REPLY = is_enabled(environ.get("SPELL_CHECK_REPLY", "True"), True)
 AUTO_DELETE = is_enabled((environ.get('AUTO_DELETE', "True")), True)
+RULS_ON = is_enabled((environ.get('RULS_ON', "True")), True)
 
 # Other 
 PORT = os.environ.get("PORT", "8080")
