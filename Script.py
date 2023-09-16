@@ -115,6 +115,24 @@ To control Global Filters in your group, use the command /g_filter followed by o
 • /clear_junk - Clear all deleted accounts and blocked accounts in the database
 • /clear_junk_group - Clear added or removed groups or deactivated groups on DB"""
 
+    GROUPMANAGER_TXT = """<b>GroupManager Help</b>
+
+<i>This is the help for your Group Management. This will work only for Group admins.</i>
+
+<b>Commands & Usage:</b>
+• /inkick - Command with required arguments, and I will kick members from the Group.
+• /instatus - Check the current status of chat members in the Group.
+• /dkick - Kick deleted accounts
+• /ban - Ban a user from the Group
+• /unban - Unban a banned user
+• /tban - Temporarily ban a user
+• /mute - Mute a user
+• /unmute - Unmute a muted user
+• /tmute - Use with a value to mute a user for a specific time, e.g., <code>/tmute 2h</code> to mute for 2 hours (values: m/h/d).
+• /pin - Pin a message in your chat
+• /unpin - Unpin a message in your chat
+• /purge - Delete all messages from the replied-to message, or to the current message"""
+    
     STATUS_TXT = """<b>★ TOTAL FILES: <code>{}</code>
 ★ TOTAL USERS: <code>{}</code>
 ★ TOTAL CHATS: <code>{}</code>
