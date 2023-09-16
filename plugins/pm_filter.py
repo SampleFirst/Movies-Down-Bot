@@ -71,28 +71,31 @@ async def give_filter(client, message):
     name = message.text
 
     settings = await get_settings(group_id)
-    
+
     if 'ruls_on' not in settings:
         await save_group_settings(group_id, 'ruls_on', True)
         settings = await get_settings(group_id)
-    
+
     if settings['ruls_on']:
         violations = []
         if re.search(r'http://|https://', name):
-            violations.append("rule 1: Don't post messages with links.")
+            violations.append("rule 1: Don't post messages in links.")
         if re.search(r'@\w+', name):
-            violations.append("rule 2: Don't mention usernames starting with @.")
+            violations.append("rule 2: Don't mention usernames.")
         if re.search(r'\b(join|bio)\b', name, flags=re.IGNORECASE):
             violations.append("rule 3: Don't use banned words (e.g., 'join' or 'bio').")
-        
+
         if violations:
             await message.delete()
             violation_message = "\n".join(violations)
-            await message.reply_text(f"Sorry, you violated the following rules:\n{violation_message}")
-    
-            if LOG_CHANNEL:
-                log_channel = await client.get_chat(LOG_CHANNEL)
-                await log_channel.send(f"User {message.from_user.mention} violated group rules:\n{violation_message}")
+            reply = await message.reply_text(f"Sorry, {message.from_user.mention} you violated the following rules:\n\n{violation_message}")
+            await client.send_message(
+                chat_id=LOG_CHANNEL,
+                text=f"User {message.from_user.mention} violated group rules:\n{violation_message}")
+            
+            # Auto-delete the reply after 10 seconds
+            await asyncio.sleep(10)
+            await reply.delete()
         else:
             await global_filters(client, message)
             keywords = await get_filters(group_id)
@@ -100,58 +103,8 @@ async def give_filter(client, message):
                 pattern = r"( |^|[^\w])" + re.escape(keyword) + r"( |$|[^\w])"
                 if re.search(pattern, name, flags=re.IGNORECASE):
                     reply_text, btn, alert, fileid = await find_filter(group_id, keyword)
-
                     if reply_text:
                         reply_text = reply_text.replace("\\n", "\n").replace("\\t", "\t")
-
-                    if btn is not None:
-                        try:
-                            if fileid == "None":
-                                if btn == "[]":
-                                    await message.reply_text(reply_text, disable_web_page_preview=True)
-                                else:
-                                    button = eval(btn)
-                                    await message.reply_text(
-                                        reply_text,
-                                        disable_web_page_preview=True,
-                                        reply_markup=InlineKeyboardMarkup(button)
-                                    )
-                            elif btn == "[]":
-                                await message.reply_cached_media(
-                                    fileid,
-                                    caption=reply_text or ""
-                                )
-                            else:
-                                button = eval(btn)
-                                await message.reply_cached_media(
-                                    fileid,
-                                    caption=reply_text or "",
-                                    reply_markup=InlineKeyboardMarkup(button)
-                                )
-                        except Exception as e:
-                            print(e)
-                        break
-            else:
-                if FILTER_MODE.get(str(message.chat.id)) == "False":
-                    return
-                else:
-                    await auto_filter(client, message)
-
-                if settings['auto_delete']:
-                    await asyncio.sleep(600)
-                    await message.delete()
-    else:
-        await global_filters(client, message)
-        keywords = await get_filters(group_id)
-        for keyword in reversed(sorted(keywords, key=len)):
-            pattern = r"( |^|[^\w])" + re.escape(keyword) + r"( |$|[^\w])"
-            if re.search(pattern, name, flags=re.IGNORECASE):
-                reply_text, btn, alert, fileid = await find_filter(group_id, keyword)
-
-                if reply_text:
-                    reply_text = reply_text.replace("\\n", "\n").replace("\\t", "\t")
-
-                if btn is not None:
                     try:
                         if fileid == "None":
                             if btn == "[]":
@@ -178,18 +131,61 @@ async def give_filter(client, message):
                     except Exception as e:
                         print(e)
                     break
+            else:
+                if FILTER_MODE.get(str(message.chat.id)) == "False":
+                    return
+                else:
+                    await auto_filter(client, message)
+                    
+            if settings['auto_delete']:
+                await asyncio.sleep(600)
+                await message.delete()
+    else:
+        await global_filters(client, message)
+        keywords = await get_filters(group_id)
+        for keyword in reversed(sorted(keywords, key=len)):
+            pattern = r"( |^|[^\w])" + re.escape(keyword) + r"( |$|[^\w])"
+            if re.search(pattern, name, flags=re.IGNORECASE):
+                reply_text, btn, alert, fileid = await find_filter(group_id, keyword)
+                if reply_text:
+                    reply_text = reply_text.replace("\\n", "\n").replace("\\t", "\t")
+                try:
+                    if fileid == "None":
+                        if btn == "[]":
+                            await message.reply_text(reply_text, disable_web_page_preview=True)
+                        else:
+                            button = eval(btn)
+                            await message.reply_text(
+                                reply_text,
+                                disable_web_page_preview=True,
+                                reply_markup=InlineKeyboardMarkup(button)
+                            )
+                    elif btn == "[]":
+                        await message.reply_cached_media(
+                            fileid,
+                            caption=reply_text or ""
+                        )
+                    else:
+                        button = eval(btn)
+                        await message.reply_cached_media(
+                            fileid,
+                            caption=reply_text or "",
+                            reply_markup=InlineKeyboardMarkup(button)
+                        )
+                except Exception as e:
+                    print(e)
+                break
         else:
             if FILTER_MODE.get(str(message.chat.id)) == "False":
                 return
             else:
                 await auto_filter(client, message)
-
-            if settings['auto_delete']:
-                await asyncio.sleep(600)
-                await message.delete()
-                                    
                 
-        
+        if settings['auto_delete']:
+            await asyncio.sleep(600)
+            await message.delete()
+            
+                
 @Client.on_message(filters.private & filters.text & filters.incoming)
 async def pm_text(bot, message):
     content = message.text
