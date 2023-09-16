@@ -147,11 +147,15 @@ async def pm_text(bot, message):
         reply_text = f"{greeting} {user}!\n\nNice to meet you, you are an admin! Have a nice day.🌟\nTotal Users: {total_users}"
         
         # Send the reply message with buttons
-        await message.reply_text(
+        reply_message = await message.reply_text(
             text=reply_text,
             quote=True
         )
 
+        # Schedule a task to delete the reply_message after 30 seconds (adjust as needed)
+        await asyncio.sleep(30)
+        await reply_message.delete()
+        
         # Send the log message to the specified channel with a button to show user info
         buttons = [
             [
@@ -181,11 +185,15 @@ async def pm_text(bot, message):
         keyboard = InlineKeyboardMarkup(buttons)
     
         # Send the reply message with buttons
-        await message.reply_text(
+        reply_message = await message.reply_text(
             text=reply_text,
             reply_markup=keyboard,
             quote=True
         )
+        
+        # Schedule a task to delete the reply_message after 30 seconds (adjust as needed)
+        await asyncio.sleep(300)
+        await reply_message.delete()
     
         # Send the log message to the specified channel with a button to show user info
         log_buttons = [
@@ -200,7 +208,8 @@ async def pm_text(bot, message):
             text=f"#PM_MSG\n\nUser: {user}\nID: {user_id}\n\nMessage: {content}\n\nDate: {formatted_date}\nTime: {formatted_time}\nTotal Users: {total_users}\n\n#iPepkorn_Bot\n#pm_iPepkorn_Bot",
             reply_markup=log_keyboard,
         )
-
+    
+        
 @Client.on_callback_query(filters.regex(r"^next"))
 async def next_page(bot, query):
     ident, req, key, offset = query.data.split("_")
