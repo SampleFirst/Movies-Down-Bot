@@ -424,6 +424,15 @@ def humanbytes(size):
         n += 1
     return str(round(size, 2)) + " " + Dic_powerN[n] + 'B'
 
+def get_time(seconds):
+    periods = [('ᴅ', 86400), ('ʜ', 3600), ('ᴍ', 60), ('ꜱ', 1)]
+    result = ''
+    for period_name, period_seconds in periods:
+        if seconds >= period_seconds:
+            period_value, seconds = divmod(seconds, period_seconds)
+            result += f'{int(period_value)}{period_name}'
+    return result
+    
 async def get_shortlink(chat_id, link):
     settings = await get_settings(chat_id) #fetching settings for group
     if 'shortlink' in settings.keys():
