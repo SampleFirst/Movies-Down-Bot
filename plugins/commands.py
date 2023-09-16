@@ -521,6 +521,16 @@ async def settings(client, message):
                     callback_data=f'setgs#is_shortlink#{settings["is_shortlink"]}#{grp_id}',
                 ),
             ],
+            [
+                InlineKeyboardButton(
+                    'Ruls Active',
+                    callback_data=f'setgs#ruls_on#{settings["ruls_on"]}#{grp_id}',
+                ),
+                InlineKeyboardButton(
+                    '✅ ON' if settings["ruls_on"] else '❌ OFF',
+                    callback_data=f'setgs#ruls_on#{settings["ruls_on"]}#{grp_id}',
+                ),
+            ],
         ]
 
         reply_markup = InlineKeyboardMarkup(buttons)
