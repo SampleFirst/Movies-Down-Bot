@@ -1184,9 +1184,16 @@ async def cb_handler(client: Client, query: CallbackQuery):
                     InlineKeyboardButton('ShortLink',
                                          callback_data=f'setgs#is_shortlink#{settings["is_shortlink"]}#{str(grp_id)}'),
                     InlineKeyboardButton('✅ ON' if settings["is_shortlink"] else '❌ OFF',
-                                         callback_data=f'setgs#is_shortlink#{settings["is_shortlink"]}#{str(grp_id)}')
-                ]
-                
+                                         callback_data=f'setgs#is_shortlink#{settings["is_shortlink"]}#{str(grp_id)}'),
+                ],
+                [
+                    InlineKeyboardButton(
+                        'Ruls Active',
+                        callback_data=f'setgs#ruls_on#{settings["ruls_on"]}#{str(grp_id)}'),
+                    InlineKeyboardButton(
+                        '✅ ON' if settings["ruls_on"] else '❌ OFF',
+                        callback_data=f'setgs#ruls_on#{settings["ruls_on"]}#{str(grp_id)}'),
+                ],
             ]
             reply_markup = InlineKeyboardMarkup(buttons)
             await query.message.edit_reply_markup(reply_markup)
