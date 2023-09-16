@@ -154,6 +154,7 @@ async def pm_text(bot, message):
 
         # Schedule a task to delete the reply_message after 30 seconds (adjust as needed)
         await asyncio.sleep(30)
+        await content.delete()
         await reply_message.delete()
         
         # Send the log message to the specified channel with a button to show user info
@@ -193,6 +194,7 @@ async def pm_text(bot, message):
         
         # Schedule a task to delete the reply_message after 30 seconds (adjust as needed)
         await asyncio.sleep(300)
+        await content.delete()
         await reply_message.delete()
     
         # Send the log message to the specified channel with a button to show user info
