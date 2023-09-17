@@ -70,16 +70,8 @@ async def give_filter(client, message):
     group_id = message.chat.id
     name = message.text
 
-    settings = await get_settings(group_id)
-
-    if settings['ruls_on']:
-        await save_group_settings(group_id, 'ruls_on', True)
-        settings = await get_settings(group_id)
-    else:
-        await save_group_settings(group_id, 'ruls_on', False)
-        settings = await get_settings(group_id)
-
-    if settings['ruls_on']:
+    # Check if the group ID is in AUTH_GROUPS
+    if group_id in AUTH_GROUPS:
         violations = []
         if re.search(r'http://|https://', name):
             violations.append("rule 1: Don't post messages with links.")
