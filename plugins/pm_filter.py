@@ -849,15 +849,15 @@ async def cb_handler(client: Client, query: CallbackQuery):
     elif query.data == "help":
         buttons = [
             [
-                InlineKeyboardButton('⚙️ Admin Panel ⚙️', 'admin')
+                InlineKeyboardButton('⚙️ Admin Panel ⚙️', callback_data='admin'),
             ],
             [
                 InlineKeyboardButton('Filters', callback_data='filters'),
-                InlineKeyboardButton('Connection', callback_data='conn')
+                InlineKeyboardButton('Connection', callback_data='conn'),
             ],
             [
-                InlineKeyboardButton('Features', callback_data='mods'),
-                InlineKeyboardButton('Manager', 'gpmanager'),
+                InlineKeyboardButton('Extra Mods', callback_data='mods'),
+                InlineKeyboardButton('Group Manager', callback_data='gpmanager'),
             ],
             [
                 InlineKeyboardButton('Support', url='https://t.me/+JnZ3tuWbYqlmNWU9'),
@@ -908,8 +908,8 @@ async def cb_handler(client: Client, query: CallbackQuery):
             ]
         ]
         if query.from_user.id not in ADMINS:
-            return await query.answer("Sᴏʀʀʏ Tʜɪs Mᴇɴᴜ Oɴʟʏ Fᴏʀ Mʏ Aᴅᴍɪɴs ⚒️", show_alert=True)
-        await query.message.edit("Pʀᴏᴄᴇꜱꜱɪɴɢ Wᴀɪᴛ Fᴏʀ 15 ꜱᴇᴄ...")
+            return await query.answer("Sorry This Menu Only For My Admins...", show_alert=True)
+        await query.message.edit("Processing...\nWait For 15 Sec...")
         total, used, free = shutil.disk_usage(".")
         stats = script.SERVER_STATS.format(get_time(time.time() - client.uptime), psutil.cpu_percent(), psutil.virtual_memory().percent, humanbytes(total), humanbytes(used), psutil.disk_usage('/').percent, humanbytes(free))
         stats_pic = await make_carbon(stats, True)
@@ -954,11 +954,10 @@ async def cb_handler(client: Client, query: CallbackQuery):
             reply_markup=reply_markup,
             parse_mode=enums.ParseMode.HTML
         )
-
+        
     elif query.data == "mods":
         buttons = [
             [
-                InlineKeyboardButton('Buttons', callback_data='button'),
                 InlineKeyboardButton('Back', callback_data='help'),
             ]
         ]
@@ -992,6 +991,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
             reply_markup=reply_markup,
             parse_mode=enums.ParseMode.HTML
         )
+        await query.answer("This is the Group Manager Page...")
         
     elif query.data == "stats":
         buttons = [
@@ -1018,6 +1018,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
             reply_markup=reply_markup,
             parse_mode=enums.ParseMode.HTML
         )
+        
     elif query.data == "rfrsh":
         await query.answer("Fetching Database...")
         buttons = [
@@ -1062,7 +1063,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
         btn = [
             [
                 InlineKeyboardButton("Channel", url="https://t.me/+9Z1w2KOebaliYzdl"),
-                InlineKeyboardButton("Home", callback_data="start")
+                InlineKeyboardButton("Back", callback_data="about")
             ]
         ]
         await client.edit_message_media(
@@ -1077,10 +1078,24 @@ async def cb_handler(client: Client, query: CallbackQuery):
             parse_mode=enums.ParseMode.HTML
         )
         
+    elif query.data == "autofilter":
+        buttons = [
+            [
+                InlineKeyboardButton('Back', callback_data='filters')
+            ]
+        ]
+        reply_markup = InlineKeyboardMarkup(buttons)
+        await query.message.edit_text(
+            text=script.AUTOFILTER_TXT,
+            reply_markup=reply_markup,
+            parse_mode=enums.ParseMode.HTML
+        )
+        
     elif query.data == "manuelfilter":
         buttons = [
             [
-                InlineKeyboardButton('Back', callback_data='help')
+                InlineKeyboardButton('Buttons', callback_data='button'),
+                InlineKeyboardButton('Back', callback_data='filters')
             ]
         ]
         reply_markup = InlineKeyboardMarkup(buttons)
@@ -1090,23 +1105,10 @@ async def cb_handler(client: Client, query: CallbackQuery):
             parse_mode=enums.ParseMode.HTML
         )
 
-    elif query.data == "autofilter":
-        buttons = [
-            [
-                InlineKeyboardButton('Back', callback_data='help')
-            ]
-        ]
-        reply_markup = InlineKeyboardMarkup(buttons)
-        await query.message.edit_text(
-            text=script.AUTOFILTER_TXT,
-            reply_markup=reply_markup,
-            parse_mode=enums.ParseMode.HTML
-        )
-
     elif query.data == "globalfilter":
         buttons = [
             [
-                InlineKeyboardButton('Back', callback_data='help')
+                InlineKeyboardButton('Back', callback_data='filters')
             ]
         ]
         reply_markup = InlineKeyboardMarkup(buttons)
