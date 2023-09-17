@@ -473,7 +473,6 @@ async def settings(client, message):
         ],
     ]
     reply_markup = InlineKeyboardMarkup(buttons)
-    await message.answer(MSG_ALRT)
     await message.reply_text(
         text=f"<b>Change Your Settings for {title} As You Wish ⚙</b>",
         reply_markup=reply_markup,
