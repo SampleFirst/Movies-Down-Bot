@@ -481,7 +481,6 @@ async def settings(client, message):
             parse_mode=enums.ParseMode.HTML,
             reply_to_message_id=message.id
         )
-        await message.answer(MSG_ALRT)
 
 
 @Client.on_message(filters.command('set_template'))
