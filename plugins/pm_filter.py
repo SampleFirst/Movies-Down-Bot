@@ -72,7 +72,7 @@ async def give_filter(client, message):
 
     settings = await get_settings(group_id)
 
-    if 'ruls_on' not in settings:
+    if settings['ruls_on']:
         await save_group_settings(group_id, 'ruls_on', True)
         settings = await get_settings(group_id)
 
