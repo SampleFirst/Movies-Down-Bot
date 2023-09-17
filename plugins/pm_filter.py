@@ -823,7 +823,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
             ],
             [
                 InlineKeyboardButton('🔍 Search', switch_inline_query_current_chat=''),
-                InlineKeyboardButton('🤖 More Bots', callback_data='bots'),
+                InlineKeyboardButton("📢 Channel", url="https://t.me/+R9B3Qma6ZkE5ZWI1"),
             ],
             [
                 InlineKeyboardButton('ℹ️ Help', callback_data='help'),
@@ -1058,6 +1058,25 @@ async def cb_handler(client: Client, query: CallbackQuery):
             parse_mode=enums.ParseMode.HTML
         )
 
+    elif query.data == "bots":
+        btn = [
+            [
+                InlineKeyboardButton("Channel", url="https://t.me/+9Z1w2KOebaliYzdl"),
+                InlineKeyboardButton("Home", callback_data="start")
+            ]
+        ]
+        await client.edit_message_media(
+            query.message.chat.id, 
+            query.message.id, 
+            InputMediaPhoto(random.choice(PICS))
+        )
+        reply_markup = InlineKeyboardMarkup(btn)
+        await query.message.edit_text(
+            text=script.MORE_BOTS,
+            reply_markup=reply_markup,
+            parse_mode=enums.ParseMode.HTML
+        )
+        
     elif query.data == "manuelfilter":
         buttons = [
             [
