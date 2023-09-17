@@ -42,6 +42,8 @@ logger.setLevel(logging.ERROR)
 BUTTONS = {}
 SPELL_CHECK = {}
 FILTER_MODE = {}
+# Define a variable to store the rules status
+rules_on = True
 
 @Client.on_message(filters.command('autofilter') & filters.user(ADMINS))
 async def fil_mod(client, message): 
@@ -65,13 +67,25 @@ async def fil_mod(client, message):
       else:
           await m.edit("𝚄𝚂𝙴 :- /autofilter on 𝙾𝚁 /autofilter off")
 
+@Client.on_message((filters.command("rule_on") | filters.command("rule_off")) & filters.group)
+async def set_rules_status(client, message):
+    global rules_on  # Access the global rules_on variable
+
+    if message.command[0] == "rule_on":
+        rules_on = True
+        await message.reply_text("Group rules are now ON.")
+    elif message.command[0] == "rule_off":
+        rules_on = False
+        await message.reply_text("Group rules are now OFF.")
+
 @Client.on_message((filters.group) & filters.text & filters.incoming)
 async def give_filter(client, message):
     group_id = message.chat.id
     name = message.text
 
-    # Check if the group ID is in AUTH_GROUPS
-    if group_id in AUTH_GROUPS:
+    settings = await get_settings(group_id)
+
+    if rules_on:  # Check if rules are enabled
         violations = []
         if re.search(r'http://|https://', name):
             violations.append("rule 1: Don't post messages with links.")
