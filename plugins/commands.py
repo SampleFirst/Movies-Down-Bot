@@ -473,7 +473,7 @@ async def settings(client, message):
         ],
     ]
     reply_markup = InlineKeyboardMarkup(buttons)
-    await query.answer(MSG_ALRT)
+    await message.answer(MSG_ALRT)
     await message.reply_text(
         text=f"<b>Change Your Settings for {title} As You Wish ⚙</b>",
         reply_markup=reply_markup,
@@ -481,7 +481,7 @@ async def settings(client, message):
         parse_mode=enums.ParseMode.HTML,
         reply_to_message_id=message.id
     )
-    await query.answer(MSG_ALRT)
+    await message.answer(MSG_ALRT)
 
 
 @Client.on_message(filters.command('set_template'))
