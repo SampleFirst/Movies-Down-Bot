@@ -401,11 +401,11 @@ async def settings(client, message):
     chat_type = message.chat.type
 
     if chat_type == enums.ChatType.PRIVATE:
-        group_id = await active_connection(str(user_id))
+        grp_id = await active_connection(str(user_id))
         
-        if group_id is not None:
+        if grp_id is not None:
             try:
-                chat = await client.get_chat(group_id)
+                chat = await client.get_chat(grp_id)
                 title = chat.title
             except:
                 await message.reply_text("Make sure I'm present in your group!!", quote=True)
@@ -415,22 +415,22 @@ async def settings(client, message):
             return
 
     elif chat_type in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
-        group_id = message.chat.id
+        grp_id = message.chat.id
         title = message.chat.title
 
     else:
         return
 
-    user_status = await client.get_chat_member(group_id, user_id)
+    user_status = await client.get_chat_member(grp_id, user_id)
 
     if (user_status.status not in [enums.ChatMemberStatus.ADMINISTRATOR, enums.ChatMemberStatus.OWNER]
             and str(user_id) not in ADMINS):
         return
 
-    settings = await get_settings(group_id)
+    settings = await get_settings(grp_id)
 
     if 'is_shortlink' not in settings.keys():
-        await save_group_settings(group_id, 'is_shortlink', False)
+        await save_group_settings(grp_id, 'is_shortlink', False)
     else:
         pass
 
