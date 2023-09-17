@@ -10,7 +10,7 @@ async def show_invite_links_command(client, message):
     user_id = user.id
 
     # Check if the user is authorized to use this command (you can implement your logic here)
-    if is_authorized(ADMINS):
+    if user_id in ADMINS:
         # Retrieve and send the invite links for saved chats
         chat_ids = await db.get_all_saved_chats()  # Implement this function in your Database class
         if chat_ids:
