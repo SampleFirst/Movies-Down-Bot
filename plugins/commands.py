@@ -10,7 +10,7 @@ from pyrogram.errors import ChatAdminRequired, FloodWait
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from database.ia_filterdb import Media, get_file_details, unpack_new_file_id
 from database.users_chats_db import db
-from info import CHANNELS, ADMINS, AUTH_CHANNEL, LOG_CHANNEL, PICS, BATCH_FILE_CAPTION, CUSTOM_FILE_CAPTION, PROTECT_CONTENT, MSG_ALRT, MAIN_CHANNEL, RULS_ON
+from info import CHANNELS, ADMINS, AUTH_CHANNEL, LOG_CHANNEL, PICS, BATCH_FILE_CAPTION, CUSTOM_FILE_CAPTION, PROTECT_CONTENT, MSG_ALRT, MAIN_CHANNEL
 from utils import get_settings, get_size, is_subscribed, save_group_settings, temp
 from database.connections_mdb import active_connection
 import re
@@ -393,19 +393,17 @@ async def delete_all_index_confirm(bot, message):
 
 @Client.on_message(filters.command('settings'))
 async def settings(client, message):
-    user_id = message.from_user.id if message.from_user else None
-    
-    if not user_id:
-        return await message.reply(f"You are an anonymous admin. Use /connect {message.chat.id} in PM")
-
+    userid = message.from_user.id if message.from_user else None
+    if not userid:
+        return await message.reply(f"You are anonymous admin. Use /connect {message.chat.id} in PM")
     chat_type = message.chat.type
 
     if chat_type == enums.ChatType.PRIVATE:
-        grp_id = await active_connection(str(user_id))
-        
-        if grp_id is not None:
+        grpid = await active_connection(str(userid))
+        if grpid is not None:
+            grp_id = grpid
             try:
-                chat = await client.get_chat(grp_id)
+                chat = await client.get_chat(grpid)
                 title = chat.title
             except:
                 await message.reply_text("Make sure I'm present in your group!!", quote=True)
@@ -421,14 +419,21 @@ async def settings(client, message):
     else:
         return
 
-    user_status = await client.get_chat_member(grp_id, user_id)
-
-    if (user_status.status not in [enums.ChatMemberStatus.ADMINISTRATOR, enums.ChatMemberStatus.OWNER]
-            and str(user_id) not in ADMINS):
+    st = await client.get_chat_member(grp_id, userid)
+    if (
+            st.status != enums.ChatMemberStatus.ADMINISTRATOR
+            and st.status != enums.ChatMemberStatus.OWNER
+            and str(userid) not in ADMINS
+    ):
         return
 
     settings = await get_settings(grp_id)
-
+    try:
+        if settings['auto_delete']:
+            settings = await get_settings(grp_id)
+    except KeyError:
+        await save_group_settings(grp_id, 'auto_delete', True)
+        settings = await get_settings(grp_id)
     if 'is_shortlink' not in settings.keys():
         await save_group_settings(grp_id, 'is_shortlink', False)
     else:
@@ -437,45 +442,91 @@ async def settings(client, message):
     if settings is not None:
         buttons = [
             [
-                InlineKeyboardButton('Filter Button', callback_data=f'setgs#button#{settings["button"]}#{str(grp_id)}'),
-                InlineKeyboardButton('🔖 Single' if settings["button"] else '🏷 Double', callback_data=f'setgs#button#{settings["button"]}#{str(grp_id)}')
+                InlineKeyboardButton(
+                    'Filter Button',
+                    callback_data=f'setgs#button#{settings["button"]}#{grp_id}',
+                ),
+                InlineKeyboardButton(
+                    'Single' if settings["button"] else 'Double',
+                    callback_data=f'setgs#button#{settings["button"]}#{grp_id}',
+                ),
             ],
             [
-                InlineKeyboardButton('Redirect To', callback_data=f'setgs#botpm#{settings["botpm"]}#{str(grp_id)}'),
-                InlineKeyboardButton('📥 Bot PM' if settings["botpm"] else '📤 Channel', callback_data=f'setgs#botpm#{settings["botpm"]}#{str(grp_id)}')
+                InlineKeyboardButton(
+                    'Redirect To',
+                    callback_data=f'setgs#botpm#{settings["botpm"]}#{grp_id}',
+                ),
+                InlineKeyboardButton(
+                    'Bot PM' if settings["botpm"] else 'Channel',
+                    callback_data=f'setgs#botpm#{settings["botpm"]}#{grp_id}',
+                ),
             ],
             [
-                InlineKeyboardButton('File Secure', callback_data=f'setgs#file_secure#{settings["file_secure"]}#{str(grp_id)}'),
-                InlineKeyboardButton('✅ Yes' if settings["file_secure"] else '❌ No', callback_data=f'setgs#file_secure#{settings["file_secure"]}#{str(grp_id)}')
+                InlineKeyboardButton(
+                    'File Secure',
+                    callback_data=f'setgs#file_secure#{settings["file_secure"]}#{grp_id}',
+                ),
+                InlineKeyboardButton(
+                    '✅ Yes' if settings["file_secure"] else '❌ No',
+                    callback_data=f'setgs#file_secure#{settings["file_secure"]}#{grp_id}',
+                ),
             ],
             [
-                InlineKeyboardButton('IMDB', callback_data=f'setgs#imdb#{settings["imdb"]}#{str(grp_id)}'),
-                InlineKeyboardButton('✅ Yes' if settings["imdb"] else '❌ No', callback_data=f'setgs#imdb#{settings["imdb"]}#{str(grp_id)}')
+                InlineKeyboardButton(
+                    'IMDB',
+                    callback_data=f'setgs#imdb#{settings["imdb"]}#{grp_id}',
+                ),
+                InlineKeyboardButton(
+                    '✅ Yes' if settings["imdb"] else '❌ No',
+                    callback_data=f'setgs#imdb#{settings["imdb"]}#{grp_id}',
+                ),
             ],
             [
-                InlineKeyboardButton('Spell Check', callback_data=f'setgs#spell_check#{settings["spell_check"]}#{str(grp_id)}'),
-                InlineKeyboardButton('✅ Yes' if settings["spell_check"] else '❌ No', callback_data=f'setgs#spell_check#{settings["spell_check"]}#{str(grp_id)}')
+                InlineKeyboardButton(
+                    'Spell Check',
+                    callback_data=f'setgs#spell_check#{settings["spell_check"]}#{grp_id}',
+                ),
+                InlineKeyboardButton(
+                    '✅ Yes' if settings["spell_check"] else '❌ No',
+                    callback_data=f'setgs#spell_check#{settings["spell_check"]}#{grp_id}',
+                ),
             ],
             [
-                InlineKeyboardButton('Welcome', callback_data=f'setgs#welcome#{settings["welcome"]}#{str(grp_id)}'),
-                InlineKeyboardButton('✅ Yes' if settings["welcome"] else '❌ No', callback_data=f'setgs#welcome#{settings["welcome"]}#{str(grp_id)}')
+                InlineKeyboardButton(
+                    'Welcome',
+                    callback_data=f'setgs#welcome#{settings["welcome"]}#{grp_id}',
+                ),
+                InlineKeyboardButton(
+                    '✅ Yes' if settings["welcome"] else '❌ No',
+                    callback_data=f'setgs#welcome#{settings["welcome"]}#{grp_id}',
+                ),
             ],
             [
-                InlineKeyboardButton('Auto Delete', callback_data=f'setgs#auto_delete#{settings["auto_delete"]}#{str(grp_id)}'),
-                InlineKeyboardButton('🗑10 Mins' if settings["auto_delete"] else '❌ Off', callback_data=f'setgs#auto_delete#{settings["auto_delete"]}#{str(grp_id)}')
+                InlineKeyboardButton(
+                    'Auto Delete',
+                    callback_data=f'setgs#auto_delete#{settings["auto_delete"]}#{grp_id}',
+                ),
+                InlineKeyboardButton(
+                    '10 Mins' if settings["auto_delete"] else 'OFF',
+                    callback_data=f'setgs#auto_delete#{settings["auto_delete"]}#{grp_id}',
+                ),
             ],
             [
-                InlineKeyboardButton('ShortLink', callback_data=f'setgs#is_shortlink#{settings["is_shortlink"]}#{str(grp_id)}'),
-                InlineKeyboardButton('✅ On' if settings["is_shortlink"] else '❌ Off', callback_data=f'setgs#is_shortlink#{settings["is_shortlink"]}#{str(grp_id)}'),
-            ],
-            [
-                InlineKeyboardButton('Ruls Active', callback_data=f'setgs#ruls_on#{settings["ruls_on"]}#{str(grp_id)}'),
-                InlineKeyboardButton('✅ On' if settings["ruls_on"] else '❌ Off', callback_data=f'setgs#ruls_on#{settings["ruls_on"]}#{str(grp_id)}'),
+                InlineKeyboardButton(
+                    'ShortLink',
+                    callback_data=f'setgs#is_shortlink#{settings["is_shortlink"]}#{grp_id}',
+                ),
+                InlineKeyboardButton(
+                    '✅ ON' if settings["is_shortlink"] else '❌ OFF',
+                    callback_data=f'setgs#is_shortlink#{settings["is_shortlink"]}#{grp_id}',
+                ),
             ],
         ]
+
         reply_markup = InlineKeyboardMarkup(buttons)
+
         await message.reply_text(
-            text=f"<b>Change Your Settings for {title} As You Wish ⚙</b>",
+            text=f"<b>Change Your Settings for {title} As Your Wish ⚙</b>",
             reply_markup=reply_markup,
             disable_web_page_preview=True,
             parse_mode=enums.ParseMode.HTML,
