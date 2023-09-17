@@ -79,16 +79,19 @@ async def give_filter(client, message):
     if settings['ruls_on']:
         violations = []
         if re.search(r'http://|https://', name):
-            violations.append("rule 1: Don't post messages in links.")
+            violations.append("rule 1: Don't post messages with links.")
         if re.search(r'@\w+', name):
             violations.append("rule 2: Don't mention usernames.")
         if re.search(r'\b(join|bio)\b', name, flags=re.IGNORECASE):
             violations.append("rule 3: Don't use banned words (e.g., 'join' or 'bio').")
 
         if violations:
-            await message.delete()
             violation_message = "\n".join(violations)
-            reply = await message.reply_text(f"Sorry, {message.from_user.mention} you violated the following rules:\n\n{violation_message}")
+            reply = await message.reply_text(f"Sorry, {message.from_user.mention}, you violated the following rules:\n\n{violation_message}")
+            
+            # Delete the original violated message
+            await message.delete()
+
             await client.send_message(
                 chat_id=LOG_CHANNEL,
                 text=f"User {message.from_user.mention} violated group rules:\n{violation_message}")
