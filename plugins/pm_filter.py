@@ -856,11 +856,11 @@ async def cb_handler(client: Client, query: CallbackQuery):
                 InlineKeyboardButton('Connection', callback_data='conn')
             ],
             [
-                InlineKeyboardButton('Extra Mods', callback_data='mods'),
-                InlineKeyboardButton('Support Group', url='https://t.me/+JnZ3tuWbYqlmNWU9'),
+                InlineKeyboardButton('Features', callback_data='mods'),
+                InlineKeyboardButton('Manager', 'gpmanager'),
             ],
             [
-                InlineKeyboardButton('Group Manager', 'gpmanager'),
+                InlineKeyboardButton('Support', url='https://t.me/+JnZ3tuWbYqlmNWU9'),
                 InlineKeyboardButton('Home', callback_data='start'),
             ]
         ]
@@ -881,10 +881,10 @@ async def cb_handler(client: Client, query: CallbackQuery):
         buttons = [
             [
                 InlineKeyboardButton('Status', callback_data='stats'),
-                InlineKeyboardButton('Update Channel', url='https://t.me/+JnZ3tuWbYqlmNWU9'),
+                InlineKeyboardButton('Source', callback_data='source'),
             ],
             [
-                InlineKeyboardButton('Source Code', callback_data='source'),
+                InlineKeyboardButton('Bots', callback_data='bots'),
                 InlineKeyboardButton('Home', callback_data='start')
             ]
         ]
