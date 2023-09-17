@@ -434,53 +434,54 @@ async def settings(client, message):
     else:
         pass
 
-    buttons = [
-        [
-            InlineKeyboardButton('Filter Button', callback_data=f'setgs#button#{settings["button"]}#{group_id}'),
-            InlineKeyboardButton('🔖 Single' if settings["button"] else '🏷 Double', callback_data=f'setgs#button#{settings["button"]}#{group_id}')
-        ],
-        [
-            InlineKeyboardButton('Redirect To', callback_data=f'setgs#botpm#{settings["botpm"]}#{group_id}'),
-            InlineKeyboardButton('📥 Bot PM' if settings["botpm"] else '📤 Channel', callback_data=f'setgs#botpm#{settings["botpm"]}#{group_id}')
-        ],
-        [
-            InlineKeyboardButton('File Secure', callback_data=f'setgs#file_secure#{settings["file_secure"]}#{group_id}'),
-            InlineKeyboardButton('✅ Yes' if settings["file_secure"] else '❌ No', callback_data=f'setgs#file_secure#{settings["file_secure"]}#{group_id}')
-        ],
-        [
-            InlineKeyboardButton('IMDB', callback_data=f'setgs#imdb#{settings["imdb"]}#{group_id}'),
-            InlineKeyboardButton('✅ Yes' if settings["imdb"] else '❌ No', callback_data=f'setgs#imdb#{settings["imdb"]}#{group_id}')
-        ],
-        [
-            InlineKeyboardButton('Spell Check', callback_data=f'setgs#spell_check#{settings["spell_check"]}#{group_id}'),
-            InlineKeyboardButton('✅ Yes' if settings["spell_check"] else '❌ No', callback_data=f'setgs#spell_check#{settings["spell_check"]}#{group_id}')
-        ],
-        [
-            InlineKeyboardButton('Welcome', callback_data=f'setgs#welcome#{settings["welcome"]}#{group_id}'),
-            InlineKeyboardButton('✅ Yes' if settings["welcome"] else '❌ No', callback_data=f'setgs#welcome#{settings["welcome"]}#{group_id}')
-        ],
-        [
-            InlineKeyboardButton('Auto Delete', callback_data=f'setgs#auto_delete#{settings["auto_delete"]}#{group_id}'),
-            InlineKeyboardButton('🗑 10 Mins' if settings["auto_delete"] else '❌ Off', callback_data=f'setgs#auto_delete#{settings["auto_delete"]}#{group_id}')
-        ],
-        [
-            InlineKeyboardButton('ShortLink', callback_data=f'setgs#is_shortlink#{settings["is_shortlink"]}#{group_id}'),
-            InlineKeyboardButton('✅ On' if settings["is_shortlink"] else '❌ Off', callback_data=f'setgs#is_shortlink#{settings["is_shortlink"]}#{group_id}'),
-        ],
-        [
-            InlineKeyboardButton('Ruls Active', callback_data=f'setgs#ruls_on#{settings["ruls_on"]}#{group_id}'),
-            InlineKeyboardButton('✅ On' if settings["ruls_on"] else '❌ Off', callback_data=f'setgs#ruls_on#{settings["ruls_on"]}#{group_id}'),
-        ],
-    ]
-    reply_markup = InlineKeyboardMarkup(buttons)
-    await message.reply_text(
-        text=f"<b>Change Your Settings for {title} As You Wish ⚙</b>",
-        reply_markup=reply_markup,
-        disable_web_page_preview=True,
-        parse_mode=enums.ParseMode.HTML,
-        reply_to_message_id=message.id
-    )
-    await message.answer(MSG_ALRT)
+    if settings is not None:
+        buttons = [
+            [
+                InlineKeyboardButton('Filter Button', callback_data=f'setgs#button#{settings["button"]}#{str(grp_id)}'),
+                InlineKeyboardButton('🔖 Single' if settings["button"] else '🏷 Double', callback_data=f'setgs#button#{settings["button"]}#{str(grp_id)}')
+            ],
+            [
+                InlineKeyboardButton('Redirect To', callback_data=f'setgs#botpm#{settings["botpm"]}#{str(grp_id)}'),
+                InlineKeyboardButton('📥 Bot PM' if settings["botpm"] else '📤 Channel', callback_data=f'setgs#botpm#{settings["botpm"]}#{str(grp_id)}')
+            ],
+            [
+                InlineKeyboardButton('File Secure', callback_data=f'setgs#file_secure#{settings["file_secure"]}#{str(grp_id)}'),
+                InlineKeyboardButton('✅ Yes' if settings["file_secure"] else '❌ No', callback_data=f'setgs#file_secure#{settings["file_secure"]}#{str(grp_id)}')
+            ],
+            [
+                InlineKeyboardButton('IMDB', callback_data=f'setgs#imdb#{settings["imdb"]}#{str(grp_id)}'),
+                InlineKeyboardButton('✅ Yes' if settings["imdb"] else '❌ No', callback_data=f'setgs#imdb#{settings["imdb"]}#{str(grp_id)}')
+            ],
+            [
+                InlineKeyboardButton('Spell Check', callback_data=f'setgs#spell_check#{settings["spell_check"]}#{str(grp_id)}'),
+                InlineKeyboardButton('✅ Yes' if settings["spell_check"] else '❌ No', callback_data=f'setgs#spell_check#{settings["spell_check"]}#{str(grp_id)}')
+            ],
+            [
+                InlineKeyboardButton('Welcome', callback_data=f'setgs#welcome#{settings["welcome"]}#{str(grp_id)}'),
+                InlineKeyboardButton('✅ Yes' if settings["welcome"] else '❌ No', callback_data=f'setgs#welcome#{settings["welcome"]}#{str(grp_id)}')
+            ],
+            [
+                InlineKeyboardButton('Auto Delete', callback_data=f'setgs#auto_delete#{settings["auto_delete"]}#{str(grp_id)}'),
+                InlineKeyboardButton('🗑10 Mins' if settings["auto_delete"] else '❌ Off', callback_data=f'setgs#auto_delete#{settings["auto_delete"]}#{str(grp_id)}')
+            ],
+            [
+                InlineKeyboardButton('ShortLink', callback_data=f'setgs#is_shortlink#{settings["is_shortlink"]}#{str(grp_id)}'),
+                InlineKeyboardButton('✅ On' if settings["is_shortlink"] else '❌ Off', callback_data=f'setgs#is_shortlink#{settings["is_shortlink"]}#{str(grp_id)}'),
+            ],
+            [
+                InlineKeyboardButton('Ruls Active', callback_data=f'setgs#ruls_on#{settings["ruls_on"]}#{str(grp_id)}'),
+                InlineKeyboardButton('✅ On' if settings["ruls_on"] else '❌ Off', callback_data=f'setgs#ruls_on#{settings["ruls_on"]}#{str(grp_id)}'),
+            ],
+        ]
+        reply_markup = InlineKeyboardMarkup(buttons)
+        await message.reply_text(
+            text=f"<b>Change Your Settings for {title} As You Wish ⚙</b>",
+            reply_markup=reply_markup,
+            disable_web_page_preview=True,
+            parse_mode=enums.ParseMode.HTML,
+            reply_to_message_id=message.id
+        )
+        await message.answer(MSG_ALRT)
 
 
 @Client.on_message(filters.command('set_template'))
