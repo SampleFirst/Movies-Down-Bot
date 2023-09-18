@@ -33,9 +33,7 @@ from utils import (
     is_subscribed,
     get_poster,
     search_gagala,
-    temp,
-    get_settings,
-    save_group_settings,
+    temp
 )
 from info import *
     
@@ -196,12 +194,12 @@ async def advantage_pm_spoll_choker(bot, query):
             await k.delete()
 
 
+
 async def pm_auto_filter(bot, msg):
     reqstr1 = msg.from_user.id if msg.from_user else 0
     reqstr = await bot.get_users(reqstr1)
     
     message = msg
-    settings = await get_private_settings(message.from_user.id)  # Update to get private settings
     
     if message.text.startswith("/"):
         return  # Ignore commands
@@ -211,27 +209,19 @@ async def pm_auto_filter(bot, msg):
 
     if len(message.text) < 100:
         search = message.text
-        files, offset, total_results = await get_search_results(search.lower(), offset=0, filter=True)
-        
-        if not files:
-            if settings["spell_check"]:
-                return await advantage_spell_chok(bot, msg)
-            else:
-                await bot.send_message(chat_id=LOG_CHANNEL, text=(script.NORSLTS.format(reqstr.id, reqstr.mention, search)))
-                return
+            files, offset, total_results = await get_search_results(search.lower(), offset=0, filter=True)
+            if not files: return await advantage_pm_spell_chok(msg)              
+        else: return 
     else:
-        return
+        message = msg.message.reply_to_message  # msg will be callback query
+        search, files, offset, total_results = pmspoll
+    pre = 'pmfilep' if PROTECT_CONTENT else 'pmfile'
 
-    if 'is_shortlink' in settings.keys():
-        ENABLE_SHORTLINK = settings['is_shortlink']
-    else:
-        await save_private_settings(message.from_user.id, 'is_shortlink', False)
-        ENABLE_SHORTLINK = False
-    
-    pre = 'filep' if settings['file_secure'] else 'file'
+    if SHORT_URL and SHORT_API:          
+        if SINGLE_BUTTON:
 
     if ENABLE_SHORTLINK == True:
-        # Update URL creation to use private settings
+
         btn = [
             [
                 InlineKeyboardButton(
@@ -242,7 +232,7 @@ async def pm_auto_filter(bot, msg):
             for file in files
         ]
     else:
-        # Update callback data creation to use private settings
+
         btn = [
             [
                 InlineKeyboardButton(
@@ -253,11 +243,13 @@ async def pm_auto_filter(bot, msg):
             for file in files
         ]
 
-    imdb = await get_poster(search, file=(files[0]).file_name) if settings["imdb"] else None
-    TEMPLATE = settings['template']
-
+    if PM_IMDB:
+        imdb = await get_poster(search)
+    else:
+        imdb = None
+    TEMPLATE = IMDB_TEMPLATE
     if imdb:
-        # Update the caption to use private settings
+        
         cap = TEMPLATE.format(
             query=search,
             title=imdb['title'],
@@ -290,53 +282,40 @@ async def pm_auto_filter(bot, msg):
             **locals()
         )
     else:
-        cap = f"<b><i>𝙃𝙚𝙧𝙚 𝙞𝙨 𝙬𝙝𝙖𝙩 𝙞𝙨 𝙛𝙤𝙪𝙣𝙙 𝙮𝙤𝙪𝙧 𝙦𝙪𝙚𝙧𝙮:\n {search}\n👤𝙍𝙚𝙦𝙪𝙚𝙨𝙩𝙚𝙙 𝘽𝙮 : {message.from_user.mention}\n</i></b>"
-    
+        cap = f"Hᴇʀᴇ Is Wʜᴀᴛ I Fᴏᴜɴᴅ Fᴏʀ Yᴏᴜʀ Qᴜᴇʀʏ {search}"
     if imdb and imdb.get('poster'):
         try:
-            hehe = await message.reply_photo(photo=imdb.get('poster'), caption=cap[:1024], reply_markup=InlineKeyboardMarkup(btn))
-            if settings['auto_delete']:
-                await asyncio.sleep(600)
-                await hehe.delete()
-                await message.delete()
+            hehe = await message.reply_photo(photo=imdb.get('poster'), caption=cap, quote=True, reply_markup=InlineKeyboardMarkup(btn))
+            await asyncio.sleep(IMDB_DELET_TIME)
+            await hehe.delete()            
         except (MediaEmpty, PhotoInvalidDimensions, WebpageMediaEmpty):
             pic = imdb.get('poster')
             poster = pic.replace('.jpg', "._V1_UX360.jpg")
-            hmm = await message.reply_photo(photo=poster, caption=cap[:1024], reply_markup=InlineKeyboardMarkup(btn))
-            if settings['auto_delete']:
-                await asyncio.sleep(600)
-                await hmm.delete()
-                await message.delete()
+            hmm = await message.reply_photo(photo=poster, caption=cap, quote=True, reply_markup=InlineKeyboardMarkup(btn))           
+            await asyncio.sleep(IMDB_DELET_TIME)
+            await hmm.delete()            
         except Exception as e:
             logger.exception(e)
-            fek = await message.reply_photo(photo=NOR_IMG, caption=cap, reply_markup=InlineKeyboardMarkup(btn))
-            if settings['auto_delete']:
-                await asyncio.sleep(600)
-                await fek.delete()
-                await message.delete()
+            cdp = await message.reply_text(cap, quote=True, reply_markup=InlineKeyboardMarkup(btn))
+            await asyncio.sleep(IMDB_DELET_TIME)
+            await cdp.delete()
     else:
-        fuk = await message.reply_photo(photo=NOR_IMG, caption=cap, reply_markup=InlineKeyboardMarkup(btn))
-        if settings['auto_delete']:
-            await asyncio.sleep(600)
-            await fuk.delete()
-            await message.delete()
+        abc = await message.reply_text(cap, quote=True, reply_markup=InlineKeyboardMarkup(btn))
+        await asyncio.sleep(IMDB_DELET_TIME)
+        await abc.delete()        
+    if pmspoll:
+        await msg.message.delete()
 
 
-
-
-
-
-@Client.on_message(filters.private & filters.command("spellcheck"))
-async def advantage_pm_spell_chok(bot, msg):
+async def advantage_pm_spell_check(bot, msg):
     mv_id = msg.message_id
     mv_rqst = msg.text
     reqstr1 = msg.from_user.id
     reqstr = await bot.get_users(reqstr1)
     
-    settings = await get_settings(msg.chat.id)
     query = re.sub(
         r"\b(pl(i|e)*?(s|z+|ease|se|ese|(e+)s(e)?)|((send|snd|giv(e)?|gib)(\sme)?)|movie(s)?|new|latest|br((o|u)h?)*|^h(e|a)?(l)*(o)*|mal(ayalam)?|t(h)?amil|file|that|find|und(o)*|kit(t(i|y)?)?o(w)?|thar(u)?(o)*w?|kittum(o)*|aya(k)*(um(o)*)?|full\smovie|any(one)|with\ssubtitle(s)?)",
-        "", mv_rqst, flags=re.IGNORECASE)  # plis contribute some common words
+        "", mv_rqst, flags=re.IGNORECASE)  # Remove common words
     
     RQST = query.strip()
     query = query.strip() + " movie"
@@ -344,7 +323,7 @@ async def advantage_pm_spell_chok(bot, msg):
     try:
         movies = await get_poster(mv_rqst, bulk=True)
     except Exception as e:
-        logger.exception(e)
+        logger.exception(e)  # Make sure you have 'logger' defined
         await bot.send_message(chat_id=LOG_CHANNEL, text=(script.NORSLTS.format(reqstr.id, reqstr.mention, mv_rqst)))
         k = await msg.reply(script.I_CUDNT.format(reqstr.mention))
         await asyncio.sleep(8)
@@ -390,15 +369,8 @@ async def advantage_pm_spell_chok(bot, msg):
     )
 
     try:
-        if settings['auto_delete']:
-            await asyncio.sleep(600)
-            await spell_check_del.delete()
-    except KeyError:
-        grpid = await active_connection(str(msg.from_user.id))
-        await save_group_settings(grpid, 'auto_delete', True)
-        settings = await get_settings(msg.chat.id)
-        if settings['auto_delete']:
-            await asyncio.sleep(600)
-            await spell_check_del.delete()
-
+        await asyncio.sleep(600)
+        await spell_check_del.delete()
+    except Exception as e:
+        logger.exception(e)  # Handle potential exceptions
 
