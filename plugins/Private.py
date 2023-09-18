@@ -14,7 +14,7 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQ
 # Database Imports
 from database.users_chats_db import db
 from database.ia_filterdb import Media, get_file_details, get_search_results
-from plugins.group_filter import global_filters
+from plugins.pm_filter import global_filters
 
 # Local Imports
 from Script import script
