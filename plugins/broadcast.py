@@ -81,7 +81,7 @@ async def broadcast_group(bot, message):
     total_members_mentioned = 0
     failed_reasons = {}
 
-    async for group in groups:
+    for group in groups:  # Iterate synchronously
         try:
             # Fetch the members of the group
             members = await bot.get_chat_members(int(group['id']))
@@ -125,7 +125,6 @@ async def broadcast_group(bot, message):
             outfile.write(response_message)
         await message.reply_document('reason.txt', caption=f"Broadcast Completed:\nCompleted in {time_taken} seconds.")
         os.remove("reason.txt")
-
       
 @Client.on_message(filters.command(["junk_group", "clear_junk_group"]) & filters.user(ADMINS))
 async def junk_clear_group(bot, message):
