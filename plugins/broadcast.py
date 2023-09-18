@@ -76,54 +76,38 @@ async def broadcast_group(bot, message):
     start_time = time.time()
     total_groups = await db.total_chat_count()
     done = 0
+    failed = ""
     success = 0
     deleted = 0
-    total_members_mentioned = 0
-    failed_reasons = {}
-
-    for group in groups:  # Iterate synchronously
-        try:
-            # Fetch the members of the group
-            members = await bot.get_chat_members(int(group['id']))
-
-            # Create a list of user mentions, limiting to 5 mentions at a time
-            mentions = [f"@{member.user.username}" for member in members if member.user.username][:5]
-
-            # Combine mentions and the original message
-            message_with_mentions = f"{b_msg.text}\n\n{' '.join(mentions)}"
-
-            # Send the message to the group
-            await bot.send_message(int(group['id']), message_with_mentions)
-            success += 1
-            total_members_mentioned += len(mentions)
-        except Exception as e:
-            deleted += 1
-            failed_reasons[group['id']] = str(e)
-            try:
-                await bot.leave_chat(int(group['id']))
-            except Exception as e:
-                print(f"{e} > {group['id']}")
-
+    async for group in groups:
+        pti, sh, ex = await broadcast_messages_group(int(group['id']), b_msg)
+        if pti == True:
+            if sh == "Succes":
+                success += 1
+                # Pin the broadcasted message in the group
+                try:
+                    await bot.pin_chat_message(int(group['id']), pti['message_id'])
+                except Exception as e:
+                    print(f"Failed to pin message in {group['id']}: {e}")
+        elif pti == False:
+            if sh == "deleted":
+                deleted+=1 
+                failed += ex 
+                try:
+                    await bot.leave_chat(int(group['id']))
+                except Exception as e:
+                    print(f"{e} > {group['id']}")  
         done += 1
         if not done % 20:
-            await sts.edit(f"Broadcast in progress:\n\nTotal Groups: {total_groups}\nCompleted: {done} / {total_groups}\nSuccess: {success}\nDeleted: {deleted}\nTotal Members Mentioned: {total_members_mentioned}")
-
+            await sts.edit(f"Broadcast in progress:\n\nTotal Groups {total_groups}\nCompleted: {done} / {total_groups}\nSuccess: {success}\nDeleted: {deleted}")    
     time_taken = datetime.timedelta(seconds=int(time.time()-start_time))
     await sts.delete()
-
-    response_message = f"Broadcast Completed:\nCompleted in {time_taken} seconds.\n\nTotal Groups: {total_groups}\nCompleted: {done} / {total_groups}\nSuccess: {success}\nDeleted: {deleted}\nTotal Members Mentioned: {total_members_mentioned}"
-
-    if deleted > 0:
-        response_message += "\n\nFailed Reasons:"
-        for group_id, reason in failed_reasons.items():
-            response_message += f"\nGroup ID {group_id}: {reason}"
-
     try:
-        await message.reply_text(response_message)
+        await message.reply_text(f"Broadcast Completed:\nCompleted in {time_taken} seconds.\n\nTotal Groups {total_groups}\nCompleted: {done} / {total_groups}\nSuccess: {success}\nDeleted: {deleted}\n\nFiled Reson:- {failed}")
     except MessageTooLong:
         with open('reason.txt', 'w+') as outfile:
-            outfile.write(response_message)
-        await message.reply_document('reason.txt', caption=f"Broadcast Completed:\nCompleted in {time_taken} seconds.")
+            outfile.write(failed)
+        await message.reply_document('reason.txt', caption=f"Completed:\nCompleted in {time_taken} seconds.\n\nTotal Groups {total_groups}\nCompleted: {done} / {total_groups}\nSuccess: {success}\nDeleted: {deleted}")
         os.remove("reason.txt")
       
 @Client.on_message(filters.command(["junk_group", "clear_junk_group"]) & filters.user(ADMINS))
