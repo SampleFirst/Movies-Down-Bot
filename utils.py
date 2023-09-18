@@ -52,6 +52,10 @@ class temp(object):
     U_NAME = None
     B_NAME = None
     SETTINGS = {}
+    GP_BUTTONS = {}
+    PM_BUTTONS = {}
+    PM_SPELL = {}
+    GP_SPELL = {}
     
 async def is_subscribed(bot, query):
     try:
