@@ -400,13 +400,11 @@ async def list_chats(bot, message):
         chat_username = chat_info.username
         chat_members = await bot.get_chat_members_count(chat['id'])
         chat_admins = await bot.get_chat_administrators(chat['id'])
-        chat_bots = len([member for member in chat_admins if member.user.is_bot])
         
         out += f"**Title:** `{chat_title}`\n"
         out += f"**Username:** @{chat_username}\n"
         out += f"**Total Members:** {chat_members}\n"
         out += f"**Total Admins:** {len(chat_admins)}\n"
-        out += f"**Total Bots:** {chat_bots}\n"
         
         if chat['chat_status']['is_disabled']:
             out += '( Disabled Chat )'
