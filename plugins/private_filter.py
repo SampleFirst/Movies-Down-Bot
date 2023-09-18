@@ -222,7 +222,7 @@ async def advantage_pm_spoll_choker(bot, query):
 
 
 
-async def pm_auto_filter(bot, msg):
+async def pm_auto_filter(client, msg, pmspoll=False):   
     if not pmspoll:
         message = msg   
         if message.text.startswith("/"): return  # ignore commands
