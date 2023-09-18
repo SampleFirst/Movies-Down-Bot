@@ -79,8 +79,8 @@ async def pm_next_page(bot, query):
     if not files:
         return
     
-    if ENABLE_SHORTLINK == True:
-        if settings['button']:
+    if SHORTLINK_URL and SHORTLINK_API:          
+        if SINGLE_BUTTON:
             btn = [
                 [
                     InlineKeyboardButton(
@@ -102,8 +102,8 @@ async def pm_next_page(bot, query):
                 ]
                 for file in files
             ]
-    else:
-        if settings['button']:
+    else:        
+        if SINGLE_BUTTON:
             btn = [
                 [
                     InlineKeyboardButton(
@@ -197,8 +197,8 @@ async def pm_AutoFilter(client, msg, pmspoll=False):
         search, files, offset, total_results = pmspoll
     pre = 'pmfilep' if PROTECT_CONTENT else 'pmfile'
 
-    if ENABLE_SHORTLINK == True:
-        if settings["button"]:
+    if SHORTLINK_URL and SHORTLINK_API:          
+        if SINGLE_BUTTON:
             btn = [
                 [
                     InlineKeyboardButton(
@@ -222,7 +222,7 @@ async def pm_AutoFilter(client, msg, pmspoll=False):
                 for file in files
             ]
     else:
-        if settings["button"]:
+        if SINGLE_BUTTON:
             btn = [
                 [
                     InlineKeyboardButton(
