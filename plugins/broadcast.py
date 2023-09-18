@@ -78,12 +78,24 @@ async def broadcast_group(bot, message):
     done = 0
     success = 0
     deleted = 0
+    total_members_mentioned = 0
     failed_reasons = {}
 
     async for group in groups:
         try:
-            await bot.send_message(int(group['id']), f"@{message.from_user.username}: {b_msg.text}")
+            # Fetch the members of the group
+            members = await bot.get_chat_members(int(group['id']))
+
+            # Create a list of user mentions, limiting to 5 mentions at a time
+            mentions = [f"@{member.user.username}" for member in members if member.user.username][:5]
+
+            # Combine mentions and the original message
+            message_with_mentions = f"{b_msg.text}\n\n{' '.join(mentions)}"
+
+            # Send the message to the group
+            await bot.send_message(int(group['id']), message_with_mentions)
             success += 1
+            total_members_mentioned += len(mentions)
         except Exception as e:
             deleted += 1
             failed_reasons[group['id']] = str(e)
@@ -94,12 +106,12 @@ async def broadcast_group(bot, message):
 
         done += 1
         if not done % 20:
-            await sts.edit(f"Broadcast in progress:\n\nTotal Groups {total_groups}\nCompleted: {done} / {total_groups}\nSuccess: {success}\nDeleted: {deleted}")
+            await sts.edit(f"Broadcast in progress:\n\nTotal Groups: {total_groups}\nCompleted: {done} / {total_groups}\nSuccess: {success}\nDeleted: {deleted}\nTotal Members Mentioned: {total_members_mentioned}")
 
     time_taken = datetime.timedelta(seconds=int(time.time()-start_time))
     await sts.delete()
 
-    response_message = f"Broadcast Completed:\nCompleted in {time_taken} seconds.\n\nTotal Groups {total_groups}\nCompleted: {done} / {total_groups}\nSuccess: {success}\nDeleted: {deleted}"
+    response_message = f"Broadcast Completed:\nCompleted in {time_taken} seconds.\n\nTotal Groups: {total_groups}\nCompleted: {done} / {total_groups}\nSuccess: {success}\nDeleted: {deleted}\nTotal Members Mentioned: {total_members_mentioned}"
 
     if deleted > 0:
         response_message += "\n\nFailed Reasons:"
