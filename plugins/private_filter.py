@@ -39,9 +39,10 @@ BUTTONS = {}
 SPELL_CHECK = {}
 FILTER_MODE = {}
 
-@Client.on_message((filters.private) & filters.text & filters.incoming)
-async def give_pm_filter(client, message):
-    await global_filters(client, message)
+            
+@Client.on_message(filters.private & filters.text & filters.incoming)
+async def pm_text(bot, message):
+    await global_filters(bot, message)
     user_id = message.chat.id
     name = message.text
 
@@ -86,12 +87,12 @@ async def give_pm_filter(client, message):
         if FILTER_MODE.get(str(user_id)) == "False":
             return
         else:
-            await auto_filter(client, message)
+            await auto_filter(bot, message)
             
             
 
 @Client.on_callback_query(filters.regex(r"^next"))
-async def next_pm_page(bot, query):
+async def next_page(bot, query):
     ident, req, key, offset = query.data.split("_")
     try:
         offset = int(offset)
@@ -178,9 +179,9 @@ async def advantage_pm_spoll_choker(bot, query):
             await k.delete()
 
 
-async def auto_filter_private(client, msg):
+async def auto_filter_private(bot, msg):
     reqstr1 = msg.from_user.id if msg.from_user else 0
-    reqstr = await client.get_users(reqstr1)
+    reqstr = await bot.get_users(reqstr1)
     
     message = msg
     settings = await get_private_settings(message.from_user.id)  # Update to get private settings
@@ -197,9 +198,9 @@ async def auto_filter_private(client, msg):
         
         if not files:
             if settings["spell_check"]:
-                return await advantage_spell_chok(client, msg)
+                return await advantage_spell_chok(bot, msg)
             else:
-                await client.send_message(chat_id=LOG_CHANNEL, text=(script.NORSLTS.format(reqstr.id, reqstr.mention, search)))
+                await bot.send_message(chat_id=LOG_CHANNEL, text=(script.NORSLTS.format(reqstr.id, reqstr.mention, search)))
                 return
     else:
         return
@@ -309,11 +310,11 @@ async def auto_filter_private(client, msg):
 
 
 @Client.on_message(filters.private & filters.command("spellcheck"))
-async def advantage_pm_spell_chok(client, msg):
+async def advantage_pm_spell_chok(bot, msg):
     mv_id = msg.message_id
     mv_rqst = msg.text
     reqstr1 = msg.from_user.id
-    reqstr = await client.get_users(reqstr1)
+    reqstr = await bot.get_users(reqstr1)
     
     settings = await get_settings(msg.chat.id)
     query = re.sub(
@@ -327,7 +328,7 @@ async def advantage_pm_spell_chok(client, msg):
         movies = await get_poster(mv_rqst, bulk=True)
     except Exception as e:
         logger.exception(e)
-        await client.send_message(chat_id=LOG_CHANNEL, text=(script.NORSLTS.format(reqstr.id, reqstr.mention, mv_rqst)))
+        await bot.send_message(chat_id=LOG_CHANNEL, text=(script.NORSLTS.format(reqstr.id, reqstr.mention, mv_rqst)))
         k = await msg.reply(script.I_CUDNT.format(reqstr.mention))
         await asyncio.sleep(8)
         await k.delete()
@@ -340,7 +341,7 @@ async def advantage_pm_spell_chok(client, msg):
         button = [[
             InlineKeyboardButton("Google", url=f"https://www.google.com/search?q={reqst_gle}")
         ]]
-        await client.send_message(chat_id=LOG_CHANNEL, text=(script.NORSLTS.format(reqstr.id, reqstr.mention, mv_rqst)))
+        await bot.send_message(chat_id=LOG_CHANNEL, text=(script.NORSLTS.format(reqstr.id, reqstr.mention, mv_rqst)))
         k = await msg.reply_photo(
             photo=SPELL_IMG,
             caption=script.I_CUDNT.format(mv_rqst),
