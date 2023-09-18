@@ -48,7 +48,15 @@ BUTTONS = {}
 SPELL_CHECK = {}
 FILTER_MODE = {}
 
-            
+@Client.on_message(filters.private & filters.text)
+async def auto_pm_fill(b, m):
+    if PMFILTER:       
+        if G_FILTER:
+            kd = await global_filters(b, m)
+            if kd == False: await pm_auto_filter(b, m)
+        else: await pm_auto_filter(b, m)
+    else: return 
+        
 @Client.on_message(filters.private & filters.text & filters.incoming)
 async def pm_text(bot, message):
     await global_filters(bot, message)
@@ -96,7 +104,7 @@ async def pm_text(bot, message):
         if FILTER_MODE.get(str(user_id)) == "False":
             return
         else:
-            await auto_filter(bot, message)
+            await pm_auto_filter(bot, message)
             
             
 
@@ -178,7 +186,7 @@ async def advantage_pm_spoll_choker(bot, query):
         files, offset, total_results = await get_search_results(movie, offset=0, filter=True)
         if files:
             k = (movie, files, offset, total_results)
-            await auto_filter(bot, query, k)
+            await pm_auto_filter(bot, query, k)
         else:
             reqstr1 = query.from_user.id if query.from_user else 0
             reqstr = await bot.get_users(reqstr1)
@@ -188,7 +196,7 @@ async def advantage_pm_spoll_choker(bot, query):
             await k.delete()
 
 
-async def auto_filter_private(bot, msg):
+async def pm_auto_filter(bot, msg):
     reqstr1 = msg.from_user.id if msg.from_user else 0
     reqstr = await bot.get_users(reqstr1)
     
