@@ -395,13 +395,27 @@ async def list_chats(bot, message):
     chats = await db.get_all_chats()
     out = "Chats Saved In DB Are:\n\n"
     async for chat in chats:
-        out += f"**Title:** `{chat['title']}`\n**- ID:** `{chat['id']}`"
+        chat_info = await bot.get_chat(chat['id'])
+        chat_title = chat_info.title
+        chat_username = chat_info.username
+        chat_members = await bot.get_chat_members_count(chat['id'])
+        chat_admins = await bot.get_chat_administrators(chat['id'])
+        chat_bots = len([member for member in chat_admins if member.user.is_bot])
+        
+        out += f"**Title:** `{chat_title}`\n"
+        out += f"**Username:** @{chat_username}\n"
+        out += f"**Total Members:** {chat_members}\n"
+        out += f"**Total Admins:** {len(chat_admins)}\n"
+        out += f"**Total Bots:** {chat_bots}\n"
+        
         if chat['chat_status']['is_disabled']:
             out += '( Disabled Chat )'
         out += '\n'
+    
     try:
         await raju.edit_text(out)
     except MessageTooLong:
         with open('chats.txt', 'w+') as outfile:
             outfile.write(out)
         await message.reply_document('chats.txt', caption="List Of Chats")
+        
