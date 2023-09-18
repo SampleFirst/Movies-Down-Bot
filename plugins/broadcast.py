@@ -84,14 +84,16 @@ async def broadcast_group(bot, message):
         if pti == True:
             if sh == "Succes":
                 success += 1
-                # Pin the broadcasted message in the group
+                # Capture the message ID when it's sent
+                sent_message = await bot.send_message(int(group['id']), b_msg.text)
                 try:
-                    await bot.pin_chat_message(int(group['id']), pti['message_id'])
+                    # Pin the sent message in the group
+                    await bot.pin_chat_message(int(group['id']), sent_message.message_id)
                 except Exception as e:
                     print(f"Failed to pin message in {group['id']}: {e}")
         elif pti == False:
             if sh == "deleted":
-                deleted+=1 
+                deleted += 1 
                 failed += ex 
                 try:
                     await bot.leave_chat(int(group['id']))
@@ -103,7 +105,7 @@ async def broadcast_group(bot, message):
     time_taken = datetime.timedelta(seconds=int(time.time()-start_time))
     await sts.delete()
     try:
-        await message.reply_text(f"Broadcast Completed:\nCompleted in {time_taken} seconds.\n\nTotal Groups {total_groups}\nCompleted: {done} / {total_groups}\nSuccess: {success}\nDeleted: {deleted}\n\nFiled Reson:- {failed}")
+        await message.reply_text(f"Broadcast Completed:\nCompleted in {time_taken} seconds.\n\nTotal Groups {total_groups}\nCompleted: {done} / {total_groups}\nSuccess: {success}\nDeleted: {deleted}\n\nFiled Reason: {failed}")
     except MessageTooLong:
         with open('reason.txt', 'w+') as outfile:
             outfile.write(failed)
