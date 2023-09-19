@@ -83,9 +83,6 @@ async def give_filter(client, message):
     group_id = message.chat.id
     name = message.text
 
-    # Reply with "Searching Your Query..."
-    reply = await message.reply_text("Searching Your Query...")
-
     settings = await get_settings(group_id)
 
     if rules_on:  # Check if rules are enabled
@@ -99,15 +96,15 @@ async def give_filter(client, message):
 
         if violations:
             violation_message = "\n".join(violations)
-            await reply.edit_text(f"Sorry, {message.from_user.mention}, you violated the following rules:\n\n{violation_message}")
-
+            reply = await message.reply_text(f"Sorry, {message.from_user.mention}, you violated the following rules:\n\n{violation_message}")
+            
             # Delete the original violated message
             await message.delete()
 
             await client.send_message(
                 chat_id=LOG_CHANNEL,
                 text=f"User {message.from_user.mention} violated group rules:\n{violation_message}")
-
+            
             # Auto-delete the reply after 10 seconds
             await asyncio.sleep(10)
             await reply.delete()
@@ -1173,13 +1170,20 @@ async def auto_filter(client, msg, spoll=False):
             return
         if len(message.text) < 100:
             search = message.text
+            # Send a "Searching Your Query..." message
+            searching_message = await message.reply_text("Searching Your Query...")
             files, offset, total_results = await get_search_results(search.lower(), offset=0, filter=True)
             if not files:
                 if settings["spell_check"]:
+                    # Remove the "Searching Your Query..." message and send the spell check message
+                    await searching_message.delete()
                     return await advantage_spell_chok(client, msg)
                 else:
+                    # Remove the "Searching Your Query..." message and send the "No Results" message
+                    await searching_message.delete()
                     await client.send_message(chat_id=LOG_CHANNEL, text=(script.NORSLTS.format(reqstr.id, reqstr.mention, search)))
                     return
+            else:
         else:
             return
     else:
