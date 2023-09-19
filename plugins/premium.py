@@ -77,3 +77,38 @@ async def check_my_premium_status(bot, message):
     except Exception as e:
         print(e)
         await message.reply("An error occurred while checking your premium status.")
+
+
+@Client.on_message(filters.command("premium") filters.user(ADMINS))
+async def add_premium_user_command(client, message):
+    user_id = message.from_user.id
+    user_name = message.from_user.username
+    premium_start_date = datetime.now()
+    premium_end_date = premium_start_date + timedelta(days=30)  # Example: Premium for 30 days
+    await db.add_premium_user(user_id, user_name, premium_start_date, premium_end_date)
+    await message.reply("You have been upgraded to Premium!")
+
+# Command to check if a user is a premium user (Only for admins)
+@Client.on_message(filters.command("seepremium") filters.user(ADMINS))
+async def check_premium_user_command(client, message):
+    user_id = message.from_user.id
+    is_premium = await db.is_premium_user(user_id)
+    if is_premium:
+        await message.reply("You are a Premium user.")
+    else:
+        await message.reply("You are a Free user.")
+
+# Command to demote a premium user to a free user (Only for admins)
+@Client.on_message(filters.command("deletepremium") filters.user(ADMINS))
+async def remove_premium_user_command(client, message):
+    user_id = message.from_user.id
+    await db.remove_premium_user(user_id)
+    await message.reply("You have been demoted to a Free user!")
+
+# Command to check your plan (Premium or Free)
+@Client.on_message(filters.command("myplan") & filters.private)
+async def check_user_plan_command(client, message):
+    user_id = message.from_user.id
+    user_plan = await db.get_user_plan(user_id)
+    await message.reply(f"Your plan is: {user_plan}")
+    
