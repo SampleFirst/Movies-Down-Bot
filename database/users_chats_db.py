@@ -146,15 +146,16 @@ class Database:
         premium_user = self.new_premium_user(id, name, premium_start_date, premium_end_date)
         await self.pre.insert_one(premium_user)
 
-    async def is_premium_user_exist(self, user_id):
-        user = await self.pre.find_one({'id': user_id})
-        return user is not None
+    async def is_premium_user_exist(self, id):
+        user = await self.pre.find_one({'id': int(id)})
+        return bool(user)
 
-    async def update_premium_status(self, user_id, is_premium):
-        await self.pre.update_one(
-            {'id': user_id},
-            {'$set': {'premium_status.is_premium': is_premium}}
-        )
+    async def total_premium_users_count(self):
+        count = await self.pre.count_documents({'premium_status.is_premium': True})
+        return count
+        
+    async def remove_premium_user(self, id):
+        await self.pre.delete_many({'id': int(id)})
 
     async def check_premium_status(self, user_id):
         user = await self.pre.find_one({'id': user_id})
@@ -162,19 +163,9 @@ class Database:
             return user['premium_status']['is_premium']
         return False
         
-    async def total_premium_users_count(self):
-        count = await self.pre.count_documents({'premium_status.is_premium': True})
-        return count
-
-    async def get_all_premium_users(self):
-        premium_users = await self.pre.find({'premium_status.is_premium': True}).to_list()
-        return premium_users
-
-    async def delete_premium_user(self, id):
-        await self.pre.delete_many({
-            'id': id,
-            'premium_status.is_premium': True,
-        })
+    async def get_user_plan(self, id):
+        is_premium = await self.is_premium_user(id)
+        return 'Premium' if is_premium else 'Free'     
         
     async def update_settings(self, id, settings):
         await self.grp.update_one({'id': int(id)}, {'$set': {'settings': settings}})
