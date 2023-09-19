@@ -67,56 +67,28 @@ async def fil_mod(client, message):
       else:
           await m.edit("𝚄𝚂𝙴 :- /autofilter on 𝙾𝚁 /autofilter off")
 
-@Client.on_message((filters.command("rule_on") | filters.command("rule_off")) & filters.group)
-async def set_rules_status(client, message):
-    global rules_on  # Access the global rules_on variable
-
-    if message.command[0] == "rule_on":
-        rules_on = True
-        await message.reply_text("Group rules are now ON.")
-    elif message.command[0] == "rule_off":
-        rules_on = False
-        await message.reply_text("Group rules are now OFF.")
-
 @Client.on_message((filters.group) & filters.text & filters.incoming)
 async def give_filter(client, message):
+    await global_filters(client, message)
     group_id = message.chat.id
+    user_id = message.from_user.id  # Get the user's ID
     name = message.text
 
-    settings = await get_settings(group_id)
+    # Check if the user is a premium user
+    is_premium_user = await db.check_premium_status(user_id)
 
-    if rules_on:  # Check if rules are enabled
-        violations = []
-        if re.search(r'http://|https://', name):
-            violations.append("rule 1: Don't post messages with links.")
-        if re.search(r'@\w+', name):
-            violations.append("rule 2: Don't mention usernames.")
-        if re.search(r'\b(join|bio)\b', name, flags=re.IGNORECASE):
-            violations.append("rule 3: Don't use banned words (e.g., 'join' or 'bio').")
+    if is_premium_user:
+        # User is a premium user, execute premium logic
+        keywords = await get_filters(group_id)
+        for keyword in reversed(sorted(keywords, key=len)):
+            pattern = r"( |^|[^\w])" + re.escape(keyword) + r"( |$|[^\w])"
+            if re.search(pattern, name, flags=re.IGNORECASE):
+                reply_text, btn, alert, fileid = await find_filter(group_id, keyword)
 
-        if violations:
-            violation_message = "\n".join(violations)
-            reply = await message.reply_text(f"Sorry, {message.from_user.mention}, you violated the following rules:\n\n{violation_message}")
-            
-            # Delete the original violated message
-            await message.delete()
+                if reply_text:
+                    reply_text = reply_text.replace("\\n", "\n").replace("\\t", "\t")
 
-            await client.send_message(
-                chat_id=LOG_CHANNEL,
-                text=f"User {message.from_user.mention} violated group rules:\n{violation_message}")
-            
-            # Auto-delete the reply after 10 seconds
-            await asyncio.sleep(10)
-            await reply.delete()
-        else:
-            await global_filters(client, message)
-            keywords = await get_filters(group_id)
-            for keyword in reversed(sorted(keywords, key=len)):
-                pattern = r"( |^|[^\w])" + re.escape(keyword) + r"( |$|[^\w])"
-                if re.search(pattern, name, flags=re.IGNORECASE):
-                    reply_text, btn, alert, fileid = await find_filter(group_id, keyword)
-                    if reply_text:
-                        reply_text = reply_text.replace("\\n", "\n").replace("\\t", "\t")
+                if btn is not None:
                     try:
                         if fileid == "None":
                             if btn == "[]":
@@ -143,61 +115,16 @@ async def give_filter(client, message):
                     except Exception as e:
                         print(e)
                     break
-            else:
-                if FILTER_MODE.get(str(message.chat.id)) == "False":
-                    return
-                else:
-                    await auto_filter(client, message)
-                    
-            if settings['auto_delete']:
-                await asyncio.sleep(600)
-                await message.delete()
-    else:
-        await global_filters(client, message)
-        keywords = await get_filters(group_id)
-        for keyword in reversed(sorted(keywords, key=len)):
-            pattern = r"( |^|[^\w])" + re.escape(keyword) + r"( |$|[^\w])"
-            if re.search(pattern, name, flags=re.IGNORECASE):
-                reply_text, btn, alert, fileid = await find_filter(group_id, keyword)
-                if reply_text:
-                    reply_text = reply_text.replace("\\n", "\n").replace("\\t", "\t")
-                try:
-                    if fileid == "None":
-                        if btn == "[]":
-                            await message.reply_text(reply_text, disable_web_page_preview=True)
-                        else:
-                            button = eval(btn)
-                            await message.reply_text(
-                                reply_text,
-                                disable_web_page_preview=True,
-                                reply_markup=InlineKeyboardMarkup(button)
-                            )
-                    elif btn == "[]":
-                        await message.reply_cached_media(
-                            fileid,
-                            caption=reply_text or ""
-                        )
-                    else:
-                        button = eval(btn)
-                        await message.reply_cached_media(
-                            fileid,
-                            caption=reply_text or "",
-                            reply_markup=InlineKeyboardMarkup(button)
-                        )
-                except Exception as e:
-                    print(e)
-                break
+
         else:
             if FILTER_MODE.get(str(message.chat.id)) == "False":
                 return
             else:
                 await auto_filter(client, message)
-                
-        if settings['auto_delete']:
-            await asyncio.sleep(600)
-            await message.delete()
-            
-                
+    else:
+        # User is not a premium user, execute non-premium logic (e.g., send a message)
+        await message.reply_text("This feature is only available to premium users.")
+
 
         
 @Client.on_callback_query(filters.regex(r"^next"))
