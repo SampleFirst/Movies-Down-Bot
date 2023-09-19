@@ -78,8 +78,7 @@ async def check_my_premium_status(bot, message):
         print(e)
         await message.reply("An error occurred while checking your premium status.")
 
-
-@Client.on_message(filters.command("premium") filters.user(ADMINS))
+@Client.on_message(filters.command("premium") & filters.user(ADMINS))
 async def add_premium_user_command(client, message):
     user_id = message.from_user.id
     user_name = message.from_user.username
@@ -89,7 +88,7 @@ async def add_premium_user_command(client, message):
     await message.reply("You have been upgraded to Premium!")
 
 # Command to check if a user is a premium user (Only for admins)
-@Client.on_message(filters.command("seepremium") filters.user(ADMINS))
+@Client.on_message(filters.command("seepremium") & filters.user(ADMINS))
 async def check_premium_user_command(client, message):
     user_id = message.from_user.id
     is_premium = await db.is_premium_user(user_id)
@@ -99,7 +98,7 @@ async def check_premium_user_command(client, message):
         await message.reply("You are a Free user.")
 
 # Command to demote a premium user to a free user (Only for admins)
-@Client.on_message(filters.command("deletepremium") filters.user(ADMINS))
+@Client.on_message(filters.command("deletepremium") & filters.user(ADMINS))
 async def remove_premium_user_command(client, message):
     user_id = message.from_user.id
     await db.remove_premium_user(user_id)
