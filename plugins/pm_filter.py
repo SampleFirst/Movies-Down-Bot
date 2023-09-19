@@ -1162,37 +1162,35 @@ async def cb_handler(client: Client, query: CallbackQuery):
 async def auto_filter(client, msg, spoll=False):
     reqstr1 = msg.from_user.id if msg.from_user else 0
     reqstr = await client.get_users(reqstr1)
+
     if not spoll:
         message = msg
         settings = await get_settings(message.chat.id)
+        
         if message.text.startswith("/"):
             return  # Ignore commands
-        if re.findall(r"^\/|^,|^!|^\.|^[\U0001F600-\U000E007F].*", message.text):
+        
+        if re.match(r'^[\/,!.]|[\U0001F600-\U000E007F].*', message.text):
             return
+        
         if len(message.text) < 100:
             search = message.text
+
             # Send a "Searching Your Query..." message
             searching_message = await message.reply_text("Searching Your Query.")
-            await asyncio.sleep(1)
-            await searching_message.edit_text("Searching Your Query..")
-            await asyncio.sleep(1)
-            await searching_message.edit_text("Searching Your Query...")
-            await asyncio.sleep(1)
-            await searching_message.edit_text("Searching Your Query.")
-            await asyncio.sleep(1)
-            await searching_message.edit_text("Searching Your Query..")
-            await asyncio.sleep(1)
-            await searching_message.edit_text("Searching Your Query...")
-            await asyncio.sleep(1)
-            files, offset, total_results = await get_search_results(search.lower(), offset=0, filter=True)
-            if not files:
-                if settings["spell_check"]:
-                    return await advantage_spell_chok(client, msg, searching_message)
+            while True:
+                for dots in [".", "..", "..."]:
+                    await message.edit_text(f"Searching Your Query{dots}")
+                    await asyncio.sleep(1)
+                    files, offset, total_results = await get_search_results(search.lower(), offset=0, filter=True)
+                    if not files:
+                        if settings["spell_check"]:
+                            return await advantage_spell_chok(client, msg, searching_message)
+                        else:
+                            await client.send_message(chat_id=LOG_CHANNEL, text=(script.NORSLTS.format(reqstr.id, reqstr.mention, search)))
+                            return
                 else:
-                    await client.send_message(chat_id=LOG_CHANNEL, text=(script.NORSLTS.format(reqstr.id, reqstr.mention, search)))
                     return
-        else:
-            return
     else:
         message = msg.message.reply_to_message  # msg will be callback query
         search, files, offset, total_results = spoll
