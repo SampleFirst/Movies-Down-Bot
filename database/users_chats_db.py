@@ -10,7 +10,7 @@ class Database:
         self.db = self._client[database_name]
         self.col = self.db.users
         self.grp = self.db.groups
-
+        self.pre = self.db.premium 
 
     def new_user(self, id, name):
         tz = pytz.timezone('Asia/Kolkata')  # Define tz here
@@ -36,6 +36,23 @@ class Database:
             ),
             timestamp=datetime.now(tz)
         )
+        
+    def new_premium_user(self, id, name, premium_start_date, premium_end_date):
+        tz = pytz.timezone('Asia/Kolkata')
+        return {
+            'id': id,
+            'name': name,
+            'premium_status': {
+                'is_premium': True,
+                'start_date': premium_start_date,
+                'end_date': premium_end_date,
+            },
+            'ban_status': {
+                'is_banned': False,
+                'ban_reason': "",
+            },
+            'timestamp': datetime.now(tz).isoformat(),
+        }
 
     async def daily_users_count(self, today):
         tz = pytz.timezone('Asia/Kolkata')
@@ -95,9 +112,6 @@ class Database:
     async def get_all_users(self):
         return self.col.find({})
     
-
-    
-
     async def delete_user(self, user_id):
         await self.col.delete_many({'id': int(user_id)})
 
@@ -111,8 +125,6 @@ class Database:
         b_users = [user['id'] async for user in users]
         return b_users, b_chats
     
-
-
     async def add_chat(self, chat, title, username):
         chat = self.new_group(chat, title, username)
         await self.grp.insert_one(chat)
@@ -129,6 +141,40 @@ class Database:
             reason="",
             )
         await self.grp.update_one({'id': int(id)}, {'$set': {'chat_status': chat_status}})
+
+    async def add_premium_user(self, id, name, premium_start_date, premium_end_date):
+        premium_user = self.new_premium_user(id, name, premium_start_date, premium_end_date)
+        await self.pre.insert_one(premium_user)
+
+    async def is_premium_user_exist(self, user_id):
+        user = await self.pre.find_one({'id': user_id})
+        return user is not None
+
+    async def update_premium_status(self, user_id, is_premium):
+        await self.pre.update_one(
+            {'id': user_id},
+            {'$set': {'premium_status.is_premium': is_premium}}
+        )
+
+    async def check_premium_status(self, user_id):
+        user = await self.pre.find_one({'id': user_id})
+        if user:
+            return user['premium_status']['is_premium']
+        return False
+        
+    async def total_premium_users_count(self):
+        count = await self.pre.count_documents({'premium_status.is_premium': True})
+        return count
+
+    async def get_all_premium_users(self):
+        premium_users = await self.pre.find({'premium_status.is_premium': True}).to_list()
+        return premium_users
+
+    async def delete_premium_user(self, id):
+        await self.pre.delete_many({
+            'id': id,
+            'premium_status.is_premium': True,
+        })
         
     async def update_settings(self, id, settings):
         await self.grp.update_one({'id': int(id)}, {'$set': {'settings': settings}})
