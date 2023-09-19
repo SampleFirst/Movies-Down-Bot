@@ -1180,7 +1180,7 @@ async def auto_filter(client, msg, spoll=False):
             searching_message = await message.reply_text("Searching Your Query.")
             while True:
                 for dots in [".", "..", "..."]:
-                    await message.edit_text(f"Searching Your Query{dots}")
+                    await searching_message.edit_text(f"Searching Your Query{dots}")
                     await asyncio.sleep(1)
                     files, offset, total_results = await get_search_results(search.lower(), offset=0, filter=True)
                     if not files:
