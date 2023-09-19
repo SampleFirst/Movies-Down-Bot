@@ -1,6 +1,7 @@
 from pyrogram import Client, filters
 from datetime import datetime, timedelta
 from database.users_chats_db import db
+from info import ADMINS 
 
 @Client.on_message(filters.command("addpremium") & filters.user(ADMINS))
 async def add_premium_user(bot, message):
