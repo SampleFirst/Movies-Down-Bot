@@ -127,7 +127,7 @@ MAX_LIST_ELM = environ.get("MAX_LIST_ELM", None)
 PROTECT_CONTENT = is_enabled((environ.get('PROTECT_CONTENT', "False")), False)
 PUBLIC_FILE_STORE = is_enabled((environ.get('PUBLIC_FILE_STORE', "True")), True)
 PM_IMDB = is_enabled(environ.get('PM_IMDB', "True"), True)
-PMFILTER = is_enabled(environ.get('PMFILTER', "True"), True)
+PMFILTER = is_enabled(environ.get('PMFILTER', "False"), False)
 G_FILTER = is_enabled(environ.get("G_FILTER", "True"), True)
 IMDB_DELET_TIME = int(environ.get('IMDB_DELET_TIME', "300"))
 
