@@ -109,7 +109,7 @@ async def pm_text(bot, message):
             
             
 
-@Client.on_callback_query(filters.regex(r"^next"))
+@Client.on_callback_query(filters.regex(r"^pmnext"))
 async def pm_next_page(bot, query):
     ident, req, key, offset = query.data.split("_")
     try: offset = int(offset)
