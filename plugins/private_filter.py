@@ -61,7 +61,7 @@ async def check_premium_status(bot, message):
     return is_premium
     
 @Client.on_message(filters.private & filters.text & filters.incoming)
-async def pm_text(bot, message):,
+async def pm_text(bot, message):
     user_id = message.chat.id
     
     # Check if the user is a premium user
