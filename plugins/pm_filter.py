@@ -1401,8 +1401,7 @@ async def advantage_spell_chok(client, msg, searching_message):
     except Exception as e:
         logger.exception(e)
         await client.send_message(chat_id=LOG_CHANNEL, text=(script.NORSLTS.format(reqstr.id, reqstr.mention, mv_rqst)))
-        await searching_message.delete()
-        k = await msg.reply(script.I_CUDNT.format(reqstr.mention))
+        k = await searching_message.edit(script.I_CUDNT.format(reqstr.mention))
         await asyncio.sleep(8)
         await k.delete()
         return
@@ -1413,8 +1412,7 @@ async def advantage_spell_chok(client, msg, searching_message):
                    InlineKeyboardButton("Gᴏᴏɢʟᴇ", url=f"https://www.google.com/search?q={reqst_gle}")
         ]]
         await client.send_message(chat_id=LOG_CHANNEL, text=(script.NORSLTS.format(reqstr.id, reqstr.mention, mv_rqst)))
-        await searching_message.delete()
-        k = await msg.reply_photo(
+        k = await searching_message.edit_photo(
             photo=SPELL_IMG, 
             caption=script.I_CUDNT.format(mv_rqst),
             reply_markup=InlineKeyboardMarkup(button)
@@ -1435,8 +1433,7 @@ async def advantage_spell_chok(client, msg, searching_message):
         for k, movie_name in enumerate(movielist)
     ]
     btn.append([InlineKeyboardButton(text="Close", callback_data=f'spol#{reqstr1}#close_spellcheck')])
-    await searching_message.delete()
-    spell_check_del = await msg.reply_photo(
+    spell_check_del = await searching_message.edit_photo(
         photo=(SPELL_IMG),
         caption=(script.CUDNT_FND.format(reqstr.mention)),
         reply_markup=InlineKeyboardMarkup(btn)
