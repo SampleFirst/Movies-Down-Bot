@@ -57,8 +57,15 @@ async def auto_pm_fill(b, m):
         
 @Client.on_message(filters.private & filters.text & filters.incoming)
 async def pm_text(bot, message):
-    await global_filters(bot, message)
+    # Check if the user is a premium user
     user_id = message.chat.id
+    is_premium = await db.check_premium_status(user_id)
+    
+    if not is_premium:
+        await message.reply("You're not a Premium User.")
+        return
+    
+    await global_filters(bot, message)
     name = message.text
 
     keywords = await get_filters(user_id)
@@ -105,8 +112,7 @@ async def pm_text(bot, message):
             await pm_auto_filter(bot, message)
             
     await asyncio.sleep(600)
-    await message.delete()            
-            
+    await message.delete()
             
 
 @Client.on_callback_query(filters.regex(r"^pmnext"))
