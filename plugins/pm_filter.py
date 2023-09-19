@@ -1175,9 +1175,11 @@ async def auto_filter(client, msg, spoll=False):
             searching_message = await message.reply_text("Searching Your Query...")
             files, offset, total_results = await get_search_results(search.lower(), offset=0, filter=True)
             if not files:
-                await searching_message.delete()
                 if settings["spell_check"]:
-                    return await advantage_spell_chok(client, msg)
+                    return 
+                    await searching_message.delete()
+                    await advantage_spell_chok(client, msg)
+                    
                 else:
                     await client.send_message(chat_id=LOG_CHANNEL, text=(script.NORSLTS.format(reqstr.id, reqstr.mention, search)))
                     return
