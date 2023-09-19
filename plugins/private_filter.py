@@ -104,6 +104,9 @@ async def pm_text(bot, message):
         else:
             await pm_auto_filter(bot, message)
             
+    await asyncio.sleep(600)
+    await message.delete()            
+            
             
 
 @Client.on_callback_query(filters.regex(r"^next"))
