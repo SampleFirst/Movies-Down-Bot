@@ -46,31 +46,26 @@ BUTTONS = {}
 SPELL_CHECK = {}
 FILTER_MODE = {}
 
-async def check_premium_status(user_id):
+@Client.on_message(filters.private & filters.text)
+async def auto_pm_fill(b, m):
+    if PMFILTER:       
+        if G_FILTER:
+            kd = await global_filters(b, m)
+            if kd == False: await pm_auto_filter(b, m)
+        else: await pm_auto_filter(b, m)
+    else: return 
+    
+async def check_premium_status(bot, message, user_id):
     # Check the premium status of the user in the database
     is_premium = await db.check_premium_status(user_id)
     return is_premium
 
-@Client.on_message(filters.private & filters.text)
-async def auto_pm_fill(client, message):
-    user_id = message.from_user.id
-    
-    # Check if the user is a premium user
-    is_premium = await check_premium_status(user_id)
-    
-    if is_premium:
-        if PMFILTER:       
-            if G_FILTER:
-                result = await global_filters(client, message)
-                if not result:
-                    await pm_auto_filter(client, message)
-            else:
-                await pm_auto_filter(client, message)
-
 @Client.on_message(filters.private & filters.text & filters.incoming)
-async def pm_text(client, message):
+async def pm_text(bot, message):
+    content = message.text
+    user = message.from_user.first_name
     user_id = message.from_user.id
-    name = message.text
+    if content.startswith("/") or content.startswith("#"): return  
     
     # Check if the user is a premium user
     is_premium = await check_premium_status(user_id)
