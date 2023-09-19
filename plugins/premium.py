@@ -42,3 +42,38 @@ async def check_premium_status(bot, message):
     
     except (IndexError, ValueError):
         await message.reply("Invalid command usage. Use /checkpremium <user_id>")
+
+@Client.on_message(filters.command("removepremium") & filters.user(ADMINS))
+async def remove_premium_user(bot, message):
+    try:
+        # Parse the user ID from the command arguments
+        user_id = int(message.command[1])
+        
+        # Check if the user exists as a premium user in the database
+        if await db.check_premium_status(user_id):
+            # Remove the user from premium status in the database
+            await db.update_premium_status(user_id, False)
+            await message.reply("User has been removed from premium status.")
+        else:
+            await message.reply("User is not a premium user.")
+    
+    except (IndexError, ValueError):
+        await message.reply("Invalid command usage. Use /removepremium <user_id>")
+
+@Client.on_message(filters.command("checkmypremium"))
+async def check_my_premium_status(bot, message):
+    try:
+        # Get the user's own ID
+        user_id = message.from_user.id
+
+        # Check the premium status of the user
+        is_premium = await db.check_premium_status(user_id)
+        
+        if is_premium:
+            await message.reply("You are a premium user.")
+        else:
+            await message.reply("You are not a premium user.")
+    
+    except Exception as e:
+        print(e)
+        await message.reply("An error occurred while checking your premium status.")
