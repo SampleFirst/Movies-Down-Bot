@@ -167,6 +167,31 @@ class Database:
         is_premium = await self.is_premium_user(id)
         return 'Premium' if is_premium else 'Free'     
         
+    async def get_all_premium_users(self):
+        premium_users = await self.pre.find({'premium_status.is_premium': True}).to_list()
+        return premium_users
+
+    async def delete_premium_user(self, id):
+        await self.pre.delete_many({
+            'id': id,
+            'premium_status.is_premium': True,
+        })
+
+    async def update_premium_user(self, id, name, premium_start_date, premium_end_date):
+        await self.pre.update_one({'id': id, 'premium_status.is_premium': True},
+            {
+                '$set': {
+                    'name': name,
+                    'premium_status.start_date': premium_start_date,
+                    'premium_status.end_date': premium_end_date,
+                }
+            }
+        )
+
+    async def get_deleted_premium_users(self):
+        deleted_users = await self.pre.find({'premium_status.is_premium': False}).to_list()
+        return deleted_users
+        
     async def update_settings(self, id, settings):
         await self.grp.update_one({'id': int(id)}, {'$set': {'settings': settings}})
         
@@ -222,4 +247,3 @@ class Database:
         return None
 
 db = Database(DATABASE_URI, DATABASE_NAME)
-
