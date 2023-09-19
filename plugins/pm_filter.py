@@ -1172,7 +1172,18 @@ async def auto_filter(client, msg, spoll=False):
         if len(message.text) < 100:
             search = message.text
             # Send a "Searching Your Query..." message
-            searching_message = await message.reply_text("Searching Your Query...")
+            searching_message = await message.reply_text("Searching Your Query.")
+            await asyncio.sleep(1)
+            await searching_message.edit_text("Searching Your Query..")
+            await asyncio.sleep(1)
+            await searching_message.edit_text("Searching Your Query...")
+            await asyncio.sleep(1)
+            await searching_message.edit_text("Searching Your Query.")
+            await asyncio.sleep(1)
+            await searching_message.edit_text("Searching Your Query..")
+            await asyncio.sleep(1)
+            await searching_message.edit_text("Searching Your Query...")
+            await asyncio.sleep(1)
             files, offset, total_results = await get_search_results(search.lower(), offset=0, filter=True)
             if not files:
                 if settings["spell_check"]:
