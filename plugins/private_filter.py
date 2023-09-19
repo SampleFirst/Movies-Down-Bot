@@ -36,7 +36,7 @@ from utils import (
     temp
 )
 from info import *
-    
+from datetime import datetime, timedelta
 
 # Set the logging level to ERROR
 logger = logging.getLogger(__name__)
@@ -54,12 +54,18 @@ async def auto_pm_fill(b, m):
             if kd == False: await pm_auto_filter(b, m)
         else: await pm_auto_filter(b, m)
     else: return 
-        
+
+async def check_premium_status(user_id):
+    # Check the premium status of the user in the database
+    is_premium = await db.check_premium_status(user_id)
+    return is_premium
+    
 @Client.on_message(filters.private & filters.text & filters.incoming)
 async def pm_text(bot, message):
-    # Check if the user is a premium user
     user_id = message.chat.id
-    is_premium = await db.check_premium_status(user_id)
+    
+    # Check if the user is a premium user
+    is_premium = await check_premium_status(user_id)
     
     if not is_premium:
         await message.reply("You're not a Premium User.")
