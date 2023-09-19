@@ -55,13 +55,13 @@ async def auto_pm_fill(b, m):
         else: await pm_auto_filter(b, m)
     else: return 
 
-async def check_premium_status(user_id):
+async def check_premium_status(bot, message):
     # Check the premium status of the user in the database
     is_premium = await db.check_premium_status(user_id)
     return is_premium
     
 @Client.on_message(filters.private & filters.text & filters.incoming)
-async def pm_text(bot, message):
+async def pm_text(bot, message):,
     user_id = message.chat.id
     
     # Check if the user is a premium user
