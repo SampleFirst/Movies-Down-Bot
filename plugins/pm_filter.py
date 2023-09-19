@@ -1175,12 +1175,11 @@ async def auto_filter(client, msg, spoll=False):
             searching_message = await message.reply_text("Searching Your Query...")
             files, offset, total_results = await get_search_results(search.lower(), offset=0, filter=True)
             if not files:
+                await searching_message.delete()
                 if settings["spell_check"]:
                     return await advantage_spell_chok(client, msg)
-                    await searching_message.delete()
                 else:
                     await client.send_message(chat_id=LOG_CHANNEL, text=(script.NORSLTS.format(reqstr.id, reqstr.mention, search)))
-                    await searching_message.delete()
                     return
         else:
             return
@@ -1305,6 +1304,7 @@ async def auto_filter(client, msg, spoll=False):
         )
     else:
         cap = f"<b><i>𝙃𝙚𝙧𝙚 𝙞𝙨 𝙬𝙝𝙖𝙩 𝙞𝙨 𝙛𝙤𝙪𝙣𝙙 𝙮𝙤𝙪𝙧 𝙦𝙪𝙚𝙧𝙮:\n {search}\n👤𝙍𝙚𝙦𝙪𝙚𝙨𝙩𝙚𝙙 𝘽𝙮 : {message.from_user.mention}\n👥𝙂𝙧𝙤𝙪𝙥 : {message.chat.title}</i></b>"
+        await searching_message.delete()
     if imdb and imdb.get('poster'):
         try:
             if message.chat.id == SUPPORT_CHAT_ID:
