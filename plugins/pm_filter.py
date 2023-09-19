@@ -1165,8 +1165,9 @@ async def auto_filter(client, msg, spoll=False):
     if not spoll:
         message = msg
         settings = await get_settings(message.chat.id)
-        if message.text.startswith("/"): return  # ignore commands
-        if re.findall("((^\/|^,|^!|^\.|^[\U0001F600-\U000E007F]).*)", message.text):
+        if message.text.startswith("/"):
+            return  # Ignore commands
+        if re.findall(r"^\/|^,|^!|^\.|^[\U0001F600-\U000E007F].*", message.text):
             return
         if len(message.text) < 100:
             search = message.text
@@ -1177,24 +1178,25 @@ async def auto_filter(client, msg, spoll=False):
                 if settings["spell_check"]:
                     # Remove the "Searching Your Query..." message and send the spell check message
                     await searching_message.delete()
-                    return await advantage_spell_chok(client, msg)
+                    return await advantage_spell_check(client, msg)
                 else:
                     # Remove the "Searching Your Query..." message and send the "No Results" message
                     await searching_message.delete()
                     await client.send_message(chat_id=LOG_CHANNEL, text=(script.NORSLTS.format(reqstr.id, reqstr.mention, search)))
                     return
             else:
+                pass  # You can add more code here
         else:
             return
     else:
-        message = msg.message.reply_to_message  # msg will be callback query
+        message = msg.message.reply_to_message  # msg will be a callback query
         search, files, offset, total_results = spoll
         settings = await get_settings(message.chat.id)
-    if 'is_shortlink' in settings.keys():
-        ENABLE_SHORTLINK = settings['is_shortlink']
-    else:
-        await save_group_settings(message.chat.id, 'is_shortlink', False)
-        ENABLE_SHORTLINK = False
+        if 'is_shortlink' in settings.keys():
+            ENABLE_SHORTLINK = settings['is_shortlink']
+        else:
+            await save_group_settings(message.chat.id, 'is_shortlink', False)
+            ENABLE_SHORTLINK = False
     pre = 'filep' if settings['file_secure'] else 'file'
     if ENABLE_SHORTLINK == True:
         if settings["button"]:
