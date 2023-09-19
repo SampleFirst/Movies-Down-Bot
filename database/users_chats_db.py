@@ -39,20 +39,20 @@ class Database:
         
     def new_premium_user(self, id, name, premium_start_date, premium_end_date):
         tz = pytz.timezone('Asia/Kolkata')
-        return {
-            'id': id,
-            'name': name,
-            'premium_status': {
-                'is_premium': True,
-                'start_date': premium_start_date,
-                'end_date': premium_end_date,
-            },
-            'ban_status': {
-                'is_banned': False,
-                'ban_reason': "",
-            },
-            'timestamp': datetime.now(tz).isoformat(),
-        }
+        return dict(
+            id=id,
+            name=name,
+            premium_status=dict(
+                is_premium=True,
+                start_date=premium_start_date,
+                end_date=premium_end_date,
+            ),
+            ban_status=dict(
+                is_banned=False,
+                ban_reason="",
+            ),
+            timestamp=datetime.now(tz)
+        )
 
     async def daily_users_count(self, today):
         tz = pytz.timezone('Asia/Kolkata')
