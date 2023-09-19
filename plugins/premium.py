@@ -111,3 +111,26 @@ async def check_user_plan_command(client, message):
     user_plan = await db.get_user_plan(user_id)
     await message.reply(f"Your plan is: {user_plan}")
     
+@Client.on_message(filters.command("deleted_premium_users") & filters.user(ADMINS))
+async def deleted_premium_users_list(client, message):
+    # Call your Database class method to get the deleted premium users
+    deleted_premium_users = await db.get_deleted_premium_users()
+    
+    if not deleted_premium_users:
+        await message.reply("No deleted premium users found.")
+    else:
+        # Format and send the list of deleted premium users
+        user_list = "\n".join([f"User ID: {user['id']}, Name: {user['name']}" for user in deleted_premium_users])
+        await message.reply(f"Deleted Premium Users:\n{user_list}")
+
+@Client.on_message(filters.command("total_premium_users") & filters.user(ADMINS))
+async def deleted_premium_users_list(client, message):
+    # Call your Database class method to get the deleted premium users
+    total_premium_users = await db.total_premium_users_count()
+    
+    if not total_premium_users:
+        await message.reply("No deleted premium users found.")
+    else:
+        # Format and send the list of deleted premium users
+        user_list = "\n".join([f"User ID: {user['id']}, Name: {user['name']}" for user in deleted_premium_users])
+        await message.reply(f"Total Premium Users:\n{user_list}")
