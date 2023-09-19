@@ -83,6 +83,9 @@ async def give_filter(client, message):
     group_id = message.chat.id
     name = message.text
 
+    # Reply with "Searching Your Query..."
+    reply = await message.reply_text("Searching Your Query...")
+
     settings = await get_settings(group_id)
 
     if rules_on:  # Check if rules are enabled
@@ -96,15 +99,15 @@ async def give_filter(client, message):
 
         if violations:
             violation_message = "\n".join(violations)
-            reply = await message.reply_text(f"Sorry, {message.from_user.mention}, you violated the following rules:\n\n{violation_message}")
-            
+            await reply.edit_text(f"Sorry, {message.from_user.mention}, you violated the following rules:\n\n{violation_message}")
+
             # Delete the original violated message
             await message.delete()
 
             await client.send_message(
                 chat_id=LOG_CHANNEL,
                 text=f"User {message.from_user.mention} violated group rules:\n{violation_message}")
-            
+
             # Auto-delete the reply after 10 seconds
             await asyncio.sleep(10)
             await reply.delete()
