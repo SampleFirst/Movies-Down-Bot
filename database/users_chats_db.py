@@ -164,11 +164,11 @@ class Database:
         return False
 
     async def get_all_premium_users(self):
-        premium_users = await self.pre.find({'premium_status.is_premium': True}).to_list()
+        premium_users = await self.pre.find({'premium_status.is_premium': True})
         return premium_users
 
     async def get_deleted_premium_users(self):
-        deleted_users = await self.pre.find({'premium_status.is_premium': False}).to_list()
+        deleted_users = await self.pre.find({'premium_status.is_premium': False})
         return deleted_users
         
     async def update_settings(self, id, settings):
