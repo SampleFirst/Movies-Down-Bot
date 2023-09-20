@@ -13,7 +13,7 @@ class Database:
         self.pre = self.db.premium 
 
     def new_user(self, id, name):
-        tz = pytz.timezone('Asia/Kolkata')  # Define tz here
+        tz = pytz.timezone('Asia/Kolkata')
         return dict(
             id=id,
             name=name,
@@ -25,7 +25,7 @@ class Database:
         )
 
     def new_group(self, id, title, username):
-        tz = pytz.timezone('Asia/Kolkata')  # Define tz here
+        tz = pytz.timezone('Asia/Kolkata')
         return dict(
             id=id,
             title=title,
@@ -140,27 +140,48 @@ class Database:
             return user['premium_status']['is_premium']
         return False
 
+    async def remove_premium_ban(self, id):
+        ban_status = dict(
+            is_banned=False,
+            ban_reason=''
+        )
+        await self.pre.update_one({'id': id}, {'$set': {'ban_status': ban_status}})
     
+    async def ban_premium_user(self, user_id, ban_reason="No Reason"):
+        ban_status = dict(
+            is_banned=True,
+            ban_reason=ban_reason
+        )
+        await self.pre.update_one({'id': user_id}, {'$set': {'ban_status': ban_status}})
 
-    async def delete_chat(self, chat_id):
-        await self.grp.delete_many({'id': int(chat_id)})
-        
-    async def get_banned(self):
-        users = self.col.find({'ban_status.is_banned': True})
-        chats = self.grp.find({'chat_status.is_disabled': True})
-        b_chats = [chat['id'] async for chat in chats]
-        b_users = [user['id'] async for user in users]
-        return b_users, b_chats
+    async def get_premium_ban_status(self, id):
+        default = dict(
+            is_banned=False,
+            ban_reason=''
+        )
+        premium_user = await self.pre.find_one({'id':int(id)})
+        if not user:
+            return default
+        return premium_user.get('ban_status', default)
+
     
     async def add_chat(self, chat, title, username):
         chat = self.new_group(chat, title, username)
         await self.grp.insert_one(chat)
-    
 
     async def get_chat(self, chat):
         chat = await self.grp.find_one({'id':int(chat)})
         return False if not chat else chat.get('chat_status')
+        
+    async def total_chat_count(self):
+        count = await self.grp.count_documents({})
+        return count
+        
+    async def get_all_chats(self):
+        return self.grp.find({})
     
+    async def delete_chat(self, chat_id):
+        await self.grp.delete_many({'id': int(chat_id)})        
 
     async def re_enable_chat(self, id):
         chat_status=dict(
@@ -169,34 +190,15 @@ class Database:
             )
         await self.grp.update_one({'id': int(id)}, {'$set': {'chat_status': chat_status}})
 
-    async def add_premium_user(self, id, name, premium_start_date, premium_end_date):
-        premium_user = self.new_premium_user(id, name, premium_start_date, premium_end_date)
-        await self.pre.insert_one(premium_user)
-
-    async def is_premium_user_exist(self, id):
-        user = await self.pre.find_one({'id': int(id)})
-        return bool(user)
-
-    async def total_premium_users(self):
-        premium_users = await self.pre.find({'premium_status.is_premium': True}).to_list(length=None)
-        return premium_users
+    async def get_banned(self):
+        users = self.col.find({'ban_status.is_banned': True})
+        premium_users = self.pre.find({'ban_status.is_banned': True})
+        chats = self.grp.find({'chat_status.is_disabled': True})
+        b_chats = [chat['id'] async for chat in chats]
+        b_premium_users = [premium_user['id'] async for premium_user in premium_users]
+        b_users = [user['id'] async for user in users]
+        return b_users, b_chats, b_premium_users
         
-    async def remove_premium_user(self, id):
-        await self.pre.delete_many({'id': int(id)})
-
-    async def check_premium_status(self, user_id):
-        user = await self.pre.find_one({'id': user_id})
-        if user:
-            return user['premium_status']['is_premium']
-        return False
-
-    async def get_all_premium_users(self):
-        premium_users = await self.pre.find({'premium_status.is_premium': True})
-        return premium_users
-
-    async def get_deleted_premium_users(self):
-        deleted_users = await self.pre.find({'premium_status.is_premium': False})
-        return deleted_users
         
     async def update_settings(self, id, settings):
         await self.grp.update_one({'id': int(id)}, {'$set': {'settings': settings}})
@@ -230,19 +232,7 @@ class Database:
             )
         await self.grp.update_one({'id': int(chat)}, {'$set': {'chat_status': chat_status}})
     
-
-    async def total_chat_count(self):
-        count = await self.grp.count_documents({})
-        return count
     
-
-    async def get_all_chats(self):
-        return self.grp.find({})
-
-
-    async def get_db_size(self):
-        return (await self.db.command("dbstats"))['dataSize']
-
     async def save_chat_invite_link(self, chat_id, invite_link):
         await self.grp.update_one({'id': int(chat_id)}, {'$set': {'invite_link': invite_link}})
     
@@ -251,5 +241,8 @@ class Database:
         if chat:
             return chat.get('invite_link', None)
         return None
+
+    async def get_db_size(self):
+        return (await self.db.command("dbstats"))['dataSize']
 
 db = Database(DATABASE_URI, DATABASE_NAME)
