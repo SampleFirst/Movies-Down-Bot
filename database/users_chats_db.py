@@ -84,7 +84,13 @@ class Database:
     async def total_users_count(self):
         count = await self.col.count_documents({})
         return count
-    
+
+    async def get_all_users(self):
+        return self.col.find({})
+
+    async def delete_user(self, user_id):
+        await self.col.delete_many({'id': int(user_id)})
+        
     async def remove_ban(self, id):
         ban_status = dict(
             is_banned=False,
@@ -109,11 +115,32 @@ class Database:
             return default
         return user.get('ban_status', default)
 
-    async def get_all_users(self):
-        return self.col.find({})
     
-    async def delete_user(self, user_id):
-        await self.col.delete_many({'id': int(user_id)})
+    async def add_premium_user(self, id, name, premium_start_date, premium_end_date):
+        premium_user = self.new_premium_user(id, name, premium_start_date, premium_end_date)
+        await self.pre.insert_one(premium_user)
+
+    async def is_premium_user_exist(self, id):
+        user = await self.pre.find_one({'id': int(id)})
+        return bool(user)
+
+    async def total_premium_users_count(self):
+        premium_count = await self.pre.count_documents({})
+        return premium_count
+
+    async def get_all_premium_users(self):
+        return self.pre.find({})
+
+    async def delete_premium_user(self, user_id):
+        await self.pre.delete_many({'id': int(user_id)})
+
+    async def check_premium_status(self, user_id):
+        user = await self.pre.find_one({'id': user_id})
+        if user:
+            return user['premium_status']['is_premium']
+        return False
+
+    
 
     async def delete_chat(self, chat_id):
         await self.grp.delete_many({'id': int(chat_id)})
