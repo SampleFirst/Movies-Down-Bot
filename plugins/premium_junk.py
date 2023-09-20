@@ -2,7 +2,7 @@ import time
 import datetime
 import asyncio
 import logging
-from pyrogram import filters
+from pyrogram import Client, filters
 from pyrogram.errors import FloodWait, InputUserDeactivated, UserIsBlocked, PeerIdInvalid
 from pyrogram.types import Message
 from database.users_chats_db import db
