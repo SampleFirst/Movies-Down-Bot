@@ -150,9 +150,9 @@ class Database:
         user = await self.pre.find_one({'id': int(id)})
         return bool(user)
 
-    async def total_premium_users_count(self):
-        count = await self.pre.count_documents({'premium_status.is_premium': True})
-        return count
+    async def total_premium_users(self):
+        premium_users = await self.pre.find({'premium_status.is_premium': True}).to_list(length=None)
+        return premium_users
         
     async def remove_premium_user(self, id):
         await self.pre.delete_many({'id': int(id)})
