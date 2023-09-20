@@ -81,7 +81,7 @@ async def check_my_premium_status(bot, message):
 @Client.on_message(filters.command("premium_users") & filters.user(ADMINS))
 async def premium_users_command(bot, message):
     try:
-        premium_users = await db.get_all_premium_users()
+        premium_users = await db.get_all_premium_users().to_list(length=None)
         if not premium_users:
             await message.reply("No premium users found.")
             return
