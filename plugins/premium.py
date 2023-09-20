@@ -52,7 +52,7 @@ async def remove_premium_user(bot, message):
         # Check if the user exists as a premium user in the database
         if await db.check_premium_status(user_id):
             # Remove the user from premium status in the database
-            await db.remove_premium_user(user_id)
+            await db.delete_premium_user(user_id)
             await message.reply("User has been removed from premium status.")
         else:
             await message.reply("User is not a premium user.")
@@ -81,13 +81,13 @@ async def check_my_premium_status(bot, message):
 @Client.on_message(filters.command("premium_users") & filters.user(ADMINS))
 async def total_premium_users(bot, message):
     try:
-        premium_users = await db.total_premium_users_count()
-        if not premium_users:
+        premium_users_count = await db.total_premium_users_count()
+        if premium_users_count == 0:
             await message.reply("No premium users found.")
             return
 
         response_text = "Premium Users List:\n\n"
-        for user in premium_users:
+        async for user in db.get_all_premium_users():
             user_id = user["id"]
             user_name = user["name"]
             premium_start_date = user["premium_status"]["start_date"]
@@ -98,8 +98,7 @@ async def total_premium_users(bot, message):
             response_text += f"Premium Start Date: {premium_start_date}\n"
             response_text += f"Premium End Date: {premium_end_date}\n\n"
 
-        # Check if the response text is too long to send as a message
-        if len(response_text) > 4096:  # Adjust the character limit as needed
+        if len(response_text) > 4096:
             with open('premium.txt', 'w+') as outfile:
                 outfile.write(response_text)
             await message.reply_document('premium.txt', caption="List Of Premium Users")
@@ -107,3 +106,4 @@ async def total_premium_users(bot, message):
             await message.reply(response_text)
     except Exception as e:
         await message.reply(f"An error occurred: {str(e)}")
+        
