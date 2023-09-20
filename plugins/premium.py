@@ -79,9 +79,9 @@ async def check_my_premium_status(bot, message):
         await message.reply("An error occurred while checking your premium status.")
 
 @Client.on_message(filters.command("premium_users") & filters.user(ADMINS))
-async def premium_users_command(bot, message):
+async def total_premium_users(bot, message: Message):
     try:
-        premium_users = await db.get_all_premium_users().to_list(length=None)
+        premium_users = await db.get_all_premium_users()
         if not premium_users:
             await message.reply("No premium users found.")
             return
@@ -98,6 +98,12 @@ async def premium_users_command(bot, message):
             response_text += f"Premium Start Date: {premium_start_date}\n"
             response_text += f"Premium End Date: {premium_end_date}\n\n"
 
-        await message.reply(response_text)
+        # Check if the response text is too long to send as a message
+        if len(response_text) > 4096:  # Adjust the character limit as needed
+            with open('premium.txt', 'w+') as outfile:
+                outfile.write(response_text)
+            await message.reply_document('premium.txt', caption="List Of Premium Users")
+        else:
+            await message.reply(response_text)
     except Exception as e:
         await message.reply(f"An error occurred: {str(e)}")
