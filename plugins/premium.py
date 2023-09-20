@@ -79,7 +79,7 @@ async def check_my_premium_status(bot, message):
         await message.reply("An error occurred while checking your premium status.")
 
 @Client.on_message(filters.command("premium_users") & filters.user(ADMINS))
-async def premium_users_command(_, message: Message):
+async def premium_users_command(bot, message):
     try:
         premium_users = await db.get_all_premium_users()
         if not premium_users:
