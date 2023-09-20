@@ -37,9 +37,10 @@ class Bot(Client):
         )
 
     async def start(self):
-        b_users, b_chats = await db.get_banned()
+        b_users, b_chats, b_premium_users = await db.get_banned()
         temp.BANNED_USERS = b_users
         temp.BANNED_CHATS = b_chats
+        temp.BANNED_PREMIUM_USERS = b_premium_users
         await super().start()
         await Media.ensure_indexes()
         me = await self.get_me()
