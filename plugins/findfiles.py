@@ -3,7 +3,7 @@ import re
 import logging
 
 from pyrogram import Client, filters, enums
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
 
 from database.ia_filterdb import Media
 from database.users_chats_db import db
