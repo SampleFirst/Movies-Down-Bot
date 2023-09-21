@@ -249,3 +249,8 @@ async def confirm_delete_starting_files(client, callback_query):
     )
 
     await callback_query.message.edit_text(confirmation_message, reply_markup=keyboard)
+
+@Client.on_callback_query(filters.regex('^cancel_delete'))
+async def cancel_delete(client, callback_query):
+    await callback_query.message.edit_text("☑️ Deletion canceled.")
+    
