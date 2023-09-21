@@ -9,7 +9,7 @@ from pyrogram import Client, filters, enums
 
 # Database Imports
 from database.users_chats_db import db
-from database.ia_filterdb import Media get_bad_files
+from database.ia_filterdb import Media, get_bad_files
 
 # Environment Variables
 from info import ADMINS
