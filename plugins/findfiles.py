@@ -208,7 +208,7 @@ async def findfiles_callback_query(client: Client, query: CallbackQuery):
 
         await callback_query.message.edit_text(message_text, reply_markup=keyboard)
 
-    elif query.data == "confirm_delete_starting"
+    elif query.data == "confirm_delete_starting":
         file_name = data[1]
         confirmation_message = f'⚠️ Are you sure you want to delete all files with names starting "{file_name}"?\n\n' \
                                f'This action cannot be undone.'
