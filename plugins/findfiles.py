@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 RESULTS_PER_PAGE = 10
 
-@Client.on_message(filters.command(['findfiles']) & filters.user(ADMINS))
+@Client.on_message(filters.command('findfiles') & filters.user(ADMINS))
 async def handle_find_files(client, message):
     """Find files in the database based on search criteria"""
     search_query = " ".join(message.command[1:])  # Extract the search query from the command
