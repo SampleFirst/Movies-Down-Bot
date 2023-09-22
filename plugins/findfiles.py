@@ -62,10 +62,10 @@ async def handle_find_files(client, message):
         
 
 @Client.on_callback_query()
-async def findfiles_callback_query(client: Client, query: CallbackQuery):
-    data = query.data
+async def findfiles_callback_query(client: Client, findfiles_query: CallbackQuery):
+    data = findfiles_query.data
 
-    if query.data == "related_files":
+    if findfiles_query.data == "related_files":
         page = int(data[1])
         search_query = data[2]
         query = {
@@ -102,7 +102,7 @@ async def findfiles_callback_query(client: Client, query: CallbackQuery):
         await callback_query.message.edit_text(result_message, reply_markup=keyboard)
         await callback_query.answer()
 
-    elif query.data == "starting_files":
+    elif findfiles_query.data == "starting_files":
         page = int(data[1])
         search_query = data[2]
         query = {
@@ -139,7 +139,7 @@ async def findfiles_callback_query(client: Client, query: CallbackQuery):
         await callback_query.message.edit_text(result_message, reply_markup=keyboard)
         await callback_query.answer()
 
-    elif query.data == "delete_related":
+    elif findfiles_query.data == "delete_related":
         file_name = data[1]
         result = await Media.collection.delete_many({
             'file_name': {"$regex": f".*{re.escape(file_name)}.*", "$options": "i"}
@@ -164,7 +164,7 @@ async def findfiles_callback_query(client: Client, query: CallbackQuery):
 
         await callback_query.message.edit_text(message_text, reply_markup=keyboard)
 
-    elif query.data == 'confirm_delete_related':
+    elif findfiles_query.data == 'confirm_delete_related':
         file_name = data[1]
         confirmation_message = f'⚠️ Are you sure you want to delete all files with the name "{file_name}"?\n\n' \
                                f'This action cannot be undone.'
@@ -183,7 +183,7 @@ async def findfiles_callback_query(client: Client, query: CallbackQuery):
 
         await callback_query.message.edit_text(confirmation_message, reply_markup=keyboard)
 
-    elif query.data == "delete_starting":
+    elif findfiles_query.data == "delete_starting":
         file_name = data[1]
         result = await Media.collection.delete_many({
             'file_name': {"$regex": f"^{re.escape(file_name)}", "$options": "i"}
@@ -208,7 +208,7 @@ async def findfiles_callback_query(client: Client, query: CallbackQuery):
 
         await callback_query.message.edit_text(message_text, reply_markup=keyboard)
 
-    elif query.data == "confirm_delete_starting":
+    elif findfiles_query.data == "confirm_delete_starting":
         file_name = data[1]
         confirmation_message = f'⚠️ Are you sure you want to delete all files with names starting "{file_name}"?\n\n' \
                                f'This action cannot be undone.'
