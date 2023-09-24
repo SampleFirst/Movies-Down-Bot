@@ -19,8 +19,7 @@ import base64
 logger = logging.getLogger(__name__)
 
 BATCH_FILES = {}
-RESULTS_PER_PAGE = 10
-
+RESULTS_PER_PAGE = 5 
 
 @Client.on_message(filters.command("start") & filters.incoming)
 async def start(client, message):
@@ -634,29 +633,8 @@ async def shortlink(bot, message):
     await save_group_settings(grpid, 'is_shortlink', True)
     await reply.edit_text(f"<b>Successfully added shortlink API for {title}.\n\nCurrent Shortlink Website: <code>{shortlink_url}</code>\nCurrent API: <code>{api}</code></b>")
 
-@Client.on_message(filters.command("deletefiles") & filters.user(ADMINS))
-async def deletemultiplefiles(bot, message):
-    btn = [
-        [
-            InlineKeyboardButton("Delete PreDVDs", callback_data="predvd"),
-            InlineKeyboardButton("Delete CamRips", callback_data="camrip")
-        ],
-        [
-            InlineKeyboardButton("Delete HDCams", callback_data="hdcam"),
-            InlineKeyboardButton("Delete S-Prints", callback_data="s-print")
-        ],
-        [
-            InlineKeyboardButton("Delete HDTVRip", callback_data="hdtvrip"),
-            InlineKeyboardButton("Delete Cancel", callback_data="cancel_delete")
-        ]
-    ]
-    await message.reply_text(
-        text="<b>Select the type of files you want to delete!\n\nThis will delete 100 files from the database for the selected type.</b>",
-        reply_markup=InlineKeyboardMarkup(btn),
-        quote=True
-    )
-    
-@Client.on_message(filters.command('findfiles') & filters.user(ADMINS))
+
+@Client.on_message(filters.command(['findfiles']) & filters.user(ADMINS))
 async def handle_find_files(client, message):
     """Find files in the database based on search criteria"""
     search_query = " ".join(message.command[1:])  # Extract the search query from the command
@@ -700,6 +678,7 @@ async def handle_find_files(client, message):
     else:
         await message.reply('❌ No files found matching the search query.', quote=True)
         
+
 
 @Client.on_callback_query(filters.regex('^related_files'))
 async def find_related_files(client, callback_query):
@@ -779,6 +758,8 @@ async def find_starting_files(client, callback_query):
 
     await callback_query.message.edit_text(result_message, reply_markup=keyboard)
     await callback_query.answer()
+
+
 
 
 @Client.on_callback_query(filters.regex('^delete_related'))
@@ -894,5 +875,4 @@ async def confirm_delete_starting_files(client, callback_query):
     )
 
     await callback_query.message.edit_text(confirmation_message, reply_markup=keyboard)
-
 
