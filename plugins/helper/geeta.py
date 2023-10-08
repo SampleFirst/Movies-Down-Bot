@@ -7,7 +7,7 @@ from info import ADMINS
 @Client.on_message(filters.command("geetaverse") & filters.user(ADMINS))
 def send_geeta_verse(client, message):
     # Free Geeta API endpoint
-    api_url = "https://bhagavadgitaapi.in/api/v1/verse"
+    api_url = "https://bhagavadgitaapi.in/slok"
 
     try:
         # Make a GET request to the API
