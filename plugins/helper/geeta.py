@@ -15,7 +15,14 @@ def get_bhagavad_gita_verse():
     soup = BeautifulSoup(response.text, "html.parser")
 
     # Extracting verse and meaning
-    verse = soup.find("div", class_="verse").text.strip()
-    meaning = soup.find("div", class_="verse-meaning").text.strip()
+    verse_element = soup.find("div", class_="verse")
+    meaning_element = soup.find("div", class_="verse-meaning")
 
-    return f"{verse}\n\n{meaning}"
+    # Check if elements are found before accessing their text attributes
+    if verse_element and meaning_element:
+        verse = verse_element.text.strip()
+        meaning = meaning_element.text.strip()
+        return f"{verse}\n\n{meaning}"
+    else:
+        return "Verse or meaning not found on the webpage."
+
