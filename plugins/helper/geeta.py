@@ -4,7 +4,7 @@ import requests
 from info import *
 
 
-@Client.on_message(filters.command("geetaverse") & filters.private)
+@Client.on_message(filters.command("geetaverse"))
 def send_geeta_verse(client, message):
     verse_with_meaning = get_bhagavad_gita_verse()
     message.reply_text(verse_with_meaning)
